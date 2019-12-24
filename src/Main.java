@@ -15,7 +15,10 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		System.out.println("Ciao");
+		DataOra dataOra = new DataOra(); 
+		
+		System.out.println("---------------------[Change Management]------------------------");
+		System.out.println(dataOra.DateStamp());
 	}
 	
 }
