@@ -54,15 +54,15 @@ public class DataOra {
 		String gg = "";
 		
 		if(this.giorno == 1) {
-			gg = "Lunedì"; 
+			gg = "Lunedi"; 
 		}else if(this.giorno == 2) {
-			gg = "Martedì";
+			gg = "Martedi";
 		}else if(this.giorno == 3) {
-			gg = "Mercoledì"; 
+			gg = "Mercoledi"; 
 		}else if(this.giorno == 4) {
-			gg = "Giovedì";
+			gg = "Giovedi";
 		}else if(this.giorno == 5) {
-			gg = "Venerdì";
+			gg = "Venerdi";
 		}else if(this.giorno == 6) {
 			gg = "Sabato";
 		}else if(this.giorno == 7) {
@@ -81,10 +81,8 @@ public class DataOra {
 	
 	public String DateStamp() {
 		
-		return "Data ora odierna: "+giorno+"/"+mese+"/"+formatoAnno()+" "+ora+":"+minuti;
+		return "Data: "+giorno+"/"+mese+"/"+formatoAnno()+" "+ora+":"+minuti;
 	}
-	
-	
 	
 	
 }
