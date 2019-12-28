@@ -1,10 +1,16 @@
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -130,7 +136,7 @@ public class ChangeManagement {
 			Iterator<Row> RowIterator = desiredSheet.iterator();
 			
 			
-			//se è la prima riga la salto 
+			//se è la prima riga la salto perché è il titolo
 			if( RowIterator.hasNext() ) RowIterator.next();
 	
 			//scorro tutte le righe all'interno del tab
@@ -138,27 +144,66 @@ public class ChangeManagement {
 				
 					//prendo ogni riga
 					Row row = RowIterator.next() ; 
+					
 					//scorro tutte le celle
 					Iterator<Cell> cellIterator = row.cellIterator();
-					int cellNum = 0; 
+					int cellNum = 0;
+					
+					String C_GAME = "";
+					String C_FILE = ""; 
+					String C_Sha1 = ""; 
 					
 					//scorro tutte le colonne della riga corrente 
 					while(cellIterator.hasNext()) {
 						
 						Cell cell = cellIterator.next(); //prendo ogni cella 
-						
+	                   
+							
 						switch(cell.getCellType()) {
 							
 							case NUMERIC:  
 								System.out.print(cell.getNumericCellValue() +"\t\t");
 								break;
 							case STRING:
+								
+								if(cellNum == 0) {
+									C_GAME = cell.getStringCellValue();
+									cell.setCellValue("");
+								}else if(cellNum == 1) {
+									C_FILE = cell.getStringCellValue();
+									cell.setCellValue("");
+								}else if(cellNum == 2) {
+									C_Sha1 = cell.getStringCellValue();
+									cell.setCellValue("");
+									
+								}else if(cellNum == 3) {
+								   cell.setCellValue(C_GAME);
+								}else if(cellNum == 4){
+								   cell.setCellValue(C_FILE);
+								}else if(cellNum == 5){
+									cell.setCellValue(C_Sha1);
+								}
+								
 								System.out.print(cell.getStringCellValue()+"\t\t");
+								//cell.setCellValue("");
 								break;
 							case FORMULA:
-								System.out.print(cell.getStringCellValue()+"\t\t");	
+					
+								if(cellNum == 0) {
+									C_GAME = cell.getStringCellValue();
+									cell.setCellValue("");
+								}else if(cellNum == 1) {
+									C_FILE = cell.getStringCellValue();
+									cell.setCellValue("");
+								}else if(cellNum == 2) {
+									C_Sha1 = cell.getStringCellValue();
+									cell.setCellValue("");
+									
+								}
+								System.out.print(cell.getStringCellValue()+"\t\t");
+								break;
 					    }
-						
+							
 						
 						cellNum ++;
 				    }
@@ -168,6 +213,11 @@ public class ChangeManagement {
 				
 			} 
 			
+			//aggiorna il foglio
+			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
+			workbook.write(fileOutputStream);
+			fileOutputStream.close();
+		
 			
 		}catch(Exception ex) { ex.printStackTrace(); }
 
