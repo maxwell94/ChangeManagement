@@ -168,13 +168,14 @@ public class ChangeManagement {
 								
 								if(cellNum == 0) {
 									C_GAME = cell.getStringCellValue();
-									cell.setCellValue("");
+									//cell.setCellValue("");
+									cell.setCellType(CellType.BLANK);
 								}else if(cellNum == 1) {
 									C_FILE = cell.getStringCellValue();
-									cell.setCellValue("");
+									cell.setCellType(CellType.BLANK);
 								}else if(cellNum == 2) {
 									C_Sha1 = cell.getStringCellValue();
-									cell.setCellValue("");
+									cell.setCellType(CellType.BLANK);
 									
 								}else if(cellNum == 3) {
 								   cell.setCellValue(C_GAME);
@@ -191,13 +192,13 @@ public class ChangeManagement {
 					
 								if(cellNum == 0) {
 									C_GAME = cell.getStringCellValue();
-									cell.setCellValue("");
+									cell.setCellType(CellType.BLANK);
 								}else if(cellNum == 1) {
 									C_FILE = cell.getStringCellValue();
-									cell.setCellValue("");
+									cell.setCellType(CellType.BLANK);
 								}else if(cellNum == 2) {
 									C_Sha1 = cell.getStringCellValue();
-									cell.setCellValue("");
+									cell.setCellType(CellType.BLANK);
 									
 								}
 								System.out.print(cell.getStringCellValue()+"\t\t");
