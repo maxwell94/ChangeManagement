@@ -57,7 +57,7 @@ public class RenameFolders {
                 			Unzip unzip = new Unzip(path+"\\"+folders[i], path+"\\"+str[j]);
 							unzip.unZipIt(path+"\\"+folders[i], path+"\\"+str[j] );
 							unzip.rename(str[j],path);
-                			
+							
                 		}
                 		
                 	}
