@@ -151,7 +151,8 @@ public class ChangeManagement {
 					
 					String C_GAME = "";
 					String C_FILE = ""; 
-					String C_Sha1 = ""; 
+					String C_Sha1 = "";
+					String formula = ""; 
 					
 					//scorro tutte le colonne della riga corrente 
 					while(cellIterator.hasNext()) {
@@ -162,7 +163,7 @@ public class ChangeManagement {
 						switch(cell.getCellType()) {
 							
 							case NUMERIC:  
-								System.out.print(cell.getNumericCellValue() +"\t\t");
+								//System.out.print(cell.getNumericCellValue() +"\t\t");
 								break;
 							case STRING:
 								
@@ -185,7 +186,7 @@ public class ChangeManagement {
 									cell.setCellValue(C_Sha1);
 								}
 								
-								System.out.print(cell.getStringCellValue()+"\t\t");
+								//System.out.print(cell.getStringCellValue()+"\t\t");
 								//cell.setCellValue("");
 								break;
 							case FORMULA:
@@ -196,16 +197,17 @@ public class ChangeManagement {
 								}else if(cellNum == 1) {
 									C_FILE = cell.getStringCellValue();
 									cell.setCellType(CellType.BLANK);
-								}else if(cellNum == 2) {
+								}else if(cellNum == 2) { //C_Sha1
 									C_Sha1 = cell.getStringCellValue();
+									formula = cell.getCellFormula();
+									//formula.replaceAll("[1]", nomeFoglioExcel);
+									//System.out.println("formula : "+formula);
 									cell.setCellType(CellType.BLANK);
-									
 								}
-								System.out.print(cell.getStringCellValue()+"\t\t");
+								//System.out.print(cell.getBooleanCellValue()+"\t\t");
 								break;
 					    }
 							
-						
 						cellNum ++;
 				    }
 					
@@ -221,7 +223,16 @@ public class ChangeManagement {
 		
 			
 		}catch(Exception ex) { ex.printStackTrace(); }
+		
+		System.out.println("Done ...");
 
 	}
 	
+	public void grezzi() {
+		
+		try {
+			
+		}catch(Exception ex) { ex.printStackTrace(); }
+		
+	}
 }
