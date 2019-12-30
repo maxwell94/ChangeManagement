@@ -83,7 +83,39 @@ public class Unzip {
 	       ex.printStackTrace(); 
 	    }
 	     
-	 } 
+	 }
+	 
+	public String estrarre(String str){
+
+	        int inizio = 16;
+	        int contaTrattini = 0;
+	        String strEstratta = "";
+
+	        for(int i=16;i<str.length(); i++){
+
+	            if(str.charAt(i) == '-'){ // se è uguale '-' controllo se il carattere successivo è un numero
+	                if( Character.isDigit(str.charAt(i+1)) || str.charAt(i+1) == '_' ){
+	                    strEstratta = str.substring(inizio,i);
+	                    break;
+	                }else{
+	                    contaTrattini ++;
+	                }
+	            }
+	        }
+	        return strEstratta;
+	 }
+	 
+	 public void rename(String name,String path) {
+		 
+		 if(name != null && path != null) {
+			 
+			 String realName = estrarre(name);
+	 	     File currentName = new File(path+"\\"+name);
+	 	     File newName = new File(path+"\\"+realName);
+	 	     
+	 	     currentName.renameTo(newName);
+		 }
+	 }
     
     
 }

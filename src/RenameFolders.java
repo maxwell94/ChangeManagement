@@ -17,25 +17,6 @@ public class RenameFolders {
 	public void setPath(String path) {
 		this.path = path;
 	}
-
-	public String estrarre(String str){
-        int inizio = 16;
-        int contaTrattini = 0;
-        String strEstratta = "";
-
-        for(int i=16;i<str.length(); i++){
-
-            if(str.charAt(i) == '-'){ // se è uguale '-' controllo se il carattere successivo è un numero
-                if( Character.isDigit(str.charAt(i+1)) ){
-                    strEstratta = str.substring(inizio,i);
-                    break;
-                }else{
-                    contaTrattini ++;
-                }
-            }
-        }
-        return strEstratta;
-    }
 	
 	public void renameFolders() throws FileNotFoundException {
         
@@ -69,27 +50,19 @@ public class RenameFolders {
                 	
                 	/* ora scorro gli zip e gli estraggo tutti */
                 	for(int i=0;i<folders.length; i++) {
-                		System.out.println(folders[i]);
+                		//System.out.println(folders[i]);
                 		String [] str = folders[i].split(".zip");
                 		for(int j=0;j<str.length;j++) {
                 			
-                			Unzip unzip = new Unzip(folders[i], str[j]);
+                			Unzip unzip = new Unzip(path+"\\"+folders[i], path+"\\"+str[j]);
 							unzip.unZipIt(path+"\\"+folders[i], path+"\\"+str[j] );
+							unzip.rename(str[j],path);
                 			
                 		}
                 		
                 	}
                 }
-                 
-//                for (String nome: folders) {
-//                    // chiamo la funzione per estrarre
-//                    String realName = estrarre(nome);
-//                    System.out.println(realName);
-//                    File currentName = new File(path+"/"+nome);
-//                    File newName = new File(path+"/"+realName);
-//                    
-//                    currentName.renameTo(newName);
-//                }  
+                
                  
             }else{
                 System.out.println("This directory doesn't exist!");

@@ -28,6 +28,8 @@ public class Main {
 	    System.out.println("Path cartella Change Management ? ");
 	    path = scanner.nextLine();
 	    
+	    System.out.println("----[Estrazione e rinominazione giochi ...]-----");
+	    
 	    if(path.length() > 0) {
 	    	
 	    	String oldCMPath = path + "\\CM_NOV_1ST_2019";
@@ -45,6 +47,9 @@ public class Main {
 	    }else {
 	    	System.out.println("Path non corretto!");
 	    }
+	    
+	    System.out.println("----[Fine]-----");
+	    
 	}
 	
 }
