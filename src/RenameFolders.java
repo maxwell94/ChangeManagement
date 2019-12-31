@@ -1,10 +1,13 @@
 import java.awt.List;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
@@ -56,6 +59,21 @@ public class RenameFolders {
 			//allInfo.add(dati.get(i)); 
 		}
 		System.out.println("fine stampa");
+	}
+	
+	/* Metodo che salva dati di un arrayList su file */
+	public void salvaSuFile(ArrayList<String> dati,File f) throws IOException {
+		
+		if(!dati.isEmpty() && f != null) {
+	        FileOutputStream fileOutputStream = new FileOutputStream(f);
+	        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream)); 
+	        
+			for(int i=0;i<dati.size() ; i++) {
+				bufferedWriter.write(dati.get(i)+"\n");
+			}
+	        
+			bufferedWriter.close(); 
+		}
 	}
 	
 	public void renameFolders() throws NoSuchAlgorithmException, IOException {
@@ -111,7 +129,6 @@ public class RenameFolders {
                 		}
                 		
                 	}
-                	
                 
                 }
                 

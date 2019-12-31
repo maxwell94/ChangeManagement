@@ -104,7 +104,7 @@ public class Unzip {
 	    	   String fileName = ze.getName();
 	           File newFile = new File(outputFolder + File.separator + fileName);
 	                
-	           //System.out.println("file unzip : "+ newFile.getAbsoluteFile());
+	           System.out.println("file unzip : "+ newFile.getAbsoluteFile());
 	                
 	            //create all non exists folders
 	            //else you will hit FileNotFoundException for compressed folder
@@ -205,7 +205,7 @@ public class Unzip {
 	        resultList.addAll(Arrays.asList(fList));
 	        for (File file : fList) {
 	            if (file.isFile()) {
-	            	System.out.println(fileSha1.sha1Code(file.getAbsolutePath())+" "+file.getAbsolutePath());
+	            	//System.out.println(fileSha1.sha1Code(file.getAbsolutePath())+" "+file.getAbsolutePath());
 	            	bw.write(fileSha1.sha1Code(file.getAbsolutePath())+" "+file.getAbsolutePath()+"\n");
 	            } else if (file.isDirectory()) {
 	               listf(file.getAbsolutePath());

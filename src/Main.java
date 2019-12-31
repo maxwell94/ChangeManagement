@@ -49,10 +49,14 @@ public class Main {
 	    	System.out.println("\n\nVecchio CM:");
 	    	rfOld.renameFolders();
 	    	
+	    	//recupero tutti i dati da scrivere nel file che contiene le info di grezzi
 	    	datiGrezzi = rfNew.getAllInfo();
 	    	
-	    	rfNew.printAllInfo(datiGrezzi);
+	    	//creo un file
+	    	File f = new File(newCMPath+"\\filesSha1.sha");
 	    	
+	    	//e scrivo questi dati su file
+	    	rfNew.salvaSuFile(datiGrezzi, f);
 	    	
 	    }else {
 	    	System.out.println("Path non corretto!");
