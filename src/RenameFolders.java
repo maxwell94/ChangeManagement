@@ -1,16 +1,34 @@
+import java.awt.List;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 public class RenameFolders {
 
-	private String path; 
+	private String path;
+	Unzip unzip;
+	private ArrayList<String> allInfo; 
 
 	public RenameFolders(String path) {
-		this.path = path; 
+		this.path = path;
+		unzip = new Unzip();
+		allInfo = new ArrayList<String>() ;  
+	}
+		
+    public ArrayList<String> getAllInfo() {
+		return allInfo;
 	}
 
-    public String getPath() {
+	public void setAllInfo(ArrayList<String> allInfo) {
+		this.allInfo = allInfo;
+	}
+
+	public String getPath() {
 		return path;
 	}
 
@@ -18,13 +36,36 @@ public class RenameFolders {
 		this.path = path;
 	}
 	
-	public void renameFolders() throws FileNotFoundException {
+	public void saveAllInfo(ArrayList<String> dati) {
+		
+		//System.out.println("stampa dati:");
+		//System.out.println("n^ elementi : "+dati.size());
+		for(int i=0;i<dati.size() ; i++) {
+			//System.out.println(dati.get(i));
+			allInfo.add(dati.get(i)); 
+		}
+		//System.out.println("fine stampa");
+	}
+	
+	public void printAllInfo(ArrayList<String> dati) {
+		
+		System.out.println("stampa dati:");
+		System.out.println("n^ elementi : "+dati.size());
+		for(int i=0;i<dati.size() ; i++) {
+			System.out.println(dati.get(i));
+			//allInfo.add(dati.get(i)); 
+		}
+		System.out.println("fine stampa");
+	}
+	
+	public void renameFolders() throws NoSuchAlgorithmException, IOException {
         
         try {
         	
             File mainDirectory = new File (path);
             String name = "";
             String [] folders = null; 
+            ArrayList<String> allfiles;
             
             if( mainDirectory.exists() ) {
                  folders = mainDirectory.list(new FilenameFilter() {
@@ -54,16 +95,26 @@ public class RenameFolders {
                 		String [] str = folders[i].split(".zip");
                 		for(int j=0;j<str.length;j++) {
                 			
-                			Unzip unzip = new Unzip(path+"\\"+folders[i], path+"\\"+str[j]);
-							unzip.unZipIt(path+"\\"+folders[i], path+"\\"+str[j] );
-							unzip.rename(str[j],path);
+                			unzip = new Unzip(path+"\\"+folders[i], path+"\\"+str[j]);
+                			/*estraggo gli zip nel path corrente*/
+							unzip.unZipIt(path+"\\"+folders[i], path+"\\"+str[j]);
 							
+							/*rinomino le directory*/
+							String newName = unzip.rename(str[j],path);
+							String newPath = path +"\\"+newName ; //path cartella rinominata
+							unzip.listf(newPath);
+							
+							//chiudo lo stream
+							unzip.getBw().close(); 
+							allfiles = unzip.salvaInfo() ; 
+							saveAllInfo(allfiles);
                 		}
                 		
                 	}
+                	
+                
                 }
                 
-                 
             }else{
                 System.out.println("This directory doesn't exist!");
             }
