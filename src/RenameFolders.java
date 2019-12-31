@@ -39,6 +39,38 @@ public class RenameFolders {
 		this.path = path;
 	}
 	
+	/* funzione che salva dentro un arrayList i nomi dei folder di un CM */
+	public String [] saveFolderNames(String path) {
+		
+		String [] folders = null; 
+		if(!path.isEmpty()) {
+		   File mainDirectory = new File(path);
+           if( mainDirectory.exists() ) {
+               folders = mainDirectory.list(new FilenameFilter() {
+                  @Override
+                  public boolean accept(File dir, String name) {
+                      return new File(dir, name).isDirectory();
+                  }
+              });
+		   
+		}else {
+			System.out.println("Questo path non esiste!");
+		}
+	}
+		
+	return folders ;  
+		
+  }
+	
+  public void stampaArray(String [] array) {
+	
+	  for(int i=0;i<array.length; i++) {
+		  System.out.println(array[i]);
+	  }
+  }
+		
+	
+	/* funzione che aggiunge i dati di un arrayList dentro un altro arrayList*/
 	public void saveAllInfo(ArrayList<String> dati) {
 		
 		//System.out.println("stampa dati:");
@@ -69,6 +101,7 @@ public class RenameFolders {
 	        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream)); 
 	        
 			for(int i=0;i<dati.size() ; i++) {
+				
 				bufferedWriter.write(dati.get(i)+"\n");
 			}
 	        

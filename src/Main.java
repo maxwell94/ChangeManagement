@@ -25,6 +25,7 @@ public class Main {
 		String path = ""; 
 		int rt = 0; 
 		ArrayList<String> datiGrezzi = new ArrayList<String>(); 
+		String [] nomiCartelle = null; 
 		
 		DataOra dto = new DataOra();
 		Scanner scanner = new Scanner(System.in);
@@ -54,9 +55,11 @@ public class Main {
 	    	
 	    	//creo un file
 	    	File f = new File(newCMPath+"\\filesSha1.sha");
-	    	
 	    	//e scrivo questi dati su file
 	    	rfNew.salvaSuFile(datiGrezzi, f);
+	    	nomiCartelle = rfNew.saveFolderNames(newCMPath);
+	    	rfNew.stampaArray(nomiCartelle);
+	    	
 	    	
 	    }else {
 	    	System.out.println("Path non corretto!");
