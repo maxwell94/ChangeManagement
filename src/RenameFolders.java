@@ -93,16 +93,38 @@ public class RenameFolders {
 		System.out.println("fine stampa");
 	}
 	
+	/* Metodo che cerca una stringa dentro un'altra e ritorna la sua posizione */
+	int cercaStringa(String str, String toSearch) {
+		return str.indexOf(toSearch); 
+	}
+	
 	/* Metodo che salva dati di un arrayList su file */
-	public void salvaSuFile(ArrayList<String> dati,File f) throws IOException {
+	public void salvaSuFile(ArrayList<String> dati,String [] nomiCartelle,File f) throws IOException {
 		
 		if(!dati.isEmpty() && f != null) {
+			
 	        FileOutputStream fileOutputStream = new FileOutputStream(f);
 	        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream)); 
 	        
 			for(int i=0;i<dati.size() ; i++) {
 				
-				bufferedWriter.write(dati.get(i)+"\n");
+				String str = dati.get(i);
+				String str2 = str.substring(41); 
+				String sha1 = str.substring(0, 41);
+				bufferedWriter.write(sha1);
+				//System.out.print(sha1);
+				for(int j=0;j<nomiCartelle.length; j++) {
+
+					int pos = cercaStringa(str2, nomiCartelle[i]);
+					if(pos > 0) {
+						String str4 = str2.substring(pos);
+						bufferedWriter.write(str4+"\n");
+						//System.out.println(str4+" pos = "+pos+"\n");
+					}
+					
+				}
+				
+				//bufferedWriter.write(dati.get(i)+"\n");
 			}
 	        
 			bufferedWriter.close(); 

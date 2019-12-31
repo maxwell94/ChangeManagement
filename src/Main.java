@@ -56,9 +56,9 @@ public class Main {
 	    	//creo un file
 	    	File f = new File(newCMPath+"\\filesSha1.sha");
 	    	//e scrivo questi dati su file
-	    	rfNew.salvaSuFile(datiGrezzi, f);
 	    	nomiCartelle = rfNew.saveFolderNames(newCMPath);
-	    	rfNew.stampaArray(nomiCartelle);
+	    	rfNew.salvaSuFile(datiGrezzi, nomiCartelle,f);
+	    	//rfNew.stampaArray(nomiCartelle);
 	    	
 	    	
 	    }else {
