@@ -106,7 +106,7 @@ public class RenameFolders {
 	        FileOutputStream fileOutputStream = new FileOutputStream(f);
 	        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream)); 
 	        int pos = 0; 
-	        
+	        String str3 = "";
 			for(int i=0;i<dati.size() ; i++) {
 				
 				String str = dati.get(i);
@@ -116,12 +116,11 @@ public class RenameFolders {
 				//System.out.println("str2: "+str2);
 				for(int j=0; j<nomiCartelle.length; j++) {
 					
-					if(str2.contains(nomiCartelle[j])) {
+					if( str2.contains(nomiCartelle[j]) ) {
 						pos = str2.indexOf(nomiCartelle[j]); 
-						String str3 = str2.substring(pos);
-						str3.replace("\\", "/");
+						str3 = str2.substring(pos);
 						bufferedWriter.write(str3+"\n");
-						System.out.println("str3 = "+str3);
+						str3 = "";
 						pos = 0; 
 					}
 				}

@@ -204,7 +204,7 @@ public class Unzip {
 	        File[] fList = directory.listFiles();
 	        resultList.addAll(Arrays.asList(fList));
 	        for (File file : fList) {
-	            if (file.isFile()) {
+	            if (file.isFile() && (file.getName().contentEquals(".class") || (file.getName().contentEquals(".scala")))) {
 	            	//System.out.println(fileSha1.sha1Code(file.getAbsolutePath())+" "+file.getAbsolutePath());
 	            	bw.write(fileSha1.sha1Code(file.getAbsolutePath())+" "+file.getAbsolutePath()+"\n");
 	            } else if (file.isDirectory()) {
