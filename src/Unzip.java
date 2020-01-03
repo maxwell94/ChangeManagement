@@ -24,7 +24,7 @@ public class Unzip {
     private BufferedWriter bw;
     FileSha1 fileSha1;
     private static File returnFile ;
-    static ArrayList <String> info ; 
+    static ArrayList <String> info ;
     
 	public Unzip(String inputFile, String outputFile) throws FileNotFoundException {
 		this.inputFile = inputFile;
@@ -35,7 +35,7 @@ public class Unzip {
         this.bw  = new BufferedWriter(new OutputStreamWriter(fileOutputStream)); 
         
         fileSha1 = new FileSha1() ; 
-        info = new ArrayList<String>() ; 
+        info = new ArrayList<String>() ;
 	}
 	
 	public Unzip() {}
@@ -103,7 +103,7 @@ public class Unzip {
 	    			
 	    	   String fileName = ze.getName();
 	           File newFile = new File(outputFolder + File.separator + fileName);
-	                
+	           
 	           System.out.println("file unzip : "+ newFile.getAbsoluteFile());
 	                
 	            //create all non exists folders
@@ -194,7 +194,7 @@ public class Unzip {
 	 
 	 /*Metodo che scorre tutti i file all'interno di una directory rinominata e calcola 
 	  * lo Sha1 dei file che trova */
-	 public void listf(String directoryName) throws NoSuchAlgorithmException, IOException,FileNotFoundException {
+	 public void listf(String directoryName) throws NoSuchAlgorithmException, IOException,FileNotFoundException,NullPointerException {
 		    
 		    File directory = new File(directoryName);
 
@@ -204,8 +204,8 @@ public class Unzip {
 	        File[] fList = directory.listFiles();
 	        resultList.addAll(Arrays.asList(fList));
 	        for (File file : fList) {
-	            if (file.isFile() && (file.getName().contentEquals(".class") || (file.getName().contentEquals(".scala")))) {
-	            	//System.out.println(fileSha1.sha1Code(file.getAbsolutePath())+" "+file.getAbsolutePath());
+	            if (file.isFile()) {
+	            	//System.out.println("scrivo: "+fileSha1.sha1Code(file.getAbsolutePath())+" "+file.getAbsolutePath());
 	            	bw.write(fileSha1.sha1Code(file.getAbsolutePath())+" "+file.getAbsolutePath()+"\n");
 	            } else if (file.isDirectory()) {
 	               listf(file.getAbsolutePath());

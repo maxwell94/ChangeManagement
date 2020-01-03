@@ -68,6 +68,19 @@ public class RenameFolders {
 		  System.out.println(array[i]);
 	  }
   }
+  
+  public ArrayList<String> removeDuplicate(ArrayList<String> lista){
+	  
+	  ArrayList<String> noDuplicate = new ArrayList<String>(); 
+	  
+	  for(String str: lista) {
+		  if(!noDuplicate.contains(str) || (str.contains("checksum")) && !noDuplicate.contains(str)) {
+			  noDuplicate.add(str); 
+		  }
+	  }
+	  
+	  return noDuplicate; 
+  }
 		
 	
 	/* funzione che aggiunge i dati di un arrayList dentro un altro arrayList*/
@@ -99,33 +112,69 @@ public class RenameFolders {
 	}
 	
 	/* Metodo che salva dati di un arrayList su file */
-	public void salvaSuFile(ArrayList<String> dati,String [] nomiCartelle,File f) throws IOException {
+	public void salvaSuFile(ArrayList<String> dati,String [] nomiCartelle,File f) throws IOException, NoSuchAlgorithmException,FileNotFoundException {
 		
 		if(!dati.isEmpty() && f != null) {
 			
 	        FileOutputStream fileOutputStream = new FileOutputStream(f);
 	        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream)); 
+	        ArrayList<String> lista = new ArrayList<String>(); 
+	        ArrayList<String> nlista = new ArrayList<String>();
+	        
 	        int pos = 0; 
-	        String str3 = "";
 			for(int i=0;i<dati.size() ; i++) {
 				
 				String str = dati.get(i);
 				String str2 = str.substring(41); 
 				String sha1 = str.substring(0, 41);
-				bufferedWriter.write(sha1+" ");
+				//bufferedWriter.write(sha1+"\n");
 				//System.out.println("str2: "+str2);
 				for(int j=0; j<nomiCartelle.length; j++) {
 					
 					if( str2.contains(nomiCartelle[j]) ) {
 						pos = str2.indexOf(nomiCartelle[j]); 
-						str3 = str2.substring(pos);
-						bufferedWriter.write(str3+"\n");
+						String str3 = str2.substring(pos);
+						//bufferedWriter.write(str3+"\n");
+						lista.add(str3);
 						str3 = "";
+						sha1 = ""; 
 						pos = 0; 
 					}
 				}
 				
 				//bufferedWriter.write(dati.get(i)+"\n");
+			}
+			
+			FileSha1 fsha1 = new FileSha1() ; 
+			
+			nlista = removeDuplicate(lista); 
+			System.out.println("lista n elementi : "+nlista.size());
+			
+			for(int i=0;i<nlista.size();i++) {
+				
+				File mioFile = new File(path+"\\"+nlista.get(i));
+				//System.out.println(path+"\\"+nlista.get(i));
+				if(nlista.get(i).contains("?")) {
+					//nlista.get(i).replace("?", "");
+					System.out.println((i+1)+" "+nlista.get(i));
+					String s = nlista.get(i);
+					String s2 = s.replace("?","");
+					System.out.println((i+1)+" "+s2);
+			         
+					//System.out.println((i+1)+" "+nlista.get(i)+" "+fsha1.sha1Code(path+"\\"+s2));
+				}else if(mioFile.exists()) {
+					//System.out.println((i+1)+" "+nlista.get(i)+" "+fsha1.sha1Code(path+"\\"+nlista.get(i)));
+					bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i))+" "+nlista.get(i)+"\n");
+				}
+				
+//				for(int j=0;j<dati.size() ; j++) {
+//					
+//					if(dati.get(j).equals(nlista.get(i))) {
+//						String str = dati.get(j);
+//						String sha1 = str.substring(0, 41);
+//						System.out.println(sha1+ " "+nlista.get(i));
+//					}
+//				}
 			}
 	        
 			bufferedWriter.close(); 
