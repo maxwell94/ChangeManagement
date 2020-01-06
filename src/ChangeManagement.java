@@ -1,7 +1,9 @@
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -229,6 +231,41 @@ public class ChangeManagement {
 	}
 	
 	public void grezzi() {
+		
+	/**
+		File miofile = new File ("/Users/ahuamaximindedou/Desktop/fileSha1.txt");
+        BufferedReader br = new BufferedReader(new FileReader(miofile)); 
+        
+        String st; 
+        char [] appoggio = null; 
+        while( (st = br.readLine()) != null ) {
+        	System.out.println("Prima: "+st);
+        	appoggio = sostituisci(st);
+        	System.out.println(appoggio);
+        	System.out.println();
+        }
+        
+	}
+	
+	public static char [] sostituisci (String str) {
+	
+		char [] myStrChar = null; 
+		
+		if( str.length() > 0 ) {
+			
+			myStrChar = str.toCharArray();
+			
+			for(int i=0; i<myStrChar.length; i++) {
+				
+				if(  myStrChar[i] == '\\' ) {
+					myStrChar[i] = '/'; 
+				}
+			}
+		}
+		
+		return myStrChar;
+	} 
+	* */
 		
 		try {
 			
