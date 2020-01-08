@@ -2,8 +2,10 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -130,7 +132,7 @@ public class ChangeManagement {
 			FileInputStream fileinputstream = new FileInputStream(new File(nomeFoglioExcel));
 			XSSFWorkbook workbook = new XSSFWorkbook(fileinputstream);
 			
-			//vado nel tab desiderato che in questo caso Ã¨ Appoggio Changed Games 
+			//vado nel tab desiderato che in questo caso è Appoggio Changed Games 
 			XSSFSheet desiredSheet = workbook.getSheetAt(5);
 			System.out.println("\nTab: "+desiredSheet.getSheetName()+"\n");
 			
@@ -138,7 +140,7 @@ public class ChangeManagement {
 			Iterator<Row> RowIterator = desiredSheet.iterator();
 			
 			
-			//se Ã¨ la prima riga la salto perchÃ© Ã¨ il titolo
+			//se Ã¨ la prima riga la salto perché è il titolo
 			if( RowIterator.hasNext() ) RowIterator.next();
 	
 			//scorro tutte le righe all'interno del tab
@@ -230,25 +232,9 @@ public class ChangeManagement {
 
 	}
 	
-	public void grezzi() {
-		
-	/**
-		File miofile = new File ("/Users/ahuamaximindedou/Desktop/fileSha1.txt");
-        BufferedReader br = new BufferedReader(new FileReader(miofile)); 
-        
-        String st; 
-        char [] appoggio = null; 
-        while( (st = br.readLine()) != null ) {
-        	System.out.println("Prima: "+st);
-        	appoggio = sostituisci(st);
-        	System.out.println(appoggio);
-        	System.out.println();
-        }
-        
-	}
-	
+	/* metodo che prende una stringa sostituisce '\' con '/' e ritorna un array */
 	public static char [] sostituisci (String str) {
-	
+		
 		char [] myStrChar = null; 
 		
 		if( str.length() > 0 ) {
@@ -265,11 +251,60 @@ public class ChangeManagement {
 		
 		return myStrChar;
 	} 
-	* */
+	
+	/*metodo che legge un file degli sha e lo carica in excel in grezzi */
+	public void grezzi(File f) throws IOException {
 		
-		try {
+		if(f.exists()) {
 			
-		}catch(Exception ex) { ex.printStackTrace(); }
+			BufferedReader br = new BufferedReader(new FileReader(f)) ; 
+	        String st; 
+	        char [] appoggio = null; 
+	        
+	        /* apro il mio foglio excel */
+			FileInputStream fileinputstream = new FileInputStream(new File(nomeFoglioExcel));
+			XSSFWorkbook workbook = new XSSFWorkbook(fileinputstream);
+			
+			//vado nel tab desiderato che in questo caso è Grezzi 
+			XSSFSheet desiredSheet = workbook.getSheetAt(0);
+			System.out.println("\nTab: "+desiredSheet.getSheetName()+"\n");
+			
+			int rowNum = 0; 
+			
+	        while( (st = br.readLine()) != null ) {
+	        	//System.out.println("Prima: "+st);
+	        	appoggio = sostituisci(st);
+	        	String dati = new String(appoggio);
+	        	String sha1 = dati.substring(0,40);
+	        	//System.out.println(sha1);
+	        	String path = dati.substring(41);
+	        	//System.out.println(path);
+	        	
+	        	Row row = desiredSheet.createRow(rowNum) ;
+	        	
+	        	int cellNum = 0; 
+	        	for(int i=0;i<2; i++) {
+	        		
+	        		Cell cell = row.createCell(i);
+	        		if(i == 0) {
+	        			cell.setCellValue(sha1);
+	        		}else {
+	        			cell.setCellValue(path);
+	        		}
+	        	}
+	        	 
+	        	rowNum ++; 
+	        }
+	        
+			//aggiorna il foglio
+			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
+			workbook.write(fileOutputStream);
+			fileOutputStream.close();
+			
+		}else {
+			System.out.println("File non trovato! ");
+		}
+		
 		
 	}
 }

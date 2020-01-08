@@ -127,27 +127,24 @@ public class RenameFolders {
 				String str = dati.get(i);
 				String str2 = str.substring(41); 
 				String sha1 = str.substring(0, 41);
-				//bufferedWriter.write(sha1+"\n");
-				//System.out.println("str2: "+str2);
 				for(int j=0; j<nomiCartelle.length; j++) {
 					
 					if( str2.contains(nomiCartelle[j]) ) {
 						pos = str2.indexOf(nomiCartelle[j]); 
 						String str3 = str2.substring(pos);
 						//bufferedWriter.write(str3+"\n");
-						lista.add(str3);
+						lista.add(str3); //carico lista
 						str3 = "";
 						sha1 = ""; 
 						pos = 0; 
 					}
 				}
 				
-				//bufferedWriter.write(dati.get(i)+"\n");
 			}
 			
 			FileSha1 fsha1 = new FileSha1() ; 
 			
-			nlista = removeDuplicate(lista); 
+			nlista = removeDuplicate(lista); // rimuovo i duplicati
 			System.out.println("lista n elementi : "+nlista.size());
 			
 			for(int i=0;i<nlista.size();i++) {
@@ -159,22 +156,17 @@ public class RenameFolders {
 					System.out.println((i+1)+" "+nlista.get(i));
 					String s = nlista.get(i);
 					String s2 = s.replace("?","");
-					System.out.println((i+1)+" "+s2);
+					//System.out.println((i+1)+" "+s2);
 			         
-					//System.out.println((i+1)+" "+nlista.get(i)+" "+fsha1.sha1Code(path+"\\"+s2));
+			
 				}else if(mioFile.exists()) {
-					//System.out.println((i+1)+" "+nlista.get(i)+" "+fsha1.sha1Code(path+"\\"+nlista.get(i)));
-					bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i))+" "+nlista.get(i)+"\n");
+					
+					if(nlista.get(i).endsWith(".class")) {
+						bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i))+" "+nlista.get(i)+"\n");
+					}
+					
 				}
 				
-//				for(int j=0;j<dati.size() ; j++) {
-//					
-//					if(dati.get(j).equals(nlista.get(i))) {
-//						String str = dati.get(j);
-//						String sha1 = str.substring(0, 41);
-//						System.out.println(sha1+ " "+nlista.get(i));
-//					}
-//				}
 			}
 	        
 			bufferedWriter.close(); 

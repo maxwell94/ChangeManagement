@@ -26,6 +26,11 @@ public class Main {
 		int rt = 0; 
 		ArrayList<String> datiGrezzi = new ArrayList<String>(); 
 		String [] nomiCartelle = null; 
+		String nomeFoglioExc = ""; 
+		ChangeManagement CM;
+		
+		//il mio foglio excel
+		XSSFWorkbook workbook;
 		
 		DataOra dto = new DataOra();
 		Scanner scanner = new Scanner(System.in);
@@ -34,10 +39,11 @@ public class Main {
 	    System.out.println(dto.DateStamp());
 	    System.out.println("Path cartella Change Management ? ");
 	    path = scanner.nextLine();
-	    
-	    System.out.println("----[Estrazione e rinominazione giochi ...]-----");
-	    
+	   
 	    if(path.length() > 0) {
+	    	
+	    	/* primo passo Change Management */
+	    	System.out.println("---------- primo passo [Estrazione , Rinominazione , e Calcolo file sha1 giochi  ...] ------------");
 	    	
 	    	String oldCMPath = path + "\\CM_NOV_1ST_2019";
 	    	String newCMPath = path + "\\CM_NOV_2nd_2019";
@@ -55,17 +61,35 @@ public class Main {
 	    	
 	    	//creo un file
 	    	File f = new File(newCMPath+"\\filesSha1.sha");
+	    	
 	    	//e scrivo questi dati su file
 	    	nomiCartelle = rfNew.saveFolderNames(newCMPath);
 	    	rfNew.salvaSuFile(datiGrezzi, nomiCartelle,f);
-	    	//rfNew.stampaArray(nomiCartelle);
 	    	
+	    	/* Fine primo passo */
+	    	System.out.println("----[Fine primo passo ]-----\n");
 	    	
+	    	System.out.println("---------- secondo passo [Lettura fileSha1.sha e caricamento dati Excel in Grezzi ...] ------------");
+	    	
+	    	System.out.println("Come vorresti chiamare il tuo foglio excel : ");
+	    	nomeFoglioExc = scanner.nextLine();
+	    	
+	    	if(nomeFoglioExc.length() > 0) {
+	    		
+	    	    CM = new ChangeManagement(nomeFoglioExc);
+	    	    
+	    	    //caricamento dati in grezzi
+	    	    CM.grezzi(f);
+	    	    
+	    	}else {  //nome foglio Excel non valido
+	    		
+	    	}   	
+	    	
+	   
 	    }else {
 	    	System.out.println("Path non corretto!");
 	    }
-	    
-	    System.out.println("----[Fine]-----");
+	   
 	    
 	}
 	
