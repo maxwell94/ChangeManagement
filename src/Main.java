@@ -71,26 +71,25 @@ public class Main {
 	    	
 	    	System.out.println("---------- secondo passo [Lettura fileSha1.sha e caricamento dati Excel in Grezzi ...] ------------");
 	    	
-	    	System.out.println("Come vorresti chiamare il tuo foglio excel : ");
+	    	System.out.println("Nome file excel vecchio CM: ");
 	    	nomeFoglioExc = scanner.nextLine();
 	    	
 	    	if(nomeFoglioExc.length() > 0) {
 	    		
-	    	    CM = new ChangeManagement(nomeFoglioExc);
+	    	    CM = new ChangeManagement(oldCMPath+"\\"+nomeFoglioExc+".xlsx");
+	    	    System.out.println(oldCMPath+"\\"+nomeFoglioExc+".xlsx");
 	    	    
 	    	    //caricamento dati in grezzi
 	    	    CM.grezzi(f);
 	    	    
 	    	}else {  //nome foglio Excel non valido
-	    		
+	    		System.out.println("File non trovato! ");
 	    	}   	
 	    	
-	   
 	    }else {
 	    	System.out.println("Path non corretto!");
 	    }
 	   
-	    
 	}
 	
 }

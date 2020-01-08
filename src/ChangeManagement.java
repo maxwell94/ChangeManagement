@@ -22,10 +22,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Classe che gestisce tutto il Change Management. 
  * Ciascun metodo ha un ruolo ben preciso , per esempio:
  * il metodo "appoggioChangedGames()" andra nel tab "Appoggio Changed Games" 
- * e gestira tutto il lavoro che dovra fare in "Appoggio Changed Games" e restituirï¿½
+ * e gestira tutto il lavoro che dovrà fare in "Appoggio Changed Games" e restituirà
  * il file aggiornato,
- * il metodo "checkSums()" andra nel tab "Checksums" e gestira tutto il lavoro che dovrï¿½
- * fare in checksum e restituira il file aggiornato e cosi via.
+ * il metodo "checkSums()" andrà nel tab "Checksums" e gestira tutto il lavoro che dovrà
+ * fare in checksum e restituira il file aggiornato e così via.
  * Author : Dedou Maximin */
 
 public class ChangeManagement {
@@ -46,22 +46,20 @@ public class ChangeManagement {
 		
 		this.workbook = new XSSFWorkbook();
 		this.tabs = new XSSFSheet [8];
+		this.nomeFoglioExcel = nomeFoglioExcel ; 
 		
-		nomeFoglioExcel += ".xlsx";
-		this.nomeFoglioExcel = nomeFoglioExcel;
-		
-		/*creo i vari tabs del file excel per il Change Management*/
-		this.tabs[0] = this.workbook.createSheet("Grezzi"); // crea un tab Grezzi
-		this.tabs[1] = this.workbook.createSheet("Checksums"); // crea un tab Checksums
-		this.tabs[2] = this.workbook.createSheet("Report"); // crea un tab Report
-		this.tabs[3] = this.workbook.createSheet("Game Versions"); // crea un tab Game Versions
-		this.tabs[4] = this.workbook.createSheet("Changed Games"); // crea un tab Changed Games
-		this.tabs[5] = this.workbook.createSheet("Appoggio Changed Games"); // crea un tab Appoggio Changed Games
-		this.tabs[6] = this.workbook.createSheet("Check EVO"); // crea un tab Check Evo
-		this.tabs[7] = this.workbook.createSheet("Description"); // crea un tab Description
-		
-		//creo fisicamente il foglio excel
-		rt = generaFoglioExcel(nomeFoglioExcel);
+//		/*creo i vari tabs del file excel per il Change Management*/
+//		this.tabs[0] = this.workbook.createSheet("Grezzi"); // crea un tab Grezzi
+//		this.tabs[1] = this.workbook.createSheet("Checksums"); // crea un tab Checksums
+//		this.tabs[2] = this.workbook.createSheet("Report"); // crea un tab Report
+//		this.tabs[3] = this.workbook.createSheet("Game Versions"); // crea un tab Game Versions
+//		this.tabs[4] = this.workbook.createSheet("Changed Games"); // crea un tab Changed Games
+//		this.tabs[5] = this.workbook.createSheet("Appoggio Changed Games"); // crea un tab Appoggio Changed Games
+//		this.tabs[6] = this.workbook.createSheet("Check EVO"); // crea un tab Check Evo
+//		this.tabs[7] = this.workbook.createSheet("Description"); // crea un tab Description
+//		
+//		//creo fisicamente il foglio excel
+		//rt = generaFoglioExcel(nomeFoglioExcel);
 		
 	}
 	
@@ -267,18 +265,20 @@ public class ChangeManagement {
 			
 			//vado nel tab desiderato che in questo caso è Grezzi 
 			XSSFSheet desiredSheet = workbook.getSheetAt(0);
-			System.out.println("\nTab: "+desiredSheet.getSheetName()+"\n");
 			
+			/* cancello tutti i dati che ci sono già nel tab grezzi */
+			 for (Row row : desiredSheet) {
+				 desiredSheet.removeRow(row);
+			 }
+			
+			 /* e ora copio i nuovi dati presi dal file sha1 */
 			int rowNum = 0; 
 			
 	        while( (st = br.readLine()) != null ) {
-	        	//System.out.println("Prima: "+st);
 	        	appoggio = sostituisci(st);
 	        	String dati = new String(appoggio);
 	        	String sha1 = dati.substring(0,40);
-	        	//System.out.println(sha1);
 	        	String path = dati.substring(41);
-	        	//System.out.println(path);
 	        	
 	        	Row row = desiredSheet.createRow(rowNum) ;
 	        	
@@ -300,6 +300,7 @@ public class ChangeManagement {
 			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
 			workbook.write(fileOutputStream);
 			fileOutputStream.close();
+			
 			
 		}else {
 			System.out.println("File non trovato! ");

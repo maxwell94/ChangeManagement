@@ -80,8 +80,13 @@ public class DataOra {
 	}
 	
 	public String DateStamp() {
-		
-		return "Data: "+giorno+"/"+mese+"/"+formatoAnno()+" "+ora+":"+minuti;
+		String info = ""; 
+		if(minuti < 10) {
+			info = "Data: "+giorno+"/"+mese+"/"+formatoAnno()+" "+ora+":"+"0"+minuti ; 
+		}else if(minuti >= 10) {
+			info = "Data: "+giorno+"/"+mese+"/"+formatoAnno()+" "+ora+":"+minuti ;
+		}
+		return info;
 	}
 	
 	
