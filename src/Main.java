@@ -79,8 +79,11 @@ public class Main {
 	    	    CM = new ChangeManagement(oldCMPath+"\\"+nomeFoglioExc+".xlsx");
 	    	    System.out.println(oldCMPath+"\\"+nomeFoglioExc+".xlsx");
 	    	    
-	    	    //caricamento dati in grezzi
+	    	    //caricamento dati in Grezzi
 	    	    CM.grezzi(f);
+	    	    
+	    	    //Appoggio Changed Games
+	    	    CM.appoggioChangedGames();
 	    	    
 	    	}else {  //nome foglio Excel non valido
 	    		System.out.println("File non trovato! ");

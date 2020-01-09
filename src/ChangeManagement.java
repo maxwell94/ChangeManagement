@@ -132,7 +132,7 @@ public class ChangeManagement {
 			
 			//vado nel tab desiderato che in questo caso è Appoggio Changed Games 
 			XSSFSheet desiredSheet = workbook.getSheetAt(5);
-			System.out.println("\nTab: "+desiredSheet.getSheetName()+"\n");
+			System.out.println("\n Aggiornamento tab: "+desiredSheet.getSheetName()+"...\n");
 			
 			//iteratore righe
 			Iterator<Row> RowIterator = desiredSheet.iterator();
@@ -213,10 +213,11 @@ public class ChangeManagement {
 						cellNum ++;
 				    }
 					
-					System.out.println("");
 				    cellNum = 0; 
 				
 			} 
+			
+			System.out.println("\n Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
 			
 			//aggiorna il foglio
 			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
@@ -296,7 +297,7 @@ public class ChangeManagement {
 			
 			//vado nel tab desiderato che in questo caso è Grezzi 
 			XSSFSheet desiredSheet = workbook.getSheetAt(0);
-			System.out.println("nome tab : "+desiredSheet.getSheetName());
+			System.out.println("\n Aggiornamento tab: "+desiredSheet.getSheetName()+"...\n");
 			
 			/* cancello tutti i dati che ci sono già nel tab grezzi */
 			deleteSheetAllContent(desiredSheet);
@@ -331,7 +332,7 @@ public class ChangeManagement {
 			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
 			workbook.write(fileOutputStream);
 			fileOutputStream.close();
-			
+			System.out.println("\n Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
 			
 		}else {
 			System.out.println("File non trovato! ");

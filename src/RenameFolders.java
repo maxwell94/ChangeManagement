@@ -163,7 +163,13 @@ public class RenameFolders {
 					
 					if(nlista.get(i).endsWith(".class")) {
 						
-						bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i)).toLowerCase()+" "+nlista.get(i)+"\n");
+						if(nlista.get(i).contains("coreservices")) {
+							String percorso = nlista.get(i).substring(13);
+							bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i)).toLowerCase()+" "+percorso+"\n");
+						}else {
+							bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i)).toLowerCase()+" "+nlista.get(i)+"\n");
+						}
+						
 					}
 					
 				}
@@ -238,6 +244,4 @@ public class RenameFolders {
         }catch(ArrayIndexOutOfBoundsException ex) {}
 	}
     
-    
-	
 }
