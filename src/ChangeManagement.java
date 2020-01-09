@@ -248,7 +248,38 @@ public class ChangeManagement {
 		}
 		
 		return myStrChar;
-	} 
+	}
+	
+	/* Metodo che cancella tutto il contenuto di un preciso tab dentro un file Excel */
+	public void deleteSheetAllContent(XSSFSheet desiredSheet) {
+		
+		Iterator<Row> rowIterator = desiredSheet.iterator();
+		
+        while (rowIterator.hasNext()) 
+        {
+            Row row = rowIterator.next();
+            //For each row, iterate through all the columns
+            Iterator<Cell> cellIterator = row.cellIterator();
+             
+            while (cellIterator.hasNext()) 
+            {
+                Cell cell = cellIterator.next();
+              
+                switch (cell.getCellType()) 
+                {
+                    case NUMERIC:
+                    	cell.setCellType(CellType.BLANK);
+                        break;
+                    case STRING:
+                    	cell.setCellType(CellType.BLANK);
+                        break;
+                    case FORMULA:
+                    	cell.setCellType(CellType.BLANK);
+                        break;    
+                }
+            }
+        }
+	}
 	
 	/*metodo che legge un file degli sha e lo carica in excel in grezzi */
 	public void grezzi(File f) throws IOException {
@@ -265,13 +296,12 @@ public class ChangeManagement {
 			
 			//vado nel tab desiderato che in questo caso è Grezzi 
 			XSSFSheet desiredSheet = workbook.getSheetAt(0);
+			System.out.println("nome tab : "+desiredSheet.getSheetName());
 			
 			/* cancello tutti i dati che ci sono già nel tab grezzi */
-			 for (Row row : desiredSheet) {
-				 desiredSheet.removeRow(row);
-			 }
-			
-			 /* e ora copio i nuovi dati presi dal file sha1 */
+			deleteSheetAllContent(desiredSheet);
+            
+			/* e ora copio i nuovi dati presi dal file sha1 */
 			int rowNum = 0; 
 			
 	        while( (st = br.readLine()) != null ) {
@@ -280,6 +310,7 @@ public class ChangeManagement {
 	        	String sha1 = dati.substring(0,40);
 	        	String path = dati.substring(41);
 	        	
+	       	
 	        	Row row = desiredSheet.createRow(rowNum) ;
 	        	
 	        	int cellNum = 0; 
@@ -305,7 +336,6 @@ public class ChangeManagement {
 		}else {
 			System.out.println("File non trovato! ");
 		}
-		
 		
 	}
 }

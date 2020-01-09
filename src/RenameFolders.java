@@ -162,7 +162,8 @@ public class RenameFolders {
 				}else if(mioFile.exists()) {
 					
 					if(nlista.get(i).endsWith(".class")) {
-						bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i))+" "+nlista.get(i)+"\n");
+						
+						bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i)).toLowerCase()+" "+nlista.get(i)+"\n");
 					}
 					
 				}
