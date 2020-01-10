@@ -45,8 +45,8 @@ public class Main {
 	    	/* primo passo Change Management */
 	    	System.out.println("---------- primo passo [Estrazione , Rinominazione , e Calcolo file sha1 giochi  ...] ------------");
 	    	
-	    	String oldCMPath = path + "\\CM_NOV_1ST_2019";
-	    	String newCMPath = path + "\\CM_NOV_2nd_2019";
+	    	String oldCMPath = path + "\\CM1_DEC_2019";
+	    	String newCMPath = path + "\\CM2_DEC_2019";
 	    	
 	    	RenameFolders rfNew = new RenameFolders(newCMPath); 
 	    	System.out.println("Nuovo CM:");
@@ -76,11 +76,14 @@ public class Main {
 	    	
 	    	if(nomeFoglioExc.length() > 0) {
 	    		
-	    	    CM = new ChangeManagement(oldCMPath+"\\"+nomeFoglioExc+".xlsx");
-	    	    System.out.println(oldCMPath+"\\"+nomeFoglioExc+".xlsx");
-	    	    
+	    		if(nomeFoglioExc.endsWith(".xlsx")) {
+	    			 CM = new ChangeManagement(oldCMPath+"\\"+nomeFoglioExc); 
+	    		}else {
+	    			CM = new ChangeManagement(oldCMPath+"\\"+nomeFoglioExc+".xlsx");
+	    		}
+	    		
 	    	    //caricamento dati in Grezzi
-	    	    CM.grezzi(f);
+	    	    CM.grezzi(f,oldCMPath);
 	    	    
 	    	    //Appoggio Changed Games
 	    	    CM.appoggioChangedGames();

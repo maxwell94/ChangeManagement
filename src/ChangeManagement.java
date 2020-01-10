@@ -6,12 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -136,16 +141,22 @@ public class ChangeManagement {
 			
 			//iteratore righe
 			Iterator<Row> RowIterator = desiredSheet.iterator();
+			int rowNum = 0; 
 			
+			FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 			
 			//se Ã¨ la prima riga la salto perché è il titolo
-			if( RowIterator.hasNext() ) RowIterator.next();
-	
+			if( RowIterator.hasNext() ) {
+				RowIterator.next();
+				rowNum ++; 
+			}
+			
 			//scorro tutte le righe all'interno del tab
 			while(RowIterator.hasNext()) {
 				
 					//prendo ogni riga
 					Row row = RowIterator.next() ; 
+					rowNum ++; 
 					
 					//scorro tutte le celle
 					Iterator<Cell> cellIterator = row.cellIterator();
@@ -159,8 +170,7 @@ public class ChangeManagement {
 					//scorro tutte le colonne della riga corrente 
 					while(cellIterator.hasNext()) {
 						
-						Cell cell = cellIterator.next(); //prendo ogni cella 
-	                   
+						Cell cell = cellIterator.next(); //prendo ogni cella    
 							
 						switch(cell.getCellType()) {
 							
@@ -192,7 +202,7 @@ public class ChangeManagement {
 								//cell.setCellValue("");
 								break;
 							case FORMULA:
-					
+								
 								if(cellNum == 0) {
 									C_GAME = cell.getStringCellValue();
 									cell.setCellType(CellType.BLANK);
@@ -200,11 +210,19 @@ public class ChangeManagement {
 									C_FILE = cell.getStringCellValue();
 									cell.setCellType(CellType.BLANK);
 								}else if(cellNum == 2) { //C_Sha1
-									C_Sha1 = cell.getStringCellValue();
-									formula = cell.getCellFormula();
-									//formula.replaceAll("[1]", nomeFoglioExcel);
-									//System.out.println("formula : "+formula);
-									cell.setCellType(CellType.BLANK);
+							        switch(cell.getCachedFormulaResultType()) {
+							        
+						            case NUMERIC:
+						            	//ignora
+						                //System.out.println("Numerico: " + cell.getNumericCellValue());
+						                break;
+						            case STRING:
+						                //System.out.println("Stringa " + cell.getRichStringCellValue() + "\"");
+						            	C_Sha1 = cell.getRichStringCellValue().toString();
+						            	cell.setCellType(CellType.BLANK);
+						                break;
+						            }
+									//cell.setCellType(CellType.BLANK);
 								}
 								//System.out.print(cell.getBooleanCellValue()+"\t\t");
 								break;
@@ -227,7 +245,7 @@ public class ChangeManagement {
 			
 		}catch(Exception ex) { ex.printStackTrace(); }
 		
-		System.out.println("Done ...");
+		System.out.println("\nDone ...");
 
 	}
 	
@@ -282,13 +300,16 @@ public class ChangeManagement {
         }
 	}
 	
-	/*metodo che legge un file degli sha e lo carica in excel in grezzi */
-	public void grezzi(File f) throws IOException {
+	/* Metodo che lavora all'interno del tab Grezzi , praticamente 
+	 * legge il file degli sha e lo carica in excel in grezzi*/
+	public void grezzi(File f,String pth) throws IOException, NoSuchAlgorithmException {
 		
 		if(f.exists()) {
 			
 			BufferedReader br = new BufferedReader(new FileReader(f)) ; 
 	        String st; 
+	        String sha1CheckSum = ""; 
+	        String nomeCheckSum = ""; 
 	        char [] appoggio = null; 
 	        
 	        /* apro il mio foglio excel */
@@ -302,6 +323,21 @@ public class ChangeManagement {
 			/* cancello tutti i dati che ci sono già nel tab grezzi */
 			deleteSheetAllContent(desiredSheet);
             
+			
+	        /* File prepare_checksums.py da aggiungere alla lista grezzi*/
+	        String pathFileChecksum = pth + "\\prepare_checksums.py";
+	        File fileChecksum = new File(pth);
+	        if(fileChecksum.exists()) {
+	        	FileSha1 fs1 = new FileSha1() ;
+	        	sha1CheckSum = fs1.sha1Code(pathFileChecksum) ; 
+	        	nomeCheckSum = "\\prepare_checksums.py"; 
+	        	//System.out.println(fs1.sha1Code(pathFileChecksum)+" "+fileChecksum.getName());
+	        }else {
+	        	System.out.println("File prepare_checksums.py non esistente!");
+	        }
+			
+			
+			
 			/* e ora copio i nuovi dati presi dal file sha1 */
 			int rowNum = 0; 
 			
@@ -311,7 +347,6 @@ public class ChangeManagement {
 	        	String sha1 = dati.substring(0,40);
 	        	String path = dati.substring(41);
 	        	
-	       	
 	        	Row row = desiredSheet.createRow(rowNum) ;
 	        	
 	        	int cellNum = 0; 
@@ -328,6 +363,18 @@ public class ChangeManagement {
 	        	rowNum ++; 
 	        }
 	        
+	        /* add file prepare_checksums.py*/
+	        Row r = desiredSheet.createRow(rowNum++);
+	        for(int i=0;i<2;i++) {
+	        	Cell c = r.createCell(i);
+        		if(i == 0) {
+        			c.setCellValue(sha1CheckSum);
+        		}else {
+        			c.setCellValue(nomeCheckSum);
+        		}
+	        }
+	        
+	        
 			//aggiorna il foglio
 			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
 			workbook.write(fileOutputStream);
@@ -339,4 +386,6 @@ public class ChangeManagement {
 		}
 		
 	}
+	
+	
 }

@@ -142,6 +142,9 @@ public class RenameFolders {
 				
 			}
 			
+			//File preChecksum = new File(path+"\\prepare_checksums.py"); 
+			
+			
 			FileSha1 fsha1 = new FileSha1() ; 
 			
 			nlista = removeDuplicate(lista); // rimuovo i duplicati
@@ -165,6 +168,7 @@ public class RenameFolders {
 						
 						if(nlista.get(i).contains("coreservices")) {
 							String percorso = nlista.get(i).substring(13);
+							System.out.println("path: "+path);
 							bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i)).toLowerCase()+" "+percorso+"\n");
 						}else {
 							bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i)).toLowerCase()+" "+nlista.get(i)+"\n");
@@ -224,6 +228,7 @@ public class RenameFolders {
 							/*rinomino le directory*/
 							String newName = unzip.rename(str[j],path);
 							String newPath = path +"\\"+newName ; //path cartella rinominata
+							//System.out.println("new path "+newPath);
 							unzip.listf(newPath);
 							
 							//chiudo lo stream

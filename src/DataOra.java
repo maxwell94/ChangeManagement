@@ -13,63 +13,54 @@ public class DataOra {
 	private Date data;
 	private int ora;
 	private int minuti;
+	String g; 
+	String m; 
+	String h; 
+	String min;
+	String aa ; 
 	
 	/*costruttore*/
 	public DataOra() {
 		
 		data = new Date(); 
-		this.giorno = data.getDate(); 
-		this.mese = data.getMonth()+1; 
-		this.anno = data.getYear();
-		ora = data.getHours();
-		minuti = data.getMinutes();
-	}
-
-	public int getGiorno() {
-		return giorno;
-	}
-
-	public void setGiorno(int giorno) {
-		this.giorno = giorno;
-	}
-
-	public int getMese() {
-		return mese;
-	}
-
-	public void setMese(int mese) {
-		this.mese = mese;
-	}
-
-	public int getAnno() {
-		return anno;
-	}
-
-	public void setAnno(int anno) {
-		this.anno = anno;
-	} 
-	
-	public String giornoToString() {
 		
-		String gg = "";
-		
-		if(this.giorno == 1) {
-			gg = "Lunedi"; 
-		}else if(this.giorno == 2) {
-			gg = "Martedi";
-		}else if(this.giorno == 3) {
-			gg = "Mercoledi"; 
-		}else if(this.giorno == 4) {
-			gg = "Giovedi";
-		}else if(this.giorno == 5) {
-			gg = "Venerdi";
-		}else if(this.giorno == 6) {
-			gg = "Sabato";
-		}else if(this.giorno == 7) {
-			gg = "Domenica";
+		this.giorno = data.getDate();
+		if(this.giorno < 10) {
+			this.g = String.valueOf(this.giorno);
+			this.g = "0"+this.g; 
+		}else {
+			this.g = String.valueOf(this.giorno);
 		}
-		return gg; 
-	}
+		
+		this.mese = data.getMonth()+1;
+		if(this.mese < 10) {
+			this.m = String.valueOf(this.mese);
+			this.m = "0"+this.m; 
+		}else {
+			this.m = String.valueOf(this.mese);
+		}
+		
+		this.anno = data.getYear();
+		
+		this.ora = data.getHours();
+		
+		if(this.ora < 10) {
+			this.h = String.valueOf(this.ora);
+			this.h = "0"+this.h; 
+		}else {
+			this.h = String.valueOf(this.ora);
+		}
+		
+		this.minuti = data.getMinutes();
+		
+		if(this.minuti < 10) {
+			this.min = String.valueOf(this.minuti);
+			this.min = "0"+this.min; 
+		}else {
+			this.min = String.valueOf(this.minuti);
+		}
+		
+	} 
 	
 	public String formatoAnno() {
 		String appoggio ="";
@@ -80,13 +71,8 @@ public class DataOra {
 	}
 	
 	public String DateStamp() {
-		String info = ""; 
-		if(minuti < 10) {
-			info = "Data: "+giorno+"/"+mese+"/"+formatoAnno()+" "+ora+":"+"0"+minuti ; 
-		}else if(minuti >= 10) {
-			info = "Data: "+giorno+"/"+mese+"/"+formatoAnno()+" "+ora+":"+minuti ;
-		}
-		return info;
+		
+		return "Data: "+g+"/"+m+"/"+formatoAnno()+" "+h+":"+min ; 
 	}
 	
 	
