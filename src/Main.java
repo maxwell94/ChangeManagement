@@ -88,6 +88,11 @@ public class Main {
 	    	    //Appoggio Changed Games
 	    	    CM.appoggioChangedGames();
 	    	    
+	    	    //Checksums
+	    	    CM.checksums();
+	    	    
+	    	    System.out.println("\nDone ...");
+	    	    
 	    	}else {  //nome foglio Excel non valido
 	    		System.out.println("File non trovato! ");
 	    	}   	

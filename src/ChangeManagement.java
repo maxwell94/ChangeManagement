@@ -137,7 +137,7 @@ public class ChangeManagement {
 			
 			//vado nel tab desiderato che in questo caso è Appoggio Changed Games 
 			XSSFSheet desiredSheet = workbook.getSheetAt(5);
-			System.out.println("\n Aggiornamento tab: "+desiredSheet.getSheetName()+"...\n");
+			System.out.print("\nAggiornamento tab: "+desiredSheet.getSheetName()+"... ");
 			
 			//iteratore righe
 			Iterator<Row> RowIterator = desiredSheet.iterator();
@@ -145,7 +145,7 @@ public class ChangeManagement {
 			
 			FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 			
-			//se Ã¨ la prima riga la salto perché è il titolo
+			//se è la prima riga la salto perché è il titolo
 			if( RowIterator.hasNext() ) {
 				RowIterator.next();
 				rowNum ++; 
@@ -235,7 +235,7 @@ public class ChangeManagement {
 				
 			} 
 			
-			System.out.println("\n Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
+			System.out.print("Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
 			
 			//aggiorna il foglio
 			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
@@ -245,7 +245,6 @@ public class ChangeManagement {
 			
 		}catch(Exception ex) { ex.printStackTrace(); }
 		
-		System.out.println("\nDone ...");
 
 	}
 	
@@ -300,6 +299,91 @@ public class ChangeManagement {
         }
 	}
 	
+	
+	
+	/* Metodo che cancella tutto il contenuto di una certa colonna dentro un preciso tab */
+	public void deleteContentsAddFormulaColumn(XSSFSheet desiredSheet , int nColumn) throws IOException {
+		
+		Iterator<Row> rowIterator = desiredSheet.iterator();
+		
+		int rowNum = 0 ; 
+		/* Se è la prima riga la salto perché titolo */
+		if( rowIterator.hasNext() ) {
+			rowIterator.next();
+			rowNum ++;
+		}
+		
+        while (rowIterator.hasNext()) 
+        {
+            Row row = rowIterator.next();
+            //For each row, iterate through all the columns
+            Iterator<Cell> cellIterator = row.cellIterator();
+            int cellNum = 0; 
+            
+            while (cellIterator.hasNext()) 
+            {
+                Cell cell = cellIterator.next();
+                
+                if( nColumn >= 0 ) {
+                	
+                	if(cellNum == nColumn) {
+                		
+                        switch (cell.getCellType()) 
+                        {
+                            case NUMERIC:
+                            	cell.setCellType(CellType.BLANK);
+                                break;
+                            case STRING:
+                            	cell.setCellType(CellType.BLANK);
+                                break;
+                            case FORMULA:
+                            	cell.setCellType(CellType.BLANK);
+                            	
+                            	//aggiungo la formula dopo aver cancellato
+                            	cell.setCellFormula("Grezzi!B"+(rowNum) );
+                            	//System.out.println("rowNum = "+rowNum);
+                                break;    
+                        }
+                        
+                	}
+                }else {
+                	System.out.println("indice colonna sbagliata...cancellazione impossibile!");
+                }
+                
+                cellNum ++ ;
+                 
+            }
+            
+            rowNum ++;
+            
+        }
+        
+	}
+	
+	
+	
+	/* Metodo che aggiunge una formula in una certa colonna in una precisa cella */
+//	public void addFormulaColumn(XSSFSheet desiredSheet , int nColumn , String formula) {
+//		
+//		Iterator<Row> rowIterator = desiredSheet.iterator();
+//		
+//		/* Se è la prima riga la salto perché titolo */
+//		if( rowIterator.hasNext() ) {
+//			rowIterator.next();
+//		}
+//		
+//		if(formula.length() > 0) { //se c'è almeno qualcosa
+//			
+//			
+//		}else {
+//			System.out.println("Formula non valida!");
+//		}
+//		
+//        
+//	}
+	
+	
+	
 	/* Metodo che lavora all'interno del tab Grezzi , praticamente 
 	 * legge il file degli sha e lo carica in excel in grezzi*/
 	public void grezzi(File f,String pth) throws IOException, NoSuchAlgorithmException {
@@ -318,7 +402,7 @@ public class ChangeManagement {
 			
 			//vado nel tab desiderato che in questo caso è Grezzi 
 			XSSFSheet desiredSheet = workbook.getSheetAt(0);
-			System.out.println("\n Aggiornamento tab: "+desiredSheet.getSheetName()+"...\n");
+			System.out.print("Aggiornamento tab: "+desiredSheet.getSheetName()+"...");
 			
 			/* cancello tutti i dati che ci sono già nel tab grezzi */
 			deleteSheetAllContent(desiredSheet);
@@ -330,7 +414,7 @@ public class ChangeManagement {
 	        if(fileChecksum.exists()) {
 	        	FileSha1 fs1 = new FileSha1() ;
 	        	sha1CheckSum = fs1.sha1Code(pathFileChecksum) ; 
-	        	nomeCheckSum = "\\prepare_checksums.py"; 
+	        	nomeCheckSum = "/prepare_checksums.py"; 
 	        	//System.out.println(fs1.sha1Code(pathFileChecksum)+" "+fileChecksum.getName());
 	        }else {
 	        	System.out.println("File prepare_checksums.py non esistente!");
@@ -379,7 +463,7 @@ public class ChangeManagement {
 			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
 			workbook.write(fileOutputStream);
 			fileOutputStream.close();
-			System.out.println("\n Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
+			System.out.print(" Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
 			
 		}else {
 			System.out.println("File non trovato! ");
@@ -387,5 +471,41 @@ public class ChangeManagement {
 		
 	}
 	
+	
+	
+	/* Metodo che lavora dentro il tab Checksums */
+	/*
+	 * Formula parola dopo ultimo slash(col A): "STRINGA.ESTRAI([@Path];TROVA("*";SOSTITUISCI([@Path];"/";"*";LUNGHEZZA([@Path])-LUNGHEZZA(SOSTITUISCI([@Path];"/";""))))+1;LUNGHEZZA([@Path]))" 
+	 * Formula copia colonna tab(col B): "=Grezzi!B1" 
+	 * Formula descrizione(col D): "=CERCA.VERT([@Path];Summary6[[Path]:[Description]];2;FALSO)" 
+	 * Formula (col C): "=Grezzi!A1" 
+	 * Formula (col J): "=[@Column1]&"_"&[@Column2]"
+	 * Formula (col K): "=CERCA.VERT(Checksums!$I2;Summary[[Path]:[Sha1]];2;FALSO)"
+	 * */
+	public void checksums() throws IOException {
+		
+        /* apro il mio foglio excel */
+		FileInputStream fileinputstream = new FileInputStream(new File(nomeFoglioExcel));
+		XSSFWorkbook workbook = new XSSFWorkbook(fileinputstream);
+		
+	    //vado nel tab desiderato che in questo caso è Checksums 
+		XSSFSheet desiredSheet = workbook.getSheetAt(1);
+		System.out.print("\nAggiornamento tab: "+desiredSheet.getSheetName()+"...");
+		
+		/**
+		 * cancello il contenuto di tutte le colonne dalla A alla D nel tab checksum
+		 * Quando index=0 è la colonna A , index=1 colonna B , index=2 colonna C ecc. 
+		 * E aggiungo le rispettive formule 
+		 * */
+
+		deleteContentsAddFormulaColumn(desiredSheet, 1);
+		System.out.print(" Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
+		
+		//aggiorna il foglio
+		FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
+		workbook.write(fileOutputStream);
+		fileOutputStream.close();
+		
+	}
 	
 }
