@@ -53,18 +53,18 @@ public class ChangeManagement {
 		this.tabs = new XSSFSheet [8];
 		this.nomeFoglioExcel = nomeFoglioExcel ; 
 		
-//		/*creo i vari tabs del file excel per il Change Management*/
-//		this.tabs[0] = this.workbook.createSheet("Grezzi"); // crea un tab Grezzi
-//		this.tabs[1] = this.workbook.createSheet("Checksums"); // crea un tab Checksums
-//		this.tabs[2] = this.workbook.createSheet("Report"); // crea un tab Report
-//		this.tabs[3] = this.workbook.createSheet("Game Versions"); // crea un tab Game Versions
-//		this.tabs[4] = this.workbook.createSheet("Changed Games"); // crea un tab Changed Games
-//		this.tabs[5] = this.workbook.createSheet("Appoggio Changed Games"); // crea un tab Appoggio Changed Games
-//		this.tabs[6] = this.workbook.createSheet("Check EVO"); // crea un tab Check Evo
-//		this.tabs[7] = this.workbook.createSheet("Description"); // crea un tab Description
-//		
-//		//creo fisicamente il foglio excel
-		//rt = generaFoglioExcel(nomeFoglioExcel);
+		/*creo i vari tabs del file excel per il Change Management*/
+		this.tabs[0] = this.workbook.createSheet("Grezzi"); // crea un tab Grezzi
+		this.tabs[1] = this.workbook.createSheet("Checksums"); // crea un tab Checksums
+		this.tabs[2] = this.workbook.createSheet("Report"); // crea un tab Report
+		this.tabs[3] = this.workbook.createSheet("Game Versions"); // crea un tab Game Versions
+		this.tabs[4] = this.workbook.createSheet("Changed Games"); // crea un tab Changed Games
+		this.tabs[5] = this.workbook.createSheet("Appoggio Changed Games"); // crea un tab Appoggio Changed Games
+		this.tabs[6] = this.workbook.createSheet("Check EVO"); // crea un tab Check Evo
+		this.tabs[7] = this.workbook.createSheet("Description"); // crea un tab Description
+		
+		//creo fisicamente il foglio excel
+		rt = generaFoglioExcel(nomeFoglioExcel);
 		
 	}
 	
@@ -204,10 +204,10 @@ public class ChangeManagement {
 							case FORMULA:
 								
 								if(cellNum == 0) {
-									C_GAME = cell.getStringCellValue();
+									C_GAME = cell.getRichStringCellValue().toString();
 									cell.setCellType(CellType.BLANK);
 								}else if(cellNum == 1) {
-									C_FILE = cell.getStringCellValue();
+									C_FILE = cell.getRichStringCellValue().toString();
 									cell.setCellType(CellType.BLANK);
 								}else if(cellNum == 2) { //C_Sha1
 							        switch(cell.getCachedFormulaResultType()) {
@@ -390,15 +390,15 @@ public class ChangeManagement {
 		
 		if(f.exists()) {
 			
-			BufferedReader br = new BufferedReader(new FileReader(f)) ; 
+			BufferedReader br = new BufferedReader(new FileReader(f)); 
 	        String st; 
 	        String sha1CheckSum = ""; 
 	        String nomeCheckSum = ""; 
 	        char [] appoggio = null; 
 	        
 	        /* apro il mio foglio excel */
-			FileInputStream fileinputstream = new FileInputStream(new File(nomeFoglioExcel));
-			XSSFWorkbook workbook = new XSSFWorkbook(fileinputstream);
+			//FileInputStream fileinputstream = new FileInputStream(new File(nomeFoglioExcel));
+			//XSSFWorkbook workbook = new XSSFWorkbook(fileinputstream);
 			
 			//vado nel tab desiderato che in questo caso è Grezzi 
 			XSSFSheet desiredSheet = workbook.getSheetAt(0);
@@ -440,7 +440,11 @@ public class ChangeManagement {
 	        		if(i == 0) {
 	        			cell.setCellValue(sha1);
 	        		}else {
-	        			cell.setCellValue(path);
+	        			
+	        			/* tolgo dal path il nome della cartella principale del gioco */
+	        			int posPrimoSlash = path.indexOf("/") ;
+	        			String nuovoPath = path.substring(posPrimoSlash+1); 	        			
+	        			cell.setCellValue(nuovoPath);
 	        		}
 	        	}
 	        	 
@@ -452,7 +456,7 @@ public class ChangeManagement {
 	        for(int i=0;i<2;i++) {
 	        	Cell c = r.createCell(i);
         		if(i == 0) {
-        			c.setCellValue(sha1CheckSum);
+        			c.setCellValue(sha1CheckSum.toLowerCase());
         		}else {
         			c.setCellValue(nomeCheckSum);
         		}

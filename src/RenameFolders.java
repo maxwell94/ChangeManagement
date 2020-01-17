@@ -168,10 +168,12 @@ public class RenameFolders {
 						
 						if(nlista.get(i).contains("coreservices")) {
 							String percorso = nlista.get(i).substring(13);
-							System.out.println("path: "+path);
+							//System.out.println("path: "+path);
 							bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i)).toLowerCase()+" "+percorso+"\n");
+							System.out.println( path+"\\"+nlista.get(i) );
 						}else {
 							bufferedWriter.write(fsha1.sha1Code(path+"\\"+nlista.get(i)).toLowerCase()+" "+nlista.get(i)+"\n");
+							//System.out.println( path+"\\"+nlista.get(i) );
 						}
 						
 					}

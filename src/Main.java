@@ -45,8 +45,8 @@ public class Main {
 	    	/* primo passo Change Management */
 	    	System.out.println("---------- primo passo [Estrazione , Rinominazione , e Calcolo file sha1 giochi  ...] ------------");
 	    	
-	    	String oldCMPath = path + "\\CM1_DEC_2019";
-	    	String newCMPath = path + "\\CM2_DEC_2019";
+	    	String oldCMPath = path +"\\CM2_DEC_2019";
+	    	String newCMPath = path +"\\CM1_GEN_2020";
 	    	
 	    	RenameFolders rfNew = new RenameFolders(newCMPath); 
 	    	System.out.println("Nuovo CM:");
@@ -71,31 +71,25 @@ public class Main {
 	    	
 	    	System.out.println("---------- secondo passo [Lettura fileSha1.sha e caricamento dati Excel in Grezzi ...] ------------");
 	    	
-	    	System.out.println("Nome file excel vecchio CM: ");
+	    	System.out.print("Come vuoi chiamare il foglio excel per il nuovo CM ? :  ");
 	    	nomeFoglioExc = scanner.nextLine();
 	    	
 	    	if(nomeFoglioExc.length() > 0) {
 	    		
 	    		if(nomeFoglioExc.endsWith(".xlsx")) {
-	    			 CM = new ChangeManagement(oldCMPath+"\\"+nomeFoglioExc); 
+	    			 CM = new ChangeManagement(newCMPath+"\\"+nomeFoglioExc); 
 	    		}else {
-	    			CM = new ChangeManagement(oldCMPath+"\\"+nomeFoglioExc+".xlsx");
+	    			CM = new ChangeManagement(newCMPath+"\\"+nomeFoglioExc+".xlsx");
 	    		}
 	    		
 	    	    //caricamento dati in Grezzi
-	    	    CM.grezzi(f,oldCMPath);
-	    	    
-	    	    //Appoggio Changed Games
-	    	    CM.appoggioChangedGames();
-	    	    
-	    	    //Checksums
-	    	    CM.checksums();
-	    	    
+	    	    CM.grezzi(f,newCMPath);
+	    	    	    	    
 	    	    System.out.println("\nDone ...");
 	    	    
 	    	}else {  //nome foglio Excel non valido
 	    		System.out.println("File non trovato! ");
-	    	}   	
+	        }   	
 	    	
 	    }else {
 	    	System.out.println("Path non corretto!");

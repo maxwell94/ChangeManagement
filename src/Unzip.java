@@ -30,7 +30,7 @@ public class Unzip {
 		this.inputFile = inputFile;
 		this.outputFile = outputFile;
 		
-		this.returnFile = new File("C:\\Users\\Max Dedou\\Desktop\\QUINEL\\CM Evolution\\CM\\ChangeManagement\\fileSha1.txt");
+		this.returnFile = new File("C:\\Users\\Max Dedou\\Desktop\\compare\\sha1.sha");
         FileOutputStream fileOutputStream = new FileOutputStream(returnFile);
         this.bw  = new BufferedWriter(new OutputStreamWriter(fileOutputStream)); 
         
