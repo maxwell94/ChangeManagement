@@ -205,6 +205,9 @@ public class ChangeManagement {
 				rowNum ++; 
 			}
 			
+			int indexRow1 = 2;
+			int indexRow2 = 2; 
+			int indexRow3 = 2; 
 			
 			while(RowIterator.hasNext()) {
 				
@@ -276,11 +279,6 @@ public class ChangeManagement {
 						  }else if(cellNum == 5) {
 							  Cell c = row2.createCell(cellNum) ; 
 							  c.setCellValue(C_Sha1);
-						  }else if(cellNum == 6) {
-							  Cell c = row2.createCell(cellNum) ;
-							  
-							  // inizio con le formule
-							  
 						  }else {
 							  Cell c = row2.createCell(cellNum) ; 
 						  }
@@ -292,6 +290,7 @@ public class ChangeManagement {
 						
 					  case FORMULA:
 						
+						 
 						 if(cellNum == 2) {
 							 
 							 switch(cell.getCachedFormulaResultType()) {
@@ -306,11 +305,27 @@ public class ChangeManagement {
 								  break;
 						     }
 							 
-						 }else {
+						 }else if(cellNum == 6 || cellNum == 7 || cellNum == 8){
 							 
-							 Cell c = row2.createCell(cellNum) ;
+							 String strFormula = ""; 
+							 
+							 if(cellNum == 6) {
+								 strFormula = "IF(A"+indexRow1+"=D"+indexRow1+",TRUE)";
+								 indexRow1 ++;
+								 
+							 }else if(cellNum == 7) {
+								 strFormula = "IF(B"+indexRow2+"=E"+indexRow2+",TRUE)";
+								 indexRow2 ++;
+								 
+							 }else if(cellNum == 8) {
+								 strFormula = "IF(C"+indexRow3+"=F"+indexRow3+",TRUE)";
+								 indexRow3 ++;
+							 }
+							
+							 Cell c = row2.createCell(cellNum);
+							 c.setCellFormula(strFormula);
+							 
 						 }
-						 
 
 						 cellNum++; 
 						  
@@ -450,29 +465,6 @@ public class ChangeManagement {
         }
         
 	}
-	
-	
-	
-	/* Metodo che aggiunge una formula in una certa colonna in una precisa cella */
-//	public void addFormulaColumn(XSSFSheet desiredSheet , int nColumn , String formula) {
-//		
-//		Iterator<Row> rowIterator = desiredSheet.iterator();
-//		
-//		/* Se è la prima riga la salto perché titolo */
-//		if( rowIterator.hasNext() ) {
-//			rowIterator.next();
-//		}
-//		
-//		if(formula.length() > 0) { //se c'è almeno qualcosa
-//			
-//			
-//		}else {
-//			System.out.println("Formula non valida!");
-//		}
-//		
-//        
-//	}
-	
 	
 	
 	/* Metodo che lavora all'interno del tab Grezzi , praticamente 
