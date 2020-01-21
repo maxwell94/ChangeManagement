@@ -64,11 +64,12 @@ public class Main {
 	    	
 	    	//e scrivo questi dati su file
 	    	nomiCartelle = rfNew.saveFolderNames(newCMPath);
-	    	rfNew.salvaSuFile(datiGrezzi, nomiCartelle,f);
+	    	rfNew.salvaSuFile(datiGrezzi, nomiCartelle, f);
 	    	
 	    	/* Fine primo passo */
 	    	System.out.println("----[Fine primo passo ]-----\n");
 	    	
+	    	/* Secondo passo */
 	    	System.out.println("---------- secondo passo [Lettura fileSha1.sha e caricamento dati Excel in Grezzi ...] ------------");
 	    	
 	    	System.out.print("Come vuoi chiamare il foglio excel per il nuovo CM ? :  ");
@@ -84,6 +85,17 @@ public class Main {
 	    		
 	    	    //caricamento dati in Grezzi
 	    	    CM.grezzi(f,newCMPath);
+	    	    
+	    		if(nomeFoglioExc.endsWith(".xlsx")) {
+	    			File vuoto = new File(newCMPath+"\\"+nomeFoglioExc); 
+	    			File pieno = new File(oldCMPath+"\\CM_DEC_2st_2019.xlsx"); 
+	    			 CM.appoggioChangedGames(vuoto,pieno); 
+	    		}else {
+	    			File vuoto = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx"); 
+	    			File pieno = new File(oldCMPath+"\\CM_DEC_2st_2019.xlsx");
+	    			 CM.appoggioChangedGames(vuoto,pieno); 
+	    			 
+	    		}
 	    	    	    	    
 	    	    System.out.println("\nDone ...");
 	    	    

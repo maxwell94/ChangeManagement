@@ -7,7 +7,11 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
@@ -125,25 +129,64 @@ public class ChangeManagement {
 		return retcode;
 		
 	}
+	
+	
+	/* metodo che mi sposta la colonna la colonna degli di appoggio changed games dalla 3° colonna alla 6° */
+	public void spostaSha1AppChGames(XSSFSheet mySheet) {
+		
+		Iterator<Row> RowIterator = mySheet.iterator();
+		int rowNum = 0; 
+		
+		while(RowIterator.hasNext()) {
+			
+			int cellNum = 0; 
+			Row row = RowIterator.next(); 
+			Iterator<Cell> cellIterator = row.cellIterator();
+			
+			String C_Sha1 = "";
+			
+			while(cellIterator.hasNext()) {
+				 
+				
+				Cell cell = cellIterator.next(); //prendo ogni cella 
+				
+				if(cellNum == 0) {
+					C_Sha1 = cell.getStringCellValue() ; 
+					cell.setCellType(CellType.BLANK);
+					//System.out.println(C_Sha1);
+				}else if(cellNum == 1) {
 
-	/* Metodo che lavora all'interno del tab Appoggio Changed Games */
-	public void appoggioChangedGames() {
+				}else if(cellNum == 3){
+					cell.setCellValue(C_Sha1);
+				}
+				//System.out.println("\n");
+				cellNum ++;
+			}
+			
+			rowNum ++; 
+		}
+	}
+
+	/* Metodo che lavora all'interno del tab Appoggio Changed Games 
+	 * getRichStringCellValue().toString();*/
+	public void appoggioChangedGames(File f , File f2) {
 		
 		try {
 			
-			//Apro il foglio excel 
-			FileInputStream fileinputstream = new FileInputStream(new File(nomeFoglioExcel));
-			XSSFWorkbook workbook = new XSSFWorkbook(fileinputstream);
+			FileInputStream fileVuoto = new FileInputStream( f ); //file vuoto
+			FileInputStream filePieno = new FileInputStream(f2) ; // file pieno 
 			
-			//vado nel tab desiderato che in questo caso è Appoggio Changed Games 
-			XSSFSheet desiredSheet = workbook.getSheetAt(5);
-			System.out.print("\nAggiornamento tab: "+desiredSheet.getSheetName()+"... ");
+			XSSFWorkbook workbook_fv = new XSSFWorkbook(fileVuoto);
+			XSSFWorkbook workbook_fp = new XSSFWorkbook(filePieno) ; 
 			
-			//iteratore righe
-			Iterator<Row> RowIterator = desiredSheet.iterator();
+		    //vado nel tab desiderato che in questo caso è appoggio changed games
+			XSSFSheet desiredSheetV = workbook_fv.getSheetAt(5);
+			XSSFSheet desiredSheetP = workbook_fp.getSheetAt(5);
+			
+			
 			int rowNum = 0; 
 			
-			FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+			Iterator<Row> RowIterator = desiredSheetP.iterator();
 			
 			//se è la prima riga la salto perché è il titolo
 			if( RowIterator.hasNext() ) {
@@ -151,101 +194,138 @@ public class ChangeManagement {
 				rowNum ++; 
 			}
 			
-			//scorro tutte le righe all'interno del tab
+			
 			while(RowIterator.hasNext()) {
 				
-					//prendo ogni riga
-					Row row = RowIterator.next() ; 
-					rowNum ++; 
-					
-					//scorro tutte le celle
-					Iterator<Cell> cellIterator = row.cellIterator();
-					int cellNum = 0;
-					
-					String C_GAME = "";
-					String C_FILE = ""; 
-					String C_Sha1 = "";
-					String formula = ""; 
-					
-					//scorro tutte le colonne della riga corrente 
-					while(cellIterator.hasNext()) {
-						
-						Cell cell = cellIterator.next(); //prendo ogni cella    
-							
-						switch(cell.getCellType()) {
-							
-							case NUMERIC:  
-								//System.out.print(cell.getNumericCellValue() +"\t\t");
-								break;
-							case STRING:
-								
-								if(cellNum == 0) {
-									C_GAME = cell.getStringCellValue();
-									//cell.setCellValue("");
-									cell.setCellType(CellType.BLANK);
-								}else if(cellNum == 1) {
-									C_FILE = cell.getStringCellValue();
-									cell.setCellType(CellType.BLANK);
-								}else if(cellNum == 2) {
-									C_Sha1 = cell.getStringCellValue();
-									cell.setCellType(CellType.BLANK);
-									
-								}else if(cellNum == 3) {
-								   cell.setCellValue(C_GAME);
-								}else if(cellNum == 4){
-								   cell.setCellValue(C_FILE);
-								}else if(cellNum == 5){
-									cell.setCellValue(C_Sha1);
-								}
-								
-								//System.out.print(cell.getStringCellValue()+"\t\t");
-								//cell.setCellValue("");
-								break;
-							case FORMULA:
-								
-								if(cellNum == 0) {
-									C_GAME = cell.getRichStringCellValue().toString();
-									cell.setCellType(CellType.BLANK);
-								}else if(cellNum == 1) {
-									C_FILE = cell.getRichStringCellValue().toString();
-									cell.setCellType(CellType.BLANK);
-								}else if(cellNum == 2) { //C_Sha1
-							        switch(cell.getCachedFormulaResultType()) {
-							        
-						            case NUMERIC:
-						            	//ignora
-						                //System.out.println("Numerico: " + cell.getNumericCellValue());
-						                break;
-						            case STRING:
-						                //System.out.println("Stringa " + cell.getRichStringCellValue() + "\"");
-						            	C_Sha1 = cell.getRichStringCellValue().toString();
-						            	cell.setCellType(CellType.BLANK);
-						                break;
-						            }
-									//cell.setCellType(CellType.BLANK);
-								}
-								//System.out.print(cell.getBooleanCellValue()+"\t\t");
-								break;
-					    }
-							
-						cellNum ++;
-				    }
-					
-				    cellNum = 0; 
+				Row row = RowIterator.next(); 
 				
-			} 
-			
-			System.out.print("Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
-			
-			//aggiorna il foglio
-			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
-			workbook.write(fileOutputStream);
-			fileOutputStream.close();
-		
-			
-		}catch(Exception ex) { ex.printStackTrace(); }
-		
+				Row row2 = desiredSheetV.createRow(rowNum) ; 
+				
+				Iterator<Cell> cellIterator = row.cellIterator();
+				
+				int cellNum = 0;
+				
+				String C_Game = ""; 
+				String C_File = ""; 
+				String C_Sha1 = ""; 
+				
+				if(cellIterator.hasNext()) {
+					//creo una cella nell'altro foglio
+					Cell c = row2.createCell(cellNum);
+					
+					//invece nel foglio corrente memorizzo i dati
+					Cell cell = cellIterator.next() ; 
+					C_Game = cell.getStringCellValue() ; 		
+					
+					cellNum ++; 
+				}
+				
+				if(cellIterator.hasNext()) {
+					//creo una cella nell'altro foglio
+					Cell c = row2.createCell(cellNum);
+					
+					//invece nel foglio corrente memorizzo i dati
+					Cell cell = cellIterator.next() ; 
+					C_File = cell.getStringCellValue() ; 		
+					
+					cellNum ++; 
+				}
+				
+				if(cellIterator.hasNext()) {
+					//creo una cella nell'altro foglio
+					Cell c = row2.createCell(cellNum);
+					
+					//invece nel foglio corrente memorizzo i dati
+					Cell cell = cellIterator.next() ; 
+					
+					C_Sha1 = cell.getStringCellValue() ;
+					
+					cellNum ++; 
+				}
+				
+				while(cellIterator.hasNext()) {
+					 
+					Cell cell = cellIterator.next(); //prendo ogni cella 
+					
+					switch(cell.getCellType()) {
+					
+					  case NUMERIC: 
+						  
+						break;
+					  
+					  case STRING: 
+						  
+						  if(cellNum == 3) { //C_GAME
+							  Cell c = row2.createCell(cellNum); 
+							  c.setCellValue(C_Game);
+						  }else if(cellNum == 4) { //C_FILE
+							  Cell c = row2.createCell(cellNum) ; 
+							  c.setCellValue(C_File);
+							  
+						  }else if(cellNum == 5) {
+							  Cell c = row2.createCell(cellNum) ; 
+							  c.setCellValue(C_Sha1);
+						  }else if(cellNum == 6) {
+							  Cell c = row2.createCell(cellNum) ;
+							  
+							  // inizio con le formule
+							  
+						  }else {
+							  Cell c = row2.createCell(cellNum) ; 
+						  }
+						  
+						  cellNum++; 
+						  
+						  
+						break;	
+						
+					  case FORMULA:
+						
+						 if(cellNum == 2) {
+							 
+							 switch(cell.getCachedFormulaResultType()) {
+							  
+							  case STRING:  
+								  Cell c = row2.createCell(cellNum) ;
+								  c.setCellValue(cell.getRichStringCellValue().toString());
+							  break ; 
 
+							  case BOOLEAN:
+								  Cell c2 = row2.createCell(cellNum);
+								  break;
+						     }
+							 
+						 }else {
+							 
+							 Cell c = row2.createCell(cellNum) ;
+						 }
+						 
+
+						 cellNum++; 
+						  
+						  break; 
+					}
+					
+				}
+				
+				cellNum = 0; 
+				
+				System.out.println("\n");
+				
+				
+				rowNum ++;
+			}
+			
+			
+			filePieno.close(); 
+			fileVuoto.close();
+			
+			//aggiorna il file che era vuoto
+			FileOutputStream out = new FileOutputStream(f);
+			workbook_fv.write(out);
+			out.close();
+
+		}catch(Exception ex) { ex.printStackTrace(); }
 	}
 	
 	/* metodo che prende una stringa sostituisce '\' con '/' e ritorna un array */
