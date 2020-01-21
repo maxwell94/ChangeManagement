@@ -86,18 +86,32 @@ public class Main {
 	    	    //caricamento dati in Grezzi
 	    	    CM.grezzi(f,newCMPath);
 	    	    
+	    	    //caricamento dati Appoggio Changed Games
 	    		if(nomeFoglioExc.endsWith(".xlsx")) {
 	    			File vuoto = new File(newCMPath+"\\"+nomeFoglioExc); 
 	    			File pieno = new File(oldCMPath+"\\CM_DEC_2st_2019.xlsx"); 
-	    			 CM.appoggioChangedGames(vuoto,pieno); 
+	    			 CM.appoggioChangedGames(vuoto,pieno);
+	    			 System.out.println("\nDone ...");
 	    		}else {
 	    			File vuoto = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx"); 
 	    			File pieno = new File(oldCMPath+"\\CM_DEC_2st_2019.xlsx");
 	    			 CM.appoggioChangedGames(vuoto,pieno); 
-	    			 
+	    			 System.out.println("\nDone ..."); 
 	    		}
+	    		
+	    		//caricamento dati Checksums 
+	    		if(nomeFoglioExc.endsWith(".xlsx")) {
+	    			File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc); 
+	    			CM.checksums(nuovoFile);
+	    			System.out.println("\nDone ...");
+	    		}else {
+	    			 File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx"); 
+	    			 CM.checksums(nuovoFile);
+	    			 System.out.println("\nDone ...");
+	    		}
+	    		
 	    	    	    	    
-	    	    System.out.println("\nDone ...");
+	    	    
 	    	    
 	    	}else {  //nome foglio Excel non valido
 	    		System.out.println("File non trovato! ");

@@ -569,29 +569,100 @@ public class ChangeManagement {
 	 * Formula (col J): "=[@Column1]&"_"&[@Column2]"
 	 * Formula (col K): "=CERCA.VERT(Checksums!$I2;Summary[[Path]:[Sha1]];2;FALSO)"
 	 * */
-	public void checksums() throws IOException {
+	public void checksums(File f) {
 		
-        /* apro il mio foglio excel */
-		FileInputStream fileinputstream = new FileInputStream(new File(nomeFoglioExcel));
-		XSSFWorkbook workbook = new XSSFWorkbook(fileinputstream);
+		try {
+			
+			FileInputStream mioFile = new FileInputStream( f ); //file nuovo CM
+			
+			XSSFWorkbook workbook_fp = new XSSFWorkbook(mioFile);
+			XSSFSheet desiredSheetP = workbook_fp.getSheetAt(1);
+			
+			int rowNum = 0; 
+			
+			/*inserimento titolo*/
+			Row header = desiredSheetP.createRow(rowNum);
+			
+		    header.createCell(0).setCellValue("FileName");
+		    header.createCell(1).setCellValue("Path");
+		    header.createCell(2).setCellValue("Sha1");
+		    header.createCell(3).setCellValue("Column1");
+		    header.createCell(4).setCellValue("");
+		    header.createCell(5).setCellValue("Column1");
+		    header.createCell(6).setCellValue("Column2");
+		    header.createCell(7).setCellValue("Column3");
+		    header.createCell(8).setCellValue("Column4");
+		    header.createCell(9).setCellValue("For Lookup");
+		    header.createCell(10).setCellValue("Column5");
+		    
+			Iterator <Row> RowIterator = desiredSheetP.iterator();
+			
+			//se è la prima riga la salto
+			if( RowIterator.hasNext() ) {
+				RowIterator.next();
+				rowNum ++; 
+			}
+			
+			while(RowIterator.hasNext()) {
+				
+				Row row = RowIterator.next(); 
+				
+				Iterator<Cell> cellIterator = row.cellIterator();
+				
+				int cellNum = 0;
+				
+				while(cellIterator.hasNext()) {
+					
+					Cell cell = cellIterator.next(); //prendo ogni cella
+					
+					if(cellNum == 0) {
+						Cell c = row.createCell(cellNum); 
+					}else if(cellNum == 1) {
+						Cell c = row.createCell(cellNum);
+					}else if(cellNum == 2) {
+						Cell c = row.createCell(cellNum);
+					}else if(cellNum == 3) {
+						Cell c = row.createCell(cellNum);
+					}else if(cellNum == 5) {
+						Cell c = row.createCell(cellNum);
+					}else if(cellNum == 6) {
+						Cell c = row.createCell(cellNum);
+					}else if(cellNum == 7) {
+						Cell c = row.createCell(cellNum);
+					}else if(cellNum == 8) {
+						Cell c = row.createCell(cellNum);
+					}else if(cellNum == 9) {
+						Cell c = row.createCell(cellNum);
+					}else if(cellNum == 10) {
+						Cell c = row.createCell(cellNum);
+					}
+					
+					/*
+					switch(cell.getCellType()) {
+					
+					  case STRING:
+					  break; 
+					  
+					  case NUMERIC:
+					  break;
+					  
+					  case FORMULA:
+					  break;
+					  
+					}*/
+					cellNum ++; 
+				}
+			}
+			
+			mioFile.close();
+			
+			//aggiorna il file che era vuoto
+			FileOutputStream out = new FileOutputStream(f);
+			workbook_fp.write(out);
+			out.close();
 		
-	    //vado nel tab desiderato che in questo caso è Checksums 
-		XSSFSheet desiredSheet = workbook.getSheetAt(1);
-		System.out.print("\nAggiornamento tab: "+desiredSheet.getSheetName()+"...");
-		
-		/**
-		 * cancello il contenuto di tutte le colonne dalla A alla D nel tab checksum
-		 * Quando index=0 è la colonna A , index=1 colonna B , index=2 colonna C ecc. 
-		 * E aggiungo le rispettive formule 
-		 * */
-
-		deleteContentsAddFormulaColumn(desiredSheet, 1);
-		System.out.print(" Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
-		
-		//aggiorna il foglio
-		FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
-		workbook.write(fileOutputStream);
-		fileOutputStream.close();
+			
+		}catch(IOException ex) { ex.printStackTrace(); }
 		
 	}
 	
