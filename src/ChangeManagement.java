@@ -183,12 +183,23 @@ public class ChangeManagement {
 			XSSFSheet desiredSheetV = workbook_fv.getSheetAt(5);
 			XSSFSheet desiredSheetP = workbook_fp.getSheetAt(5);
 			
-			
 			int rowNum = 0; 
+			Row header = desiredSheetV.createRow(rowNum);
+			
+		    header.createCell(0).setCellValue("C_Game");
+		    header.createCell(1).setCellValue("C_File");
+		    header.createCell(2).setCellValue("C_Sha1");
+		    header.createCell(3).setCellValue("O_Game");
+		    header.createCell(4).setCellValue("O_File");
+		    header.createCell(5).setCellValue("O_Sha1");
+		    header.createCell(6).setCellValue("Game");
+		    header.createCell(7).setCellValue("File");
+		    header.createCell(8).setCellValue("Sha");
+			
 			
 			Iterator<Row> RowIterator = desiredSheetP.iterator();
 			
-			//se è la prima riga la salto perché è il titolo
+			//se è la prima riga inserisco il titolo
 			if( RowIterator.hasNext() ) {
 				RowIterator.next();
 				rowNum ++; 
