@@ -597,62 +597,6 @@ public class ChangeManagement {
 		    
 			Iterator <Row> RowIterator = desiredSheetP.iterator();
 			
-			//se è la prima riga la salto
-			if( RowIterator.hasNext() ) {
-				RowIterator.next();
-				rowNum ++; 
-			}
-			
-			while(RowIterator.hasNext()) {
-				
-				Row row = RowIterator.next(); 
-				
-				Iterator<Cell> cellIterator = row.cellIterator();
-				
-				int cellNum = 0;
-				
-				while(cellIterator.hasNext()) {
-					
-					Cell cell = cellIterator.next(); //prendo ogni cella
-					
-					if(cellNum == 0) {
-						Cell c = row.createCell(cellNum); 
-					}else if(cellNum == 1) {
-						Cell c = row.createCell(cellNum);
-					}else if(cellNum == 2) {
-						Cell c = row.createCell(cellNum);
-					}else if(cellNum == 3) {
-						Cell c = row.createCell(cellNum);
-					}else if(cellNum == 5) {
-						Cell c = row.createCell(cellNum);
-					}else if(cellNum == 6) {
-						Cell c = row.createCell(cellNum);
-					}else if(cellNum == 7) {
-						Cell c = row.createCell(cellNum);
-					}else if(cellNum == 8) {
-						Cell c = row.createCell(cellNum);
-					}else if(cellNum == 9) {
-						Cell c = row.createCell(cellNum);
-					}else if(cellNum == 10) {
-						Cell c = row.createCell(cellNum);
-					}
-					
-					/*
-					switch(cell.getCellType()) {
-					
-					  case STRING:
-					  break; 
-					  
-					  case NUMERIC:
-					  break;
-					  
-					  case FORMULA:
-					  break;
-					  
-					}*/
-					cellNum ++; 
-				}
-			}
 			
 			mioFile.close();
 			
