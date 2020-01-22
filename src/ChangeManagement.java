@@ -562,6 +562,44 @@ public class ChangeManagement {
 	/* Metodo che lavora dentro il tab Description */
 	public void caricaDescription(XSSFSheet descriptionSheet, File v) {
 		
+		try {
+			
+			FileInputStream mioFile = new FileInputStream( v ) ;
+			XSSFWorkbook w = new XSSFWorkbook(mioFile); 
+			
+			XSSFSheet desiredSheet = w.getSheetAt(7); 
+			
+			Iterator<Row> rowIterator = desiredSheet.iterator() ; 
+			int rowNum = 0 ; 
+			/* Se è la prima riga la salto */
+			if(rowIterator.hasNext()) {
+				rowIterator.next();
+				rowNum ++;
+			}
+			
+			while(rowIterator.hasNext()) {
+				Row row = rowIterator.next() ; 
+				
+				Iterator<Cell> cellIterator = row.cellIterator() ; 
+				
+				while(cellIterator.hasNext()) {
+					
+					Cell cell = cellIterator.next() ;
+					
+					switch(cell.getCellType()) {
+					
+						case STRING:
+							System.out.println(cell.getStringCellValue());
+							break ; 
+					}
+				}
+				
+				rowNum ++; 
+			}
+			
+			
+		}catch(IOException ex) {ex.printStackTrace();}
+		 
 	}
 	
 	
