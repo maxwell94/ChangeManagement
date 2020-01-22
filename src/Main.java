@@ -102,11 +102,13 @@ public class Main {
 	    		//caricamento dati Checksums 
 	    		if(nomeFoglioExc.endsWith(".xlsx")) {
 	    			File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc); 
-	    			CM.checksums(nuovoFile);
+	    			CM.checksums1(nuovoFile);
+	    			//CM.checksums2(nuovoFile);
 	    			System.out.println("\nDone ...");
 	    		}else {
 	    			 File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx"); 
-	    			 CM.checksums(nuovoFile);
+	    			 CM.checksums1(nuovoFile);
+	    			 //CM.checksums2(nuovoFile);
 	    			 System.out.println("\nDone ...");
 	    		}
 	    			    	    

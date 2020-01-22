@@ -569,7 +569,7 @@ public class ChangeManagement {
 	 * Formula (col J): "=[@Column1]&"_"&[@Column2]"
 	 * Formula (col K): "=CERCA.VERT(Checksums!$I2;Summary[[Path]:[Sha1]];2;FALSO)"
 	 * */
-	public void checksums(File f) {
+	public void checksums1(File f) {
 		
 		try {
 			
@@ -634,7 +634,6 @@ public class ChangeManagement {
 		    	while(cellIterator.hasNext()) {
 		    		
 		    		Cell cell = cellIterator.next() ;
-		    	    
 		    		
 		    		switch(cell.getCellType()) {
 		    		
@@ -642,16 +641,21 @@ public class ChangeManagement {
 			    			break ; 
 			    		case STRING:
 			    			
-			    			if(cellNum == 0) { //ho gli sha1
+			    			if(cellNum == 0) { //faccio la formula per gli sha1
 			    				
-			    				sha1 = cell.getStringCellValue() ; 
+			    				//sha1 = cell.getStringCellValue() ; 
 			    				Cell cellChecksumsUpdate = checksumsSheet.getRow(checksumsRowNum).getCell(2);
 			    				String formula = "Grezzi!A"+indexRow;
 			    				//cellChecksumsUpdate.setCellValue(sha1); // non devo metterlo direttamente ma fare la formula di excel che me lo prende automaticamente
 			    				cellChecksumsUpdate.setCellFormula(formula);
-			    			}else if(cellNum == 1) { //ho i path
 			    				
-			    			    path = cell.getStringCellValue() ; 	
+			    			}else if(cellNum == 1) { //faccio la formula per i path
+			    				
+			    			   // path = cell.getStringCellValue() ;
+			    				Cell cellChecksumsUpdate = checksumsSheet.getRow(checksumsRowNum).getCell(1);
+			    				String formula = "Grezzi!B"+indexRow;
+			    				//cellChecksumsUpdate.setCellValue(sha1); // non devo metterlo direttamente ma fare la formula di excel che me lo prende automaticamente
+			    				cellChecksumsUpdate.setCellFormula(formula);
 			    			}
 			    			break ; 
 		    		}
@@ -665,6 +669,43 @@ public class ChangeManagement {
 		    	indexRow ++; 
 		    }
 		    
+/*  ---------------------------------------------------------------------------------------------------------------*/		    
+		    
+		    FormulaEvaluator evaluator = workbook_fp.getCreationHelper().createFormulaEvaluator() ; 
+		    Iterator<Row> checkSRowIterator = checksumsSheet.iterator() ; 
+		    rowNum = 0; 
+		    
+			// se è la prima riga la salto perché è il titolo
+			if(checkSRowIterator.hasNext()) {
+				checkSRowIterator.next() ;
+				//System.out.println("DEBUG1...");
+				rowNum ++; 
+			}
+			
+			//int conta = 0 ; 
+			
+			while(checkSRowIterator.hasNext()) {
+				
+				Row row = checkSRowIterator.next() ; 
+				
+				int cellNum = 0;
+				
+				Iterator<Cell> checkScellIterator = row.cellIterator() ; 
+				
+				while(checkScellIterator.hasNext()) {
+					
+					Cell cell = checkScellIterator.next() ;
+					
+					if(cellNum == 0) {
+						cell.setCellValue("Maxio");
+					}
+					
+					cellNum ++; 
+				}
+				
+				rowNum ++; 
+			}
+		    
 		    
 			mioFile.close();
 			
@@ -673,11 +714,78 @@ public class ChangeManagement {
 			workbook_fp.write(out);
 			out.close();
 			
-			indexRow = 0 ; 
+			indexRow = 0; 
 		
 			
 		}catch(IOException ex) { ex.printStackTrace(); }
 		
+	}
+	
+	
+	public void checksums2(File f) {
+		
+		try {
+			
+			FileInputStream mioFile = new FileInputStream( f ); //file nuovo CM
+			
+			XSSFWorkbook workbook_fp = new XSSFWorkbook(mioFile);
+			
+			FormulaEvaluator evaluator = workbook_fp.getCreationHelper().createFormulaEvaluator() ; 
+			
+			XSSFSheet checksumsSheet = workbook_fp.getSheetAt(1);
+			
+			Iterator<Row> rowIterator = checksumsSheet.iterator() ; 
+			int rowNum = 0; 
+			
+			// se è la prima riga la salto perché è il titolo
+			if(rowIterator.hasNext()) {
+				rowIterator.next() ;
+				//System.out.println("DEBUG1...");
+				rowNum ++; 
+			}
+			
+			//int conta = 0 ; 
+			
+			while(rowIterator.hasNext()) {
+				
+				Row row = rowIterator.next() ; 
+				
+				int cellNum = 0;
+				
+				Iterator<Cell> cellIterator = row.cellIterator() ; 
+				
+				while(cellIterator.hasNext()) {
+					
+					Cell cell = cellIterator.next() ;
+					
+					if(cellNum == 0) {
+						cell.setCellValue("Maxio");
+					}
+					
+					switch(evaluator.evaluateInCell(cell).getCellType()) {
+					
+						case STRING:
+							//System.out.println("cellNum = "+cellNum+"   "+cell.getStringCellValue());
+							break; 
+						case NUMERIC:
+							//System.out.println(cell.getNumericCellValue());
+							break ; 
+						
+					}
+					
+					cellNum ++; 
+				}
+				
+				rowNum ++; 
+			}
+
+           			
+			//aggiorna il foglio excel
+			FileOutputStream out = new FileOutputStream(f);
+			workbook_fp.write(out);
+			out.close();
+			
+		}catch( IOException ex) { ex.printStackTrace(); }
 	}
 	
 }
