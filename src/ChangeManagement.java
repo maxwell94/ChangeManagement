@@ -559,6 +559,11 @@ public class ChangeManagement {
 	}
 	
 	
+	/* Metodo che lavora dentro il tab Description */
+	public void caricaDescription(XSSFSheet descriptionSheet, File v) {
+		
+	}
+	
 	
 	/* Metodo che lavora dentro il tab Checksums */
 	/*
@@ -569,7 +574,7 @@ public class ChangeManagement {
 	 * Formula (col J): "=[@Column1]&"_"&[@Column2]"
 	 * Formula (col K): "=CERCA.VERT(Checksums!$I2;Summary[[Path]:[Sha1]];2;FALSO)"
 	 * */
-	public void checksums1(File f) {
+	public void checksums1(File f, File v) {
 		
 		try {
 			
@@ -579,6 +584,8 @@ public class ChangeManagement {
 			
 			XSSFSheet checksumsSheet = workbook_fp.getSheetAt(1);
 			XSSFSheet grezziSheet = workbook_fp.getSheetAt(0);
+			
+			XSSFSheet descriptionSheet = workbook_fp.getSheetAt(7);
 			
 			int rowNum = 0;
 			int checksumsRowNum = 0; 
@@ -703,11 +710,17 @@ public class ChangeManagement {
 						String strVuota = "";
 						
 						//String formula ="RIGHT("+cella+",5)";
-						//String formula = "RIGHT(B1,LEN(B1)-FIND('@',SUBSTITUTE(B1,'/',"'@'",LEN(B1)-LEN(SUBSTITUTE(B1,"+slash+",''))),1))";
+						
+						//String formula = "RIGHT("+cella+",LEN("+cella+")-FIND("+cella+",SUBSTITUTE("+cella+","+"\"/\" "+","+cella+",LEN("+cella+")-LEN(SUBSTITUTE("+cella+","+"\"/\" "+","+""+"))),1))";
 						String formula = "RIGHT("+cella+",LEN("+cella+")-FIND("+cella+",SUBSTITUTE("+cella+","+"\"/\" "+","+cella+",LEN("+cella+")-LEN(SUBSTITUTE("+cella+","+"\"/\" "+","+""+"))),1))";
 						cell.setCellFormula(formula);
 
 						conta++;
+						
+					}else if(cellNum == 3) {
+						
+						//ora devo caricare i dati della colonna Description
+						caricaDescription(descriptionSheet,v); 
 					}
 					
 					cellNum ++; 
@@ -730,6 +743,8 @@ public class ChangeManagement {
 		}catch(IOException ex) { ex.printStackTrace(); }
 		
 	}
+
+
 	
 	
 }

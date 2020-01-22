@@ -28,6 +28,7 @@ public class Main {
 		String [] nomiCartelle = null; 
 		String nomeFoglioExc = ""; 
 		ChangeManagement CM;
+		String vecchioCMExcel= "CM_DEC_2st_2019.xlsx";
 		
 		//il mio foglio excel
 		XSSFWorkbook workbook;
@@ -89,25 +90,27 @@ public class Main {
 	    	    //caricamento dati Appoggio Changed Games
 	    		if(nomeFoglioExc.endsWith(".xlsx")) {
 	    			File vuoto = new File(newCMPath+"\\"+nomeFoglioExc); 
-	    			File pieno = new File(oldCMPath+"\\CM_DEC_2st_2019.xlsx"); 
+	    			File pieno = new File(oldCMPath+"\\"+vecchioCMExcel); 
 	    			 CM.appoggioChangedGames(vuoto,pieno);
 	    			 System.out.println("\nDone ...");
 	    		}else {
 	    			File vuoto = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx"); 
-	    			File pieno = new File(oldCMPath+"\\CM_DEC_2st_2019.xlsx");
+	    			File pieno = new File(oldCMPath+"\\"+vecchioCMExcel);
 	    			 CM.appoggioChangedGames(vuoto,pieno); 
 	    			 System.out.println("\nDone ..."); 
 	    		}
 	    		
 	    		//caricamento dati Checksums 
 	    		if(nomeFoglioExc.endsWith(".xlsx")) {
-	    			File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc); 
-	    			CM.checksums1(nuovoFile);
+	    			File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc);
+	    			File vecchioFile = new File(oldCMPath+"\\"+vecchioCMExcel);
+	    			CM.checksums1(nuovoFile,vecchioFile);
 	    			//CM.checksums2(nuovoFile);
 	    			System.out.println("\nDone ...");
 	    		}else {
-	    			 File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx"); 
-	    			 CM.checksums1(nuovoFile);
+	    			 File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx");
+	    			 File vecchioFile = new File(oldCMPath+"\\"+vecchioCMExcel);
+	    			 CM.checksums1(nuovoFile,vecchioFile);
 	    			 //CM.checksums2(nuovoFile);
 	    			 System.out.println("\nDone ...");
 	    		}
