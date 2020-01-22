@@ -109,9 +109,7 @@ public class Main {
 	    			 CM.checksums(nuovoFile);
 	    			 System.out.println("\nDone ...");
 	    		}
-	    		
-	    	    	    	    
-	    	    
+	    			    	    
 	    	    
 	    	}else {  //nome foglio Excel non valido
 	    		System.out.println("File non trovato! ");

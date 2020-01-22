@@ -576,12 +576,15 @@ public class ChangeManagement {
 			FileInputStream mioFile = new FileInputStream( f ); //file nuovo CM
 			
 			XSSFWorkbook workbook_fp = new XSSFWorkbook(mioFile);
-			XSSFSheet desiredSheetP = workbook_fp.getSheetAt(1);
 			
-			int rowNum = 0; 
+			XSSFSheet checksumsSheet = workbook_fp.getSheetAt(1);
+			XSSFSheet grezziSheet = workbook_fp.getSheetAt(0);
+			
+			int rowNum = 0;
+			int checksumsRowNum = 0; 
 			
 			/*inserimento titolo*/
-			Row header = desiredSheetP.createRow(rowNum);
+			Row header = checksumsSheet.createRow(rowNum);
 			
 		    header.createCell(0).setCellValue("FileName");
 		    header.createCell(1).setCellValue("Path");
@@ -595,9 +598,70 @@ public class ChangeManagement {
 		    header.createCell(9).setCellValue("For Lookup");
 		    header.createCell(10).setCellValue("Column5");
 		    
-			Iterator <Row> RowIterator = desiredSheetP.iterator();
+		    
 			
-			
+			/* ora scorro tutto Grezzi e per ogni riga in grezzi faccio la formula*/
+		    Iterator<Row> rowIterator = grezziSheet.rowIterator(); 
+		    
+		    //salto la prima riga nel tab Checksums perché è il titolo
+		    Iterator<Row> checksumsRowIterator = checksumsSheet.rowIterator();
+		    if(checksumsRowIterator.hasNext()) {
+		    	checksumsRowIterator.next() ; 
+		    	checksumsRowNum ++; 
+		    }
+	 
+		    while(rowIterator.hasNext()) {
+		    	
+		    	Row row = rowIterator.next() ; 
+		    	
+		    	Row rowChecksums = checksumsSheet.createRow(checksumsRowNum) ; 
+		    			
+		    	Iterator<Cell> cellIterator = row.cellIterator() ; 
+		    	
+		    	int cellNum = 0; 
+		    	//int checksumsCellNum = 0 ; 
+		    	
+		    	String sha1 = ""; 
+		    	String path = ""; 
+		    	
+		    	//creo 11 celle in checksums per ogni riga creata
+		    	for(int i=0; i<11;i++) {
+		    		 rowChecksums.createCell(i);  
+		    	}
+		    	
+		    	while(cellIterator.hasNext()) {
+		    		
+		    		Cell cell = cellIterator.next() ;
+		    	    
+		    		
+		    		switch(cell.getCellType()) {
+		    		
+			    		case NUMERIC:
+			    			break ; 
+			    		case STRING:
+			    			
+			    			if(cellNum == 0) { //ho gli sha1
+			    				
+			    				sha1 = cell.getStringCellValue() ; 
+			    				Cell cellChecksumsUpdate = checksumsSheet.getRow(checksumsRowNum).getCell(2);
+			    				cellChecksumsUpdate.setCellValue(sha1);
+			    				
+			    			}else if(cellNum == 1) { //ho i path
+			    				
+			    			    path = cell.getStringCellValue() ; 	
+			    			}
+			    			break ; 
+		    		}
+		    		
+		    		cellNum ++ ; 
+		    
+		    	}
+		    	
+		    	rowNum ++ ; 
+		    	checksumsRowNum ++ ; 
+		    }
+		    
+		    
 			mioFile.close();
 			
 			//aggiorna il file che era vuoto
