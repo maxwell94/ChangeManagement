@@ -609,6 +609,8 @@ public class ChangeManagement {
 		    	checksumsRowIterator.next() ; 
 		    	checksumsRowNum ++; 
 		    }
+		    
+		    int indexRow = 1; 
 	 
 		    while(rowIterator.hasNext()) {
 		    	
@@ -624,7 +626,7 @@ public class ChangeManagement {
 		    	String sha1 = ""; 
 		    	String path = ""; 
 		    	
-		    	//creo 11 celle in checksums per ogni riga creata
+		    	//creo 11 celle in checksums per ogni riga trovata nel tab Grezzi
 		    	for(int i=0; i<11;i++) {
 		    		 rowChecksums.createCell(i);  
 		    	}
@@ -644,8 +646,9 @@ public class ChangeManagement {
 			    				
 			    				sha1 = cell.getStringCellValue() ; 
 			    				Cell cellChecksumsUpdate = checksumsSheet.getRow(checksumsRowNum).getCell(2);
-			    				cellChecksumsUpdate.setCellValue(sha1);
-			    				
+			    				String formula = "Grezzi!A"+indexRow;
+			    				//cellChecksumsUpdate.setCellValue(sha1); // non devo metterlo direttamente ma fare la formula di excel che me lo prende automaticamente
+			    				cellChecksumsUpdate.setCellFormula(formula);
 			    			}else if(cellNum == 1) { //ho i path
 			    				
 			    			    path = cell.getStringCellValue() ; 	
@@ -659,6 +662,7 @@ public class ChangeManagement {
 		    	
 		    	rowNum ++ ; 
 		    	checksumsRowNum ++ ; 
+		    	indexRow ++; 
 		    }
 		    
 		    
@@ -668,6 +672,8 @@ public class ChangeManagement {
 			FileOutputStream out = new FileOutputStream(f);
 			workbook_fp.write(out);
 			out.close();
+			
+			indexRow = 0 ; 
 		
 			
 		}catch(IOException ex) { ex.printStackTrace(); }
