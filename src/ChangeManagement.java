@@ -682,7 +682,7 @@ public class ChangeManagement {
 				rowNum ++; 
 			}
 			
-			//int conta = 0 ; 
+			int conta = 2; 
 			
 			while(checkSRowIterator.hasNext()) {
 				
@@ -694,10 +694,20 @@ public class ChangeManagement {
 				
 				while(checkScellIterator.hasNext()) {
 					
-					Cell cell = checkScellIterator.next() ;
+					Cell cell = checkScellIterator.next();
 					
-					if(cellNum == 0) {
-						cell.setCellValue("Maxio");
+					if(cellNum == 0) { // se la prima colonna faccio la formula per ricavare il .class
+						
+						String cella = "B"+conta;
+						String c = "@";
+						String strVuota = "";
+						
+						//String formula ="RIGHT("+cella+",5)";
+						//String formula = "RIGHT(B1,LEN(B1)-FIND('@',SUBSTITUTE(B1,'/',"'@'",LEN(B1)-LEN(SUBSTITUTE(B1,"+slash+",''))),1))";
+						String formula = "RIGHT("+cella+",LEN("+cella+")-FIND("+cella+",SUBSTITUTE("+cella+","+"\"/\" "+","+cella+",LEN("+cella+")-LEN(SUBSTITUTE("+cella+","+"\"/\" "+","+""+"))),1))";
+						cell.setCellFormula(formula);
+
+						conta++;
 					}
 					
 					cellNum ++; 
@@ -709,7 +719,7 @@ public class ChangeManagement {
 		    
 			mioFile.close();
 			
-			//aggiorna il file che era vuoto
+			//aggiorna il folgio excel
 			FileOutputStream out = new FileOutputStream(f);
 			workbook_fp.write(out);
 			out.close();
@@ -721,71 +731,5 @@ public class ChangeManagement {
 		
 	}
 	
-	
-	public void checksums2(File f) {
-		
-		try {
-			
-			FileInputStream mioFile = new FileInputStream( f ); //file nuovo CM
-			
-			XSSFWorkbook workbook_fp = new XSSFWorkbook(mioFile);
-			
-			FormulaEvaluator evaluator = workbook_fp.getCreationHelper().createFormulaEvaluator() ; 
-			
-			XSSFSheet checksumsSheet = workbook_fp.getSheetAt(1);
-			
-			Iterator<Row> rowIterator = checksumsSheet.iterator() ; 
-			int rowNum = 0; 
-			
-			// se è la prima riga la salto perché è il titolo
-			if(rowIterator.hasNext()) {
-				rowIterator.next() ;
-				//System.out.println("DEBUG1...");
-				rowNum ++; 
-			}
-			
-			//int conta = 0 ; 
-			
-			while(rowIterator.hasNext()) {
-				
-				Row row = rowIterator.next() ; 
-				
-				int cellNum = 0;
-				
-				Iterator<Cell> cellIterator = row.cellIterator() ; 
-				
-				while(cellIterator.hasNext()) {
-					
-					Cell cell = cellIterator.next() ;
-					
-					if(cellNum == 0) {
-						cell.setCellValue("Maxio");
-					}
-					
-					switch(evaluator.evaluateInCell(cell).getCellType()) {
-					
-						case STRING:
-							//System.out.println("cellNum = "+cellNum+"   "+cell.getStringCellValue());
-							break; 
-						case NUMERIC:
-							//System.out.println(cell.getNumericCellValue());
-							break ; 
-						
-					}
-					
-					cellNum ++; 
-				}
-				
-				rowNum ++; 
-			}
-
-           			
-			//aggiorna il foglio excel
-			FileOutputStream out = new FileOutputStream(f);
-			workbook_fp.write(out);
-			out.close();
-			
-		}catch( IOException ex) { ex.printStackTrace(); }
-	}
 	
 }
