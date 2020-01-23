@@ -702,17 +702,20 @@ public class ChangeManagement {
 					
 					Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
 					if(cn == 5) {
-						System.out.print(cell.toString()+"   ") ; 
+						//System.out.print(cell.toString()+"   ") ;
+						checksumColumn1.add(cell.toString()); 
 						
 					}else if( cn == 6) {
-						System.out.print(cell.toString()+"   ") ;
+						checksumColumn2.add(cell.toString());
+						//System.out.print(cell.toString()+"   ") ;
 						
 					}else if(cn == 7) {
-						
-						System.out.print(cell.toString()+"   ") ;
+						checksumColumn3.add(cell.toString());
+						//System.out.print(cell.toString()+"   ") ;
 						
 					}else if(cn == 8) {
-						System.out.print(cell.toString()) ;
+						checksumColumn4.add(cell.toString());
+						//System.out.print(cell.toString()) ;
 					}
 					
 				}
@@ -858,7 +861,7 @@ public class ChangeManagement {
 			
 			
 			//chiamo leggiVCM qui
-			leggiVCM(v) ; 
+			//leggiVCM(v) ; 
 			
 			int conta = 2; 
 			int cont = 2; 
@@ -902,7 +905,12 @@ public class ChangeManagement {
 					}else if(cellNum == 5) {
 						//cell.setCellValue("Maxio");
 						
-						//leggiVCM(); 
+						//questa funzione memorizza dentro degli arraylist i dati di column1 , column2, column3, column4
+						//cosi sono facili da recuperarli e incollarli dentro checksums
+						
+						leggiVCM(v); 
+						
+						
 						
 					}
 					
