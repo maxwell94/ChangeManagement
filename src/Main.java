@@ -106,13 +106,13 @@ public class Main {
 	    			File vecchioFile = new File(oldCMPath+"\\"+vecchioCMExcel);
 	    			CM.checksums1(nuovoFile,vecchioFile);
 	    			//CM.checksums2(nuovoFile);
-	    			System.out.println("\nDone ...");
+	    			System.out.println("\nChecksums finito con successo ...");
 	    		}else {
 	    			 File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx");
 	    			 File vecchioFile = new File(oldCMPath+"\\"+vecchioCMExcel);
 	    			 CM.checksums1(nuovoFile,vecchioFile);
 	    			 //CM.checksums2(nuovoFile);
-	    			 System.out.println("\nDone ...");
+	    			 System.out.println("\nnChecksums finito con successo ...");
 	    		}
 	    			    	    
 	    	    

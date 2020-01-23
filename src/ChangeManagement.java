@@ -49,6 +49,8 @@ public class ChangeManagement {
 	
 	/* controllare se la creazione del foglio Ã¨ andata buon fine */
 	private int rt ; 
+	
+	ArrayList<String> giochiPathGrezzi ; 
 
 	/*Costruttore*/
 	public ChangeManagement(String nomeFoglioExcel) {
@@ -66,6 +68,8 @@ public class ChangeManagement {
 		this.tabs[5] = this.workbook.createSheet("Appoggio Changed Games"); // crea un tab Appoggio Changed Games
 		this.tabs[6] = this.workbook.createSheet("Check EVO"); // crea un tab Check Evo
 		this.tabs[7] = this.workbook.createSheet("Description"); // crea un tab Description
+		
+		this.giochiPathGrezzi = new ArrayList<String>() ; 
 		
 		//creo fisicamente il foglio excel
 		rt = generaFoglioExcel(nomeFoglioExcel);
@@ -525,9 +529,11 @@ public class ChangeManagement {
 	        		}else {
 	        			
 	        			/* tolgo dal path il nome della cartella principale del gioco */
-	        			int posPrimoSlash = path.indexOf("/") ;
+	        			//System.out.println("path: "+path);
+	        			int posPrimoSlash = path.indexOf("/");
 	        			String nuovoPath = path.substring(posPrimoSlash+1); 	        			
 	        			cell.setCellValue(nuovoPath);
+	        			giochiPathGrezzi.add(nuovoPath); 
 	        		}
 	        	}
 	        	 
@@ -559,6 +565,19 @@ public class ChangeManagement {
 	}
 	
 	
+	public int cercaPaths(String s) {
+		
+		int trovato = 0; 
+		for(String str: giochiPathGrezzi) {
+			if(s.equals(str)) {
+				trovato = 1 ; 
+			}
+		}
+		
+		return trovato ; 
+	}
+	
+	
 	/* Metodo che lavora dentro il tab Description */
 	public void caricaDescription(XSSFSheet descriptionSheet, File v) {
 		
@@ -569,29 +588,81 @@ public class ChangeManagement {
 			
 			XSSFSheet desiredSheet = w.getSheetAt(7); 
 			
-			Iterator<Row> rowIterator = desiredSheet.iterator() ; 
+			Iterator<Row> rowIterator = desiredSheet.iterator(); 
+			
 			int rowNum = 0 ; 
-			/* Se è la prima riga la salto */
+		
+			
+			/* Nel sheet da riempire creo prima il titolo */
+			Row header = descriptionSheet.createRow(rowNum);
+			
+		    header.createCell(0).setCellValue("Filename");
+		    header.createCell(1).setCellValue("Path");
+		    header.createCell(2).setCellValue("Description");
+			
+			/* Invece nel sheet da cui devo copiare le cose è la prima riga la salto perché è il titolo */
 			if(rowIterator.hasNext()) {
 				rowIterator.next();
 				rowNum ++;
 			}
+			 
+			
+			XSSFSheet sheetGrezzi = w.getSheetAt(0); 
 			
 			while(rowIterator.hasNext()) {
+				
 				Row row = rowIterator.next() ; 
+				
+				Row row2 = descriptionSheet.createRow(rowNum) ; 
 				
 				Iterator<Cell> cellIterator = row.cellIterator() ; 
 				
+				int cellNum = 0;
+							
+				
 				while(cellIterator.hasNext()) {
 					
-					Cell cell = cellIterator.next() ;
+					Cell cell = cellIterator.next();
+					
+					Cell c = row2.createCell(cellNum) ; 
 					
 					switch(cell.getCellType()) {
 					
 						case STRING:
-							System.out.println(cell.getStringCellValue());
+                            
+							/* Cercherò in Grezzi il path corrente, se non lo trovo toglierò il nome del folder principale
+							 * dal path ed eseguirò di nuovo la ricerca. è un modo per sapere devo modificare il path o no*/
+							
+							if(cellNum == 1) {
+							   
+								
+							  int trovato = cercaPaths( cell.getStringCellValue() );
+							  if( trovato == 0) {
+								  //c.setCellValue("non trovato");
+								  int primoSlash = cell.getStringCellValue().indexOf("/");
+								  String newPth = cell.getStringCellValue().substring(primoSlash+1) ;
+								  trovato = cercaPaths(newPth);
+								  if(trovato == 1) {
+									  c.setCellValue(newPth);
+								  }else {
+									  c.setCellValue(cell.getStringCellValue());
+									  //System.out.println("controllare bene il path : "+newPth);
+								  }
+								  //c.setCellValue(newPth);
+								  
+							  }else if( trovato == 1) {
+								  c.setCellValue(cell.getStringCellValue());
+							  }
+								
+							}else {
+								
+								c.setCellValue(cell.getStringCellValue());
+							}
+							
 							break ; 
 					}
+					
+					cellNum ++; 
 				}
 				
 				rowNum ++; 
@@ -728,14 +799,15 @@ public class ChangeManagement {
 			}
 			
 			int conta = 2; 
+			int cont = 2; 
 			
 			while(checkSRowIterator.hasNext()) {
 				
-				Row row = checkSRowIterator.next() ; 
+				Row row = checkSRowIterator.next(); 
 				
 				int cellNum = 0;
 				
-				Iterator<Cell> checkScellIterator = row.cellIterator() ; 
+				Iterator<Cell> checkScellIterator = row.cellIterator(); 
 				
 				while(checkScellIterator.hasNext()) {
 					
@@ -757,9 +829,18 @@ public class ChangeManagement {
 						
 					}else if(cellNum == 3) {
 						
-						//ora devo caricare i dati della colonna Description
+						String cella = "B"+cont;
+						String matrice = "Description!B2:C139";
+						//ora devo caricare i dati della colonna Column1 (tabella sinistra Checksums)
 						caricaDescription(descriptionSheet,v); 
+						String formula = "VLOOKUP("+cella+","+matrice+",2,FALSE)";
+						cell.setCellFormula(formula);
+						cont++;
+						
+					}else if(cellNum == 5) {
+						cell.setCellValue("Maxio");
 					}
+					
 					
 					cellNum ++; 
 				}
