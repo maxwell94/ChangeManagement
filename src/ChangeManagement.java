@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -50,7 +51,12 @@ public class ChangeManagement {
 	/* controllare se la creazione del foglio Ã¨ andata buon fine */
 	private int rt ; 
 	
-	ArrayList<String> giochiPathGrezzi ; 
+	ArrayList<String> giochiPathGrezzi ;
+	
+	ArrayList<String> checksumColumn1 ;
+	ArrayList<String> checksumColumn2 ;
+	ArrayList<String> checksumColumn3 ;
+	ArrayList<String> checksumColumn4 ;
 
 	/*Costruttore*/
 	public ChangeManagement(String nomeFoglioExcel) {
@@ -340,8 +346,6 @@ public class ChangeManagement {
 				
 				cellNum = 0; 
 				
-				System.out.println("\n");
-				
 				
 				rowNum ++;
 			}
@@ -489,7 +493,7 @@ public class ChangeManagement {
 			
 			//vado nel tab desiderato che in questo caso è Grezzi 
 			XSSFSheet desiredSheet = workbook.getSheetAt(0);
-			System.out.print("Aggiornamento tab: "+desiredSheet.getSheetName()+"...");
+			//System.out.print("Aggiornamento tab: "+desiredSheet.getSheetName()+"...");
 			
 			/* cancello tutti i dati che ci sono già nel tab grezzi */
 			deleteSheetAllContent(desiredSheet);
@@ -556,7 +560,7 @@ public class ChangeManagement {
 			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
 			workbook.write(fileOutputStream);
 			fileOutputStream.close();
-			System.out.print(" Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
+			//System.out.print(" Fine aggiornamento tab: "+desiredSheet.getSheetName()+"\n");
 			
 		}else {
 			System.out.println("File non trovato! ");
@@ -674,6 +678,54 @@ public class ChangeManagement {
 	}
 	
 	
+	
+	/* Metodo che va a leggere il foglio excel del vecchio CM e memorizza la column1 , column2 , column3 , column4 dentro degli arraylist */
+	public void leggiVCM(File f) {
+		
+		try {
+			
+			FileInputStream mioFile = new FileInputStream( f );	
+			XSSFWorkbook w = new XSSFWorkbook(mioFile);
+			
+			//FormulaEvaluator evaluator = w.getCreationHelper().createFormulaEvaluator() ; 
+			
+			XSSFSheet wSheet = w.getSheetAt(1); //vado nel tab Checksums
+			
+			Iterator<Row> rowIterator = wSheet.iterator() ; 
+			
+			int rowNum = 0; 
+			
+			for(Row row: wSheet) {
+				
+				
+				for(int cn = 0; cn < row.getLastCellNum(); cn++) {
+					
+					Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
+					if(cn == 5) {
+						System.out.print(cell.toString()+"   ") ; 
+						
+					}else if( cn == 6) {
+						System.out.print(cell.toString()+"   ") ;
+						
+					}else if(cn == 7) {
+						
+						System.out.print(cell.toString()+"   ") ;
+						
+					}else if(cn == 8) {
+						System.out.print(cell.toString()) ;
+					}
+					
+				}
+				
+				System.out.println("\n");
+			}
+			
+			
+		}catch(IOException ex) { ex.printStackTrace(); }
+	
+	}
+	
+	
 	/* Metodo che lavora dentro il tab Checksums */
 	/*
 	 * Formula parola dopo ultimo slash(col A): "STRINGA.ESTRAI([@Path];TROVA("*";SOSTITUISCI([@Path];"/";"*";LUNGHEZZA([@Path])-LUNGHEZZA(SOSTITUISCI([@Path];"/";""))))+1;LUNGHEZZA([@Path]))" 
@@ -689,6 +741,8 @@ public class ChangeManagement {
 			
 			FileInputStream mioFile = new FileInputStream( f ); //file nuovo CM
 			
+			//FileInputStream fileVCM = new FileInputStream( v ); //file vecchio CM
+			
 			XSSFWorkbook workbook_fp = new XSSFWorkbook(mioFile);
 			
 			XSSFSheet checksumsSheet = workbook_fp.getSheetAt(1);
@@ -696,10 +750,12 @@ public class ChangeManagement {
 			
 			XSSFSheet descriptionSheet = workbook_fp.getSheetAt(7);
 			
+			
 			int rowNum = 0;
 			int checksumsRowNum = 0; 
+			int checksumsSheetVcmRowNum = 0; 
 			
-			/*inserimento titolo*/
+			/*inserimento titolo nuovo foglio Excel */
 			Row header = checksumsSheet.createRow(rowNum);
 			
 		    header.createCell(0).setCellValue("FileName");
@@ -713,7 +769,6 @@ public class ChangeManagement {
 		    header.createCell(8).setCellValue("Column4");
 		    header.createCell(9).setCellValue("For Lookup");
 		    header.createCell(10).setCellValue("Column5");
-		    
 		    
 			
 			/* ora scorro tutto Grezzi e per ogni riga in grezzi faccio la formula*/
@@ -732,11 +787,14 @@ public class ChangeManagement {
 		    	
 		    	Row row = rowIterator.next() ; 
 		    	
+
+		    	
 		    	Row rowChecksums = checksumsSheet.createRow(checksumsRowNum) ; 
 		    			
 		    	Iterator<Cell> cellIterator = row.cellIterator() ; 
 		    	
 		    	int cellNum = 0; 
+		    	int checksumsSheetVcmCellNum =0; 
 		    	//int checksumsCellNum = 0 ; 
 		    	
 		    	String sha1 = ""; 
@@ -798,6 +856,10 @@ public class ChangeManagement {
 				rowNum ++; 
 			}
 			
+			
+			//chiamo leggiVCM qui
+			leggiVCM(v) ; 
+			
 			int conta = 2; 
 			int cont = 2; 
 			
@@ -838,7 +900,10 @@ public class ChangeManagement {
 						cont++;
 						
 					}else if(cellNum == 5) {
-						cell.setCellValue("Maxio");
+						//cell.setCellValue("Maxio");
+						
+						//leggiVCM(); 
+						
 					}
 					
 					
