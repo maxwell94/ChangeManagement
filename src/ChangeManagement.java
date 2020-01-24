@@ -27,6 +27,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.examples.CreateCell;
 
 /**
  * Classe che gestisce tutto il Change Management. 
@@ -57,6 +58,8 @@ public class ChangeManagement {
 	ArrayList<String> checksumColumn2 ;
 	ArrayList<String> checksumColumn3 ;
 	ArrayList<String> checksumColumn4 ;
+	
+	int maxRowGrezzi; 
 
 	/*Costruttore*/
 	public ChangeManagement(String nomeFoglioExcel) {
@@ -76,6 +79,14 @@ public class ChangeManagement {
 		this.tabs[7] = this.workbook.createSheet("Description"); // crea un tab Description
 		
 		this.giochiPathGrezzi = new ArrayList<String>() ; 
+		
+		this.checksumColumn1 = new ArrayList<String>() ;
+		this.checksumColumn2 = new ArrayList<String>() ;
+		this.checksumColumn3 = new ArrayList<String>() ;
+		this.checksumColumn4 = new ArrayList<String>() ;
+		
+		this.maxRowGrezzi = 0; 
+
 		
 		//creo fisicamente il foglio excel
 		rt = generaFoglioExcel(nomeFoglioExcel);
@@ -523,6 +534,7 @@ public class ChangeManagement {
 	        	String path = dati.substring(41);
 	        	
 	        	Row row = desiredSheet.createRow(rowNum) ;
+	        	maxRowGrezzi ++;
 	        	
 	        	int cellNum = 0; 
 	        	for(int i=0;i<2; i++) {
@@ -554,6 +566,7 @@ public class ChangeManagement {
         			c.setCellValue(nomeCheckSum);
         		}
 	        }
+	        maxRowGrezzi ++;
 	        
 	        
 			//aggiorna il foglio
@@ -690,8 +703,7 @@ public class ChangeManagement {
 			//FormulaEvaluator evaluator = w.getCreationHelper().createFormulaEvaluator() ; 
 			
 			XSSFSheet wSheet = w.getSheetAt(1); //vado nel tab Checksums
-			
-			Iterator<Row> rowIterator = wSheet.iterator() ; 
+	
 			
 			int rowNum = 0; 
 			
@@ -720,7 +732,6 @@ public class ChangeManagement {
 					
 				}
 				
-				System.out.println("\n");
 			}
 			
 			
@@ -729,18 +740,52 @@ public class ChangeManagement {
 	}
 	
 	
-	/* Metodo che lavora dentro il tab Checksums */
-	/*
-	 * Formula parola dopo ultimo slash(col A): "STRINGA.ESTRAI([@Path];TROVA("*";SOSTITUISCI([@Path];"/";"*";LUNGHEZZA([@Path])-LUNGHEZZA(SOSTITUISCI([@Path];"/";""))))+1;LUNGHEZZA([@Path]))" 
-	 * Formula copia colonna tab(col B): "=Grezzi!B1" 
-	 * Formula descrizione(col D): "=CERCA.VERT([@Path];Summary6[[Path]:[Description]];2;FALSO)" 
-	 * Formula (col C): "=Grezzi!A1" 
-	 * Formula (col J): "=[@Column1]&"_"&[@Column2]"
-	 * Formula (col K): "=CERCA.VERT(Checksums!$I2;Summary[[Path]:[Sha1]];2;FALSO)"
-	 * */
+	/* Metodo che crea delle righe e celle vuoto nel tab checksums prima di iniziare l'inserimento dei dati 
+	 * Questo per evitare che il programma si fermi senza avere scritto tutti i dati */
+	
+	public void checksumsCreateRowsAndCells(XSSFSheet checksumsSheet) {
+		
+		for(int i=0;i<234; i++) {
+			
+			Row row = checksumsSheet.createRow(i); 
+			
+			for(int j=0;j<20; j++) {
+				
+				 Cell c = row.createCell(j);
+				 c.setCellValue("");
+
+			}
+		}
+	}
+	
+	
+	
+
+	public void deleteEmptyRows(XSSFSheet checksumsSheet) {
+		
+		int indexRow = 0; 
+		
+		for(Row row: checksumsSheet) {
+			
+			for(int cn = 0; cn < row.getLastCellNum(); cn++) {
+				
+                if(indexRow >= maxRowGrezzi && cn < 4) {
+                	
+                	Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
+                	cell.setCellType(CellType.BLANK);
+                }
+				
+			}
+			
+			indexRow ++; 
+		}
+	}
+	
+	
 	public void checksums1(File f, File v) {
 		
 		try {
+			
 			
 			FileInputStream mioFile = new FileInputStream( f ); //file nuovo CM
 			
@@ -749,6 +794,11 @@ public class ChangeManagement {
 			XSSFWorkbook workbook_fp = new XSSFWorkbook(mioFile);
 			
 			XSSFSheet checksumsSheet = workbook_fp.getSheetAt(1);
+			
+			//create a lot rows and cells
+			checksumsCreateRowsAndCells(checksumsSheet);
+			
+			
 			XSSFSheet grezziSheet = workbook_fp.getSheetAt(0);
 			
 			XSSFSheet descriptionSheet = workbook_fp.getSheetAt(7);
@@ -865,6 +915,15 @@ public class ChangeManagement {
 			
 			int conta = 2; 
 			int cont = 2; 
+			int index1 = 1;
+			int index2 = 1;
+			int index3 = 1;
+			int index4 = 1;
+			int index5 = 1; 
+			int index6 = 1; 
+			
+			
+			leggiVCM(v);
 			
 			while(checkSRowIterator.hasNext()) {
 				
@@ -903,15 +962,34 @@ public class ChangeManagement {
 						cont++;
 						
 					}else if(cellNum == 5) {
-						//cell.setCellValue("Maxio");
 						
-						//questa funzione memorizza dentro degli arraylist i dati di column1 , column2, column3, column4
-						//cosi sono facili da recuperarli e incollarli dentro checksums
+					   cell.setCellValue(checksumColumn1.get(index1));
+					   index1++;
+					   
+					}else if(cellNum == 6) {
 						
-						leggiVCM(v); 
+						   cell.setCellValue(checksumColumn2.get(index2));
+						   index2++;
+						   
+					}else if(cellNum == 7) {
 						
+						   cell.setCellValue(checksumColumn3.get(index3));
+						   index3++;
+						   
+					}else if(cellNum == 8) {
 						
+						   cell.setCellValue(checksumColumn4.get(index4));
+						   index4++;
+					
+					}else if(cellNum == 9) {
 						
+						cell.setCellValue("Buon");
+						index5 ++;
+						
+					}else if(cellNum == 10) {
+						
+						cell.setCellValue("giorno");
+					    index6 ++;
 					}
 					
 					
@@ -920,7 +998,13 @@ public class ChangeManagement {
 				
 				rowNum ++; 
 			}
-		    
+			
+			
+			
+			
+			/* Ora devo cancellare le righe che non esistono in grezzi ma in checksums esistono perché hanno valoro null */
+		    System.out.println("Maxrowgrezzi = "+maxRowGrezzi);
+		    deleteEmptyRows(checksumsSheet);
 		    
 			mioFile.close();
 			
