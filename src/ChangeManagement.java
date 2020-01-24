@@ -916,6 +916,7 @@ public class ChangeManagement {
 			int conta = 2; 
 			int cont = 2;
 			int cont1 = 2; 
+			int cont2 = 2;
 			
 			int index1 = 1;
 			int index2 = 1;
@@ -993,8 +994,12 @@ public class ChangeManagement {
 						
 					}else if(cellNum == 10) {
 						
-						cell.setCellValue("giorno");
+						String cella = "I"+cont2;
+						String matrice = "Checksums!B2:C122";
+						String formula = "VLOOKUP("+cella+","+matrice+",2,FALSE)";
+						cell.setCellFormula(formula);
 					    index6 ++;
+					    cont2 ++;
 					}
 					
 					
