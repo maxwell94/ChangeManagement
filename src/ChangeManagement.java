@@ -564,10 +564,13 @@ public class ChangeManagement {
         			c.setCellValue(sha1CheckSum.toLowerCase());
         		}else {
         			c.setCellValue(nomeCheckSum);
+        			
+        			giochiPathGrezzi.add(nomeCheckSum);
         		}
 	        }
-	        maxRowGrezzi ++;
 	        
+	        rowNum++;
+	        maxRowGrezzi ++;
 	        
 			//aggiorna il foglio
 			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
@@ -726,7 +729,13 @@ public class ChangeManagement {
 						//System.out.print(cell.toString()+"   ") ;
 						
 					}else if(cn == 8) {
-						checksumColumn4.add(cell.toString());
+						
+						/* Devo togliere il nome del folder principale però ricordarsi che dal CM1_JAN_2020 
+						 * in poi togliere questa parte */
+						int primoSlash = cell.toString().indexOf("/");
+						String s = cell.toString().substring(primoSlash+1);
+						checksumColumn4.add(s);
+						
 						//System.out.print(cell.toString()) ;
 					}
 					
@@ -745,7 +754,7 @@ public class ChangeManagement {
 	
 	public void checksumsCreateRowsAndCells(XSSFSheet checksumsSheet) {
 		
-		for(int i=0;i<233; i++) {
+		for(int i=0;i<234; i++) {
 			
 			Row row = checksumsSheet.createRow(i); 
 			
@@ -838,16 +847,14 @@ public class ChangeManagement {
 	 
 		    while(rowIterator.hasNext()) {
 		    	
-		    	Row row = rowIterator.next() ; 
+		    	Row row = rowIterator.next(); 
 		    	
-
-		    	
-		    	Row rowChecksums = checksumsSheet.createRow(checksumsRowNum) ; 
+		    	Row rowChecksums = checksumsSheet.createRow(rowNum) ; 
 		    			
 		    	Iterator<Cell> cellIterator = row.cellIterator() ; 
 		    	
 		    	int cellNum = 0; 
-		    	int checksumsSheetVcmCellNum =0; 
+		    	int checksumsSheetVcmCellNum = 0; 
 		    	//int checksumsCellNum = 0 ; 
 		    	
 		    	String sha1 = ""; 
@@ -871,7 +878,7 @@ public class ChangeManagement {
 			    			if(cellNum == 0) { //faccio la formula per gli sha1
 			    				
 			    				//sha1 = cell.getStringCellValue() ; 
-			    				Cell cellChecksumsUpdate = checksumsSheet.getRow(checksumsRowNum).getCell(2);
+			    				Cell cellChecksumsUpdate = checksumsSheet.getRow(rowNum).getCell(2);
 			    				String formula = "Grezzi!A"+indexRow;
 			    				//cellChecksumsUpdate.setCellValue(sha1); // non devo metterlo direttamente ma fare la formula di excel che me lo prende automaticamente
 			    				cellChecksumsUpdate.setCellFormula(formula);
@@ -879,11 +886,12 @@ public class ChangeManagement {
 			    			}else if(cellNum == 1) { //faccio la formula per i path
 			    				
 			    			   // path = cell.getStringCellValue() ;
-			    				Cell cellChecksumsUpdate = checksumsSheet.getRow(checksumsRowNum).getCell(1);
+			    				Cell cellChecksumsUpdate = checksumsSheet.getRow(rowNum).getCell(1);
 			    				String formula = "Grezzi!B"+indexRow;
 			    				//cellChecksumsUpdate.setCellValue(sha1); // non devo metterlo direttamente ma fare la formula di excel che me lo prende automaticamente
 			    				cellChecksumsUpdate.setCellFormula(formula);
 			    			}
+			    			
 			    			break ; 
 		    		}
 		    		
@@ -891,6 +899,7 @@ public class ChangeManagement {
 		    
 		    	}
 		    	
+		    	//System.out.println("rowNum = "+rowNum);
 		    	rowNum ++ ; 
 		    	checksumsRowNum ++ ; 
 		    	indexRow ++; 
