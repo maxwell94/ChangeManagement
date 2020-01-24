@@ -745,7 +745,7 @@ public class ChangeManagement {
 	
 	public void checksumsCreateRowsAndCells(XSSFSheet checksumsSheet) {
 		
-		for(int i=0;i<234; i++) {
+		for(int i=0;i<233; i++) {
 			
 			Row row = checksumsSheet.createRow(i); 
 			
@@ -914,7 +914,9 @@ public class ChangeManagement {
 			//leggiVCM(v) ; 
 			
 			int conta = 2; 
-			int cont = 2; 
+			int cont = 2;
+			int cont1 = 2; 
+			
 			int index1 = 1;
 			int index2 = 1;
 			int index3 = 1;
@@ -983,8 +985,11 @@ public class ChangeManagement {
 					
 					}else if(cellNum == 9) {
 						
-						cell.setCellValue("Buon");
+						String separator = "\"_\" ";
+						String formula = "CONCATENATE(F"+cont1+","+separator+","+"G"+cont1+")";
+						cell.setCellFormula(formula);
 						index5 ++;
+						cont1++;
 						
 					}else if(cellNum == 10) {
 						
