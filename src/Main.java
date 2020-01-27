@@ -84,39 +84,43 @@ public class Main {
 	    			CM = new ChangeManagement(newCMPath+"\\"+nomeFoglioExc+".xlsx");
 	    		}
 	    		
+	    		
 	    	    //caricamento dati in Grezzi
+	    		System.out.print("Caricamento dati in Grezzi... ");
 	    	    CM.grezzi(f,newCMPath);
+	    	    System.out.print(" Fine\n");
+	    	    
+	    	    
+	    		//caricamento dati Checksums 
+	    		if(nomeFoglioExc.endsWith(".xlsx")) {
+	    			File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc);
+	    			File vecchioFile = new File(oldCMPath+"\\"+vecchioCMExcel);
+	    			System.out.print("Caricamento dati in Checksums ...");
+	    			CM.checksums(nuovoFile,vecchioFile);
+	    			//CM.checksums2(nuovoFile);
+	    			System.out.print(" Fine\n");
+	    		}else {
+	    			 File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx");
+	    			 File vecchioFile = new File(oldCMPath+"\\"+vecchioCMExcel);
+	    			 System.out.print("Caricamento dati in Checksums ...");
+	    			 CM.checksums(nuovoFile,vecchioFile);
+	    			 //CM.checksums2(nuovoFile);
+	    			 System.out.print(" Fine\n");
+	    		}
 	    	    
 	    	    //caricamento dati Appoggio Changed Games
 	    		if(nomeFoglioExc.endsWith(".xlsx")) {
 	    			File vuoto = new File(newCMPath+"\\"+nomeFoglioExc); 
 	    			File pieno = new File(oldCMPath+"\\"+vecchioCMExcel);
-	    			 System.out.print("Appoggio Changed Games in corso ... ");
+	    			System.out.print("Caricamento dati in Appoggio Changed Games ...");
 	    			 CM.appoggioChangedGames(vuoto,pieno);
-	    			 System.out.print("Appoggio Changed Games terminato con successo\n");
+	    			 System.out.print(" Fine\n");
 	    		}else {
 	    			File vuoto = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx"); 
 	    			File pieno = new File(oldCMPath+"\\"+vecchioCMExcel);
-	    			 System.out.print("Appoggio Changed Games in corso ...");
+	    			System.out.print("Caricamento dati in Appoggio Changed Games ...");
 	    			 CM.appoggioChangedGames(vuoto,pieno); 
-	    			 System.out.print("Appoggio Changed Games terminato con successo\n");
-	    		}
-	    		
-	    		//caricamento dati Checksums 
-	    		if(nomeFoglioExc.endsWith(".xlsx")) {
-	    			File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc);
-	    			File vecchioFile = new File(oldCMPath+"\\"+vecchioCMExcel);
-	    			System.out.print("Checksums in corso ...");
-	    			CM.checksums1(nuovoFile,vecchioFile);
-	    			//CM.checksums2(nuovoFile);
-	    			System.out.print(" Checksums terminato con successo ...");
-	    		}else {
-	    			 File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx");
-	    			 File vecchioFile = new File(oldCMPath+"\\"+vecchioCMExcel);
-	    			 System.out.print("Checksums in corso ...");
-	    			 CM.checksums1(nuovoFile,vecchioFile);
-	    			 //CM.checksums2(nuovoFile);
-	    			 System.out.print(" Checksums terminato con successo\n");
+	    			 System.out.print(" Fine\n");
 	    		}
 	    			    	    
 	    	    

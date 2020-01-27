@@ -59,7 +59,8 @@ public class ChangeManagement {
 	ArrayList<String> checksumColumn3 ;
 	ArrayList<String> checksumColumn4 ;
 	
-	int maxRowGrezzi; 
+	int maxRowGrezzi;
+	static int nDatiGrezzi = 0; 
 
 	/*Costruttore*/
 	public ChangeManagement(String nomeFoglioExcel) {
@@ -93,32 +94,9 @@ public class ChangeManagement {
 		
 	}
 	
-	/* Metodo che ritorna rt*/
-    public int getRt() {
-    	return rt; 
-    }
-    
-	/* Metodo che restituisce il foglio Excel*/
-	public XSSFWorkbook getWorkbook() {
-		return workbook;
-	}
-    
-	/* Metodo che modifica il foglio excel*/
-	public void setWorkbook(XSSFWorkbook workbook) {
-		this.workbook = workbook;
-	}
 	
-	
-	public XSSFSheet[] getTabs() {
-		return tabs;
-	}
-
-	public void setTabs(XSSFSheet[] tabs) {
-		this.tabs = tabs;
-	}
-	
-	
-	/* Metodo che genera un foglio excel che il Change Management nella cartella di lavoro 
+	/* --------------------------------------------[generaFoglioExcel]---------------------------------------------------*/
+		/* Metodo che genera un foglio excel che il Change Management nella cartella di lavoro 
 	 * (in futuro si potra modificare cosi da scegliere il percorso in cui si vorrebbe salvarlo) */
 	public int generaFoglioExcel(String nome) {
 
@@ -151,42 +129,14 @@ public class ChangeManagement {
 		
 	}
 	
+	/*--------------------------------------------------[Fine]------------------------------------------------------------*/
 	
-	/* metodo che mi sposta la colonna la colonna degli di appoggio changed games dalla 3° colonna alla 6° */
-	public void spostaSha1AppChGames(XSSFSheet mySheet) {
-		
-		Iterator<Row> RowIterator = mySheet.iterator();
-		int rowNum = 0; 
-		
-		while(RowIterator.hasNext()) {
-			
-			int cellNum = 0; 
-			Row row = RowIterator.next(); 
-			Iterator<Cell> cellIterator = row.cellIterator();
-			
-			String C_Sha1 = "";
-			
-			while(cellIterator.hasNext()) {
-				 
-				
-				Cell cell = cellIterator.next(); //prendo ogni cella 
-				
-				if(cellNum == 0) {
-					C_Sha1 = cell.getStringCellValue() ; 
-					cell.setCellType(CellType.BLANK);
-					//System.out.println(C_Sha1);
-				}else if(cellNum == 1) {
-
-				}else if(cellNum == 3){
-					cell.setCellValue(C_Sha1);
-				}
-				//System.out.println("\n");
-				cellNum ++;
-			}
-			
-			rowNum ++; 
-		}
-	}
+	
+	
+	
+	
+	
+	/* ---------------------------------------------[appoggioChangedGames]---------------------------------------------*/
 
 	/* Metodo che lavora all'interno del tab Appoggio Changed Games 
 	 * getRichStringCellValue().toString();*/
@@ -373,6 +323,15 @@ public class ChangeManagement {
 		}catch(Exception ex) { ex.printStackTrace(); }
 	}
 	
+	/*-----------------------------------------------------[Fine]-------------------------------------------------------*/
+	
+	
+	
+	
+	
+	
+	
+	/* ---------------------------------------------[sostituisci]--------------------------------------------------------*/
 	/* metodo che prende una stringa sostituisce '\' con '/' e ritorna un array */
 	public static char [] sostituisci (String str) {
 		
@@ -392,6 +351,15 @@ public class ChangeManagement {
 		
 		return myStrChar;
 	}
+	
+	/*-------------------------------------------------[Fine]------------------------------------------------------------*/
+	
+	
+	
+	
+
+	
+	/* ---------------------------------------------[deleteSheetAllContent]---------------------------------------------*/
 	
 	/* Metodo che cancella tutto il contenuto di un preciso tab dentro un file Excel */
 	public void deleteSheetAllContent(XSSFSheet desiredSheet) {
@@ -423,68 +391,15 @@ public class ChangeManagement {
             }
         }
 	}
+
+	/*-----------------------------------------------[Fine]--------------------------------------------------------------*/
 	
 	
 	
-	/* Metodo che cancella tutto il contenuto di una certa colonna dentro un preciso tab */
-	public void deleteContentsAddFormulaColumn(XSSFSheet desiredSheet , int nColumn) throws IOException {
-		
-		Iterator<Row> rowIterator = desiredSheet.iterator();
-		
-		int rowNum = 0 ; 
-		/* Se è la prima riga la salto perché titolo */
-		if( rowIterator.hasNext() ) {
-			rowIterator.next();
-			rowNum ++;
-		}
-		
-        while (rowIterator.hasNext()) 
-        {
-            Row row = rowIterator.next();
-            //For each row, iterate through all the columns
-            Iterator<Cell> cellIterator = row.cellIterator();
-            int cellNum = 0; 
-            
-            while (cellIterator.hasNext()) 
-            {
-                Cell cell = cellIterator.next();
-                
-                if( nColumn >= 0 ) {
-                	
-                	if(cellNum == nColumn) {
-                		
-                        switch (cell.getCellType()) 
-                        {
-                            case NUMERIC:
-                            	cell.setCellType(CellType.BLANK);
-                                break;
-                            case STRING:
-                            	cell.setCellType(CellType.BLANK);
-                                break;
-                            case FORMULA:
-                            	cell.setCellType(CellType.BLANK);
-                            	
-                            	//aggiungo la formula dopo aver cancellato
-                            	cell.setCellFormula("Grezzi!B"+(rowNum) );
-                            	//System.out.println("rowNum = "+rowNum);
-                                break;    
-                        }
-                        
-                	}
-                }else {
-                	System.out.println("indice colonna sbagliata...cancellazione impossibile!");
-                }
-                
-                cellNum ++ ;
-                 
-            }
-            
-            rowNum ++;
-            
-        }
-        
-	}
 	
+
+	
+	/* ---------------------------------------------[grezzi]------------------------------------------------------------*/
 	
 	/* Metodo che lavora all'interno del tab Grezzi , praticamente 
 	 * legge il file degli sha e lo carica in excel in grezzi*/
@@ -534,6 +449,7 @@ public class ChangeManagement {
 	        	String path = dati.substring(41);
 	        	
 	        	Row row = desiredSheet.createRow(rowNum) ;
+	       
 	        	maxRowGrezzi ++;
 	        	
 	        	int cellNum = 0; 
@@ -584,7 +500,13 @@ public class ChangeManagement {
 		
 	}
 	
+	/*-----------------------------------------------[Fine]--------------------------------------------------------------*/
 	
+	
+	
+	
+	
+	/* ---------------------------------------------[cercaPaths]---------------------------------------------------------*/
 	public int cercaPaths(String s) {
 		
 		int trovato = 0; 
@@ -597,7 +519,14 @@ public class ChangeManagement {
 		return trovato ; 
 	}
 	
+	/*-------------------------------------------------[Fine]------------------------------------------------------------*/
 	
+	
+	
+	
+	
+	
+	/* ---------------------------------------------[caricaDescription]-----------------------------------------------------*/	
 	/* Metodo che lavora dentro il tab Description */
 	public void caricaDescription(XSSFSheet descriptionSheet, File v) {
 		
@@ -693,8 +622,15 @@ public class ChangeManagement {
 		 
 	}
 	
+	/*----------------------------------------------------[Fine]------------------------------------------------------------*/
 	
 	
+	
+	
+	
+	
+	
+	/* --------------------------------------------------[leggiVCM]-------------------------------------------------------*/	
 	/* Metodo che va a leggere il foglio excel del vecchio CM e memorizza la column1 , column2 , column3 , column4 dentro degli arraylist */
 	public void leggiVCM(File f) {
 		
@@ -748,298 +684,163 @@ public class ChangeManagement {
 	
 	}
 	
-	
-	/* Metodo che crea delle righe e celle vuoto nel tab checksums prima di iniziare l'inserimento dei dati 
-	 * Questo per evitare che il programma si fermi senza avere scritto tutti i dati */
-	
-	public void checksumsCreateRowsAndCells(XSSFSheet checksumsSheet) {
-		
-		for(int i=0;i<234; i++) {
-			
-			Row row = checksumsSheet.createRow(i); 
-			
-			for(int j=0;j<20; j++) {
-				
-				 Cell c = row.createCell(j);
-				 c.setCellValue("");
-
-			}
-		}
-	}
+	/*----------------------------------------------------[Fine]-----------------------------------------------------------*/
 	
 	
 	
-
-	public void deleteEmptyRows(XSSFSheet checksumsSheet) {
+	
+	
+	
+/* -----------------------------------------------[deleteEmptyRows]---------------------------------------------------------*/
+	
+	public static void deleteEmptyRows(XSSFSheet checksumsSheet) {
 		
 		int indexRow = 0; 
 		
-		for(Row row: checksumsSheet) {
-			
-			for(int cn = 0; cn < row.getLastCellNum(); cn++) {
-				
-                if(indexRow >= maxRowGrezzi && cn < 4) {
-                	
-                	Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
-                	cell.setCellType(CellType.BLANK);
-                }
-				
-			}
-			
-			indexRow ++; 
-		}
-	}
-	
-	
-	public void checksums1(File f, File v) {
+		System.out.println("nDatiGrezzi = "+nDatiGrezzi);
 		
-		try {
-			
-			
-			FileInputStream mioFile = new FileInputStream( f ); //file nuovo CM
-			
-			//FileInputStream fileVCM = new FileInputStream( v ); //file vecchio CM
-			
-			XSSFWorkbook workbook_fp = new XSSFWorkbook(mioFile);
-			
-			XSSFSheet checksumsSheet = workbook_fp.getSheetAt(1);
-			
-			//create a lot rows and cells
-			checksumsCreateRowsAndCells(checksumsSheet);
-			
-			
-			XSSFSheet grezziSheet = workbook_fp.getSheetAt(0);
-			
-			XSSFSheet descriptionSheet = workbook_fp.getSheetAt(7);
-			
-			
-			int rowNum = 0;
-			int checksumsRowNum = 0; 
-			int checksumsSheetVcmRowNum = 0; 
-			
-			/*inserimento titolo nuovo foglio Excel */
-			Row header = checksumsSheet.createRow(rowNum);
-			
-		    header.createCell(0).setCellValue("FileName");
-		    header.createCell(1).setCellValue("Path");
-		    header.createCell(2).setCellValue("Sha1");
-		    header.createCell(3).setCellValue("Column1");
-		    header.createCell(4).setCellValue("");
-		    header.createCell(5).setCellValue("Column1");
-		    header.createCell(6).setCellValue("Column2");
-		    header.createCell(7).setCellValue("Column3");
-		    header.createCell(8).setCellValue("Column4");
-		    header.createCell(9).setCellValue("For Lookup");
-		    header.createCell(10).setCellValue("Column5");
-		    
-			
-			/* ora scorro tutto Grezzi e per ogni riga in grezzi faccio la formula*/
-		    Iterator<Row> rowIterator = grezziSheet.rowIterator(); 
-		    
-		    //salto la prima riga nel tab Checksums perché è il titolo
-		    Iterator<Row> checksumsRowIterator = checksumsSheet.rowIterator();
-		    if(checksumsRowIterator.hasNext()) {
-		    	checksumsRowIterator.next() ; 
-		    	checksumsRowNum ++; 
-		    }
-		    
-		    int indexRow = 1; 
-	 
-		    while(rowIterator.hasNext()) {
-		    	
-		    	Row row = rowIterator.next(); 
-		    	
-		    	Row rowChecksums = checksumsSheet.createRow(rowNum) ; 
-		    			
-		    	Iterator<Cell> cellIterator = row.cellIterator() ; 
-		    	
-		    	int cellNum = 0; 
-		    	int checksumsSheetVcmCellNum = 0; 
-		    	//int checksumsCellNum = 0 ; 
-		    	
-		    	String sha1 = ""; 
-		    	String path = ""; 
-		    	
-		    	//creo 11 celle in checksums per ogni riga trovata nel tab Grezzi
-		    	for(int i=0; i<11;i++) {
-		    		 rowChecksums.createCell(i);  
-		    	}
-		    	
-		    	while(cellIterator.hasNext()) {
-		    		
-		    		Cell cell = cellIterator.next() ;
-		    		
-		    		switch(cell.getCellType()) {
-		    		
-			    		case NUMERIC:
-			    			break ; 
-			    		case STRING:
-			    			
-			    			if(cellNum == 0) { //faccio la formula per gli sha1
-			    				
-			    				//sha1 = cell.getStringCellValue() ; 
-			    				Cell cellChecksumsUpdate = checksumsSheet.getRow(rowNum).getCell(2);
-			    				String formula = "Grezzi!A"+indexRow;
-			    				//cellChecksumsUpdate.setCellValue(sha1); // non devo metterlo direttamente ma fare la formula di excel che me lo prende automaticamente
-			    				cellChecksumsUpdate.setCellFormula(formula);
-			    				
-			    			}else if(cellNum == 1) { //faccio la formula per i path
-			    				
-			    			   // path = cell.getStringCellValue() ;
-			    				Cell cellChecksumsUpdate = checksumsSheet.getRow(rowNum).getCell(1);
-			    				String formula = "Grezzi!B"+indexRow;
-			    				//cellChecksumsUpdate.setCellValue(sha1); // non devo metterlo direttamente ma fare la formula di excel che me lo prende automaticamente
-			    				cellChecksumsUpdate.setCellFormula(formula);
-			    			}
-			    			
-			    			break ; 
-		    		}
-		    		
-		    		cellNum ++ ; 
-		    
-		    	}
-		    	
-		    	//System.out.println("rowNum = "+rowNum);
-		    	rowNum ++ ; 
-		    	checksumsRowNum ++ ; 
-		    	indexRow ++; 
-		    }
-		    
-/*  ---------------------------------------------------------------------------------------------------------------*/		    
-		    
-		    FormulaEvaluator evaluator = workbook_fp.getCreationHelper().createFormulaEvaluator() ; 
-		    Iterator<Row> checkSRowIterator = checksumsSheet.iterator() ; 
-		    rowNum = 0; 
-		    
-			// se è la prima riga la salto perché è il titolo
-			if(checkSRowIterator.hasNext()) {
-				checkSRowIterator.next() ;
-				//System.out.println("DEBUG1...");
-				rowNum ++; 
-			}
-			
-			
-			//chiamo leggiVCM qui
-			//leggiVCM(v) ; 
-			
-			int conta = 2; 
-			int cont = 2;
-			int cont1 = 2; 
-			int cont2 = 2;
-			
-			int index1 = 1;
-			int index2 = 1;
-			int index3 = 1;
-			int index4 = 1;
-			int index5 = 1; 
-			int index6 = 1; 
-			
-			
-			leggiVCM(v);
-			
-			while(checkSRowIterator.hasNext()) {
-				
-				Row row = checkSRowIterator.next(); 
-				
-				int cellNum = 0;
-				
-				Iterator<Cell> checkScellIterator = row.cellIterator(); 
-				
-				while(checkScellIterator.hasNext()) {
-					
-					Cell cell = checkScellIterator.next();
-					
-					if(cellNum == 0) { // se la prima colonna faccio la formula per ricavare il .class
-						
-						String cella = "B"+conta;
-						String c = "@";
-						String strVuota = "";
-						
-						//String formula ="RIGHT("+cella+",5)";
-						
-						//String formula = "RIGHT("+cella+",LEN("+cella+")-FIND("+cella+",SUBSTITUTE("+cella+","+"\"/\" "+","+cella+",LEN("+cella+")-LEN(SUBSTITUTE("+cella+","+"\"/\" "+","+""+"))),1))";
-						String formula = "RIGHT("+cella+",LEN("+cella+")-FIND("+cella+",SUBSTITUTE("+cella+","+"\"/\" "+","+cella+",LEN("+cella+")-LEN(SUBSTITUTE("+cella+","+"\"/\" "+","+""+"))),1))";
-						cell.setCellFormula(formula);
+//		for(Row row: checksumsSheet) {
+//			
+//			for(int cn = 0; cn < row.getLastCellNum(); cn++) {
+//				
+//                if(indexRow >= (nDatiGrezzi) && cn < 4) {
+//                	
+//                	Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
+//                	cell.setCellType(CellType.BLANK);
+//                }
+//				
+//			}
+//			
+//			indexRow ++; 
+//		}
+	}
 
-						conta++;
-						
-					}else if(cellNum == 3) {
-						
-						String cella = "B"+cont;
-						String matrice = "Description!B2:C139";
-						//ora devo caricare i dati della colonna Column1 (tabella sinistra Checksums)
-						caricaDescription(descriptionSheet,v); 
-						String formula = "VLOOKUP("+cella+","+matrice+",2,FALSE)";
-						cell.setCellFormula(formula);
-						cont++;
-						
-					}else if(cellNum == 5) {
-						
-					   cell.setCellValue(checksumColumn1.get(index1));
-					   index1++;
-					   
-					}else if(cellNum == 6) {
-						
-						   cell.setCellValue(checksumColumn2.get(index2));
-						   index2++;
-						   
-					}else if(cellNum == 7) {
-						
-						   cell.setCellValue(checksumColumn3.get(index3));
-						   index3++;
-						   
-					}else if(cellNum == 8) {
-						
-						   cell.setCellValue(checksumColumn4.get(index4));
-						   index4++;
+/*----------------------------------------------------[Fine]----------------------------------------------------------------*/
+	
+	
+
+	
+/* -----------------------------------------------------[checksums]----------------------------------------------------------*/
+	
+	 public void checksums(File f, File f3) {
+	    	
+	    	try {
+	    		
+	    		/* FileInputStream per il file in cui devo copiare i dati */
+	    		FileInputStream fileVuoto = new FileInputStream( f ); //file vuoto
+	    		
+				/* Foglio Excel nuovo CM */
+				XSSFWorkbook workbook_fv = new XSSFWorkbook(fileVuoto);
+				
+			    /*vado nel tab desiderato che in questo caso è Checksums */
+				XSSFSheet tabChecksumsFileVuoto = workbook_fv.getSheetAt(1);
+				
+				/* prima di scrivere dentro il tab vuoto lo pulisco */
+				deleteSheetAllContent(tabChecksumsFileVuoto);
+				
+				XSSFSheet tabDescriptionFileVuoto = workbook_fv.getSheetAt(7);
+				
+				/* carico il tab Description */
+				caricaDescription(tabDescriptionFileVuoto, f3);
+				
+				/* carica gli ArrayList per column1 , 2 , 3 , 4 di checksums*/
+				leggiVCM(f3);
+				
+	    		
+				int nRigheTabVuoto = 0; 
+				int indexPath = 1;
+				int indexFileName = 2;
+				int indexSha1 = 1;
+				int indexDescr = 2;
+				int indexCol1 = 1;
+				int indexCol2 = 1;
+				int indexCol3 = 1;
+				int indexCol4 = 1;
+				int indexCol5 = 2;
+				int indexCol6 = 2;
+				
+				/* prima di scrivere dentro il tab vuoto lo pulisco */
+				deleteSheetAllContent(tabChecksumsFileVuoto);
+				
+				Row titoloTabFileVuoto = tabChecksumsFileVuoto.createRow(nRigheTabVuoto); 
+				titoloTabFileVuoto.createCell(0).setCellValue("FileName");
+				titoloTabFileVuoto.createCell(1).setCellValue("Path");
+				titoloTabFileVuoto.createCell(2).setCellValue("Sha1");
+				titoloTabFileVuoto.createCell(3).setCellValue("Column1");
+				titoloTabFileVuoto.createCell(4).setCellValue("");
+				titoloTabFileVuoto.createCell(5).setCellValue("Column1");
+				titoloTabFileVuoto.createCell(6).setCellValue("Column2");
+				titoloTabFileVuoto.createCell(7).setCellValue("Column3");
+				titoloTabFileVuoto.createCell(8).setCellValue("Column4");
+				titoloTabFileVuoto.createCell(9).setCellValue("For Lookup");
+				titoloTabFileVuoto.createCell(10).setCellValue("Column5");
+				
+			
+				nRigheTabVuoto ++; 
+				
+				//System.out.println("dim vettore1 = "+checksumColumn1.size());
+				
+				
+				for(int i=0;i<checksumColumn1.size()-1; i++) {
 					
-					}else if(cellNum == 9) {
-						
-						String separator = "\"_\" ";
-						String formula = "CONCATENATE(F"+cont1+","+separator+","+"G"+cont1+")";
-						cell.setCellFormula(formula);
-						index5 ++;
-						cont1++;
-						
-					}else if(cellNum == 10) {
-						
-						String cella = "I"+cont2;
-						String matrice = "Checksums!B2:C122";
-						String formula = "VLOOKUP("+cella+","+matrice+",2,FALSE)";
-						cell.setCellFormula(formula);
-					    index6 ++;
-					    cont2 ++;
-					}
-					
-					
-					cellNum ++; 
+				    Row rigaCreataFileVuoto = tabChecksumsFileVuoto.createRow(nRigheTabVuoto);
+				    
+				    String cellaDescription = "B"+indexDescr;
+				    String matrice = "Description!B2:C139";
+				    String formulaDescr = "VLOOKUP("+cellaDescription+","+matrice+",2,FALSE)";
+				    
+				    String cella = "B"+indexFileName;
+				    String formula1 = "Grezzi!B"+indexPath;
+		            String formula2 = "Grezzi!A"+indexSha1;
+		            String formula3 = "RIGHT("+cella+",LEN("+cella+")-FIND("+cella+",SUBSTITUTE("+cella+","+"\"/\" "+","+cella+",LEN("+cella+")-LEN(SUBSTITUTE("+cella+","+"\"/\" "+","+""+"))),1))";
+		            
+		            String separator = "\"_\" ";
+		            String formula4 = "CONCATENATE(F"+indexCol5+","+separator+","+"G"+indexCol5+")";
+		            
+		            String cellaColumn5 = "I"+indexCol6;
+					String matriceColumn5 = "Checksums!B2:C122";
+					String formula5 = "VLOOKUP("+cellaColumn5+","+matriceColumn5+",2,FALSE)";
+		            
+				    rigaCreataFileVuoto.createCell(1).setCellFormula(formula1);
+				    rigaCreataFileVuoto.createCell(2).setCellFormula(formula2);
+				    rigaCreataFileVuoto.createCell(0).setCellFormula(formula3);
+				    rigaCreataFileVuoto.createCell(3).setCellFormula(formulaDescr);
+				    rigaCreataFileVuoto.createCell(5).setCellValue(checksumColumn1.get(indexCol1));
+				    rigaCreataFileVuoto.createCell(6).setCellValue(checksumColumn2.get(indexCol2));
+				    rigaCreataFileVuoto.createCell(7).setCellValue(checksumColumn3.get(indexCol3));
+				    rigaCreataFileVuoto.createCell(8).setCellValue(checksumColumn4.get(indexCol4));
+				    
+				    rigaCreataFileVuoto.createCell(9).setCellFormula(formula4);
+				    rigaCreataFileVuoto.createCell(10).setCellFormula(formula5);
+				    
+				    nRigheTabVuoto ++;
+				    indexPath ++;
+				    indexFileName ++;
+				    indexSha1 ++;
+				    indexDescr ++;
+				    
+				    indexCol1++;
+				    indexCol2++;
+				    indexCol3++;
+				    indexCol4++;
+				    indexCol5++;
+				    indexCol6++;
+				    
 				}
 				
-				rowNum ++; 
-			}
-			
-			
-			
-			
-			/* Ora devo cancellare le righe che non esistono in grezzi ma in checksums esistono perché hanno valoro null */
-		    System.out.println("Maxrowgrezzi = "+maxRowGrezzi);
-		    deleteEmptyRows(checksumsSheet);
-		    
-			mioFile.close();
-			
-			//aggiorna il folgio excel
-			FileOutputStream out = new FileOutputStream(f);
-			workbook_fp.write(out);
-			out.close();
-			
-			indexRow = 0; 
-		
-			
-		}catch(IOException ex) { ex.printStackTrace(); }
-		
-	}
+				deleteEmptyRows(tabChecksumsFileVuoto);
+				
+				
+				//aggiorna il file vuoto
+				FileOutputStream out = new FileOutputStream(f);
+				workbook_fv.write(out);
+				out.close();
+				
+				
+	    	}catch(IOException ex) { ex.printStackTrace(); }
 
+	    }
 
-	
+/*--------------------------------------------------------[Fine]-------------------------------------------------------------*/	
 	
 }
