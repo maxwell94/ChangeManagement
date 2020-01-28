@@ -25,13 +25,25 @@ public class Main {
 		String path = ""; 
 		int rt = 0; 
 		ArrayList<String> datiGrezzi = new ArrayList<String>(); 
+		
+		/*Variabile che conterrà i nomi delle cartelle dei giochi rinominate*/
 		String [] nomiCartelle = null; 
+		
+		/*Sara il nome del file del nuovo CM*/
 		String nomeFoglioExc = ""; 
+		
+		/*Istanza della classe che gestisce tutto il ChangeManagement*/
 		ChangeManagement CM;
+		
+		/*Vecchio File Excel */
 		String vecchioCMExcel= "CM_DEC_2st_2019.xlsx";
 		
-		//il mio foglio excel
-		XSSFWorkbook workbook;
+		/*il mio foglio excel*/
+		XSSFWorkbook workbook = null;
+		
+		/*Directory del nuovo CM, il mio obiettivo è quello di trovare tra i file che ci sono in questa cartella
+		 * il file excel critical assets register così da poter copiare dei dati che mi servono*/
+		File directoryNuovoCM = null; 
 		
 		DataOra dto = new DataOra();
 		Scanner scanner = new Scanner(System.in);
@@ -56,6 +68,10 @@ public class Main {
 	    	RenameFolders rfOld = new RenameFolders(oldCMPath);
 	    	System.out.println("\n\nVecchio CM:");
 	    	rfOld.renameFolders();
+	    	
+	    	
+	    	/* directory nuovo CM */
+	    	directoryNuovoCM = new File(newCMPath); 
 	    	
 	    	//recupero tutti i dati da scrivere nel file che contiene le info di grezzi
 	    	datiGrezzi = rfNew.getAllInfo();
@@ -122,7 +138,44 @@ public class Main {
 	    			 CM.appoggioChangedGames(vuoto,pieno); 
 	    			 System.out.print(" Fine\n");
 	    		}
-	    			    	    
+	    		
+	    		
+	    		
+	    		//caricamento dati Check EVO
+	    		if(nomeFoglioExc.endsWith(".xlsx")) {
+	    			
+	    			System.out.print("Caricamento dati in Check EVO ...");
+	    			File nuovoCM = new File(newCMPath+"\\"+nomeFoglioExc);
+	    			File checkEvoFile = null; 
+	    		    /* qui recupero tutti i nomi dei files presenti nella cartella del nuovo CM così troverò il file 
+	    		     * Excel critical assets register */
+	    			 String [] nomiFiles = directoryNuovoCM.list();
+	    			 for(String s:nomiFiles) {
+	    				 if(s.contains("critical assets register")) {
+	    					 checkEvoFile = new File(newCMPath+"\\"+s);
+	    				 }
+	    			 }
+
+	    			 CM.checkEVO(nuovoCM,checkEvoFile);
+	    			 System.out.print(" Fine\n");
+	    		}else {
+
+	    			System.out.print("Caricamento dati in Check EVO ...");
+	    			File nuovoCM = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx");
+	    			File checkEvoFile = null; 
+	    		    /* qui recupero tutti i nomi dei files presenti nella cartella del nuovo CM così troverò il file 
+	    		     * Excel critical assets register */
+	    			 String [] nomiFiles = directoryNuovoCM.list();
+	    			 for(String s:nomiFiles) {
+	    				 if(s.contains("critical assets register")) {
+	    					 checkEvoFile = new File(newCMPath+"\\"+s);
+	    				 }
+	    			 }
+	    			 
+	    			 CM.checkEVO(nuovoCM,checkEvoFile);
+	    			 System.out.print(" Fine\n");
+	    		}
+	    		
 	    	    
 	    	}else {  //nome foglio Excel non valido
 	    		System.out.println("File non trovato! ");

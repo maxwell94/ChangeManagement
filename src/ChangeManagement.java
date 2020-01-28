@@ -58,9 +58,11 @@ public class ChangeManagement {
 	ArrayList<String> checksumColumn2 ;
 	ArrayList<String> checksumColumn3 ;
 	ArrayList<String> checksumColumn4 ;
+	ArrayList<String> checksumColumn5Sha1; 
+	String Sha1PrepareChecksumsGrezzi; 
 	
-	int maxRowGrezzi;
-	static int nDatiGrezzi = 0; 
+	static int nDatiGrezzi;
+	static int nDatiChecksums; 
 
 	/*Costruttore*/
 	public ChangeManagement(String nomeFoglioExcel) {
@@ -85,9 +87,11 @@ public class ChangeManagement {
 		this.checksumColumn2 = new ArrayList<String>() ;
 		this.checksumColumn3 = new ArrayList<String>() ;
 		this.checksumColumn4 = new ArrayList<String>() ;
-		
-		this.maxRowGrezzi = 0; 
+		this.checksumColumn5Sha1 = new ArrayList<String>() ; 
+		this.Sha1PrepareChecksumsGrezzi = "" ; 
 
+		nDatiGrezzi = 0 ; 
+		nDatiChecksums = 0; 
 		
 		//creo fisicamente il foglio excel
 		rt = generaFoglioExcel(nomeFoglioExcel);
@@ -133,7 +137,55 @@ public class ChangeManagement {
 	
 	
 	
+	/* ---------------------------------------------[leggiCheckColumn5Sha1]---------------------------------------------*/
 	
+	public void leggiChecksumsColumn5Sha1(File f) {
+		
+		try {
+			
+			FileInputStream mioFile = new FileInputStream( f ); //file nuovo CM
+			XSSFWorkbook w = new XSSFWorkbook(mioFile);
+			XSSFSheet wSheet = w.getSheetAt(1);
+			
+			FormulaEvaluator fe = w.getCreationHelper().createFormulaEvaluator();
+			
+			Iterator<Row> rowIterator = wSheet.iterator() ;
+			
+			//System.out.println("DEBUG1");
+			
+    		for(int i=1; i<nDatiChecksums; i++) {
+    			
+        		Cell c5 = wSheet.getRow(i).getCell(10); //column5
+        		
+        		
+        		CellValue cellValueColumn5 = fe.evaluate(c5);
+        		
+        		/*Se uguale a null controllo se è la riga corrispondente a quella del file prepare_checksums.py */
+        		if(cellValueColumn5.getStringValue() == null) {
+        			
+        			if(checksumColumn4.get(i).equals("prepare_checksums.py")) {
+        			   /* Aggiungo lo sha1 di "prepare_checksums.py" al mio vettore così da recuperarlo 
+        			    * in Appoggio Changed Games per la scrittura */	
+        			   checksumColumn5Sha1.add(Sha1PrepareChecksumsGrezzi);	
+        			}
+    				//System.out.println("i = "+i+" str vuota");
+    			}
+        		
+        	  switch(cellValueColumn5.getCellType()) {
+        		   
+        		case STRING :
+        			checksumColumn5Sha1.add(cellValueColumn5.getStringValue());	
+        		break;
+        		
+        	  }
+    			
+    		}
+			
+		}catch(IOException ex) { ex.printStackTrace(); }
+		
+	}
+	
+	/*--------------------------------------------------[Fine]-----------------------------------------------------------*/
 	
 	
 	/* ---------------------------------------------[appoggioChangedGames]---------------------------------------------*/
@@ -153,6 +205,12 @@ public class ChangeManagement {
 		    //vado nel tab desiderato che in questo caso è appoggio changed games
 			XSSFSheet desiredSheetV = workbook_fv.getSheetAt(5);
 			XSSFSheet desiredSheetP = workbook_fp.getSheetAt(5);
+			
+			//pulisco il seguente prima dell'inserimento di nuovi dati
+			deleteSheetAllContent(desiredSheetV);
+			
+			//Intanto recupero gli Sha1 nella colonna 5 nel tab Checksums  
+			leggiChecksumsColumn5Sha1(f);
 			
 			int rowNum = 0; 
 			Row header = desiredSheetV.createRow(rowNum);
@@ -176,6 +234,10 @@ public class ChangeManagement {
 				rowNum ++; 
 			}
 			
+			int indexColumn1 = 1; 
+			int indexColumn2 = 1; 
+			int indexColumn5 = 0; 
+			
 			int indexRow1 = 2;
 			int indexRow2 = 2; 
 			int indexRow3 = 2; 
@@ -189,10 +251,10 @@ public class ChangeManagement {
 				Iterator<Cell> cellIterator = row.cellIterator();
 				
 				int cellNum = 0;
-				
-				String C_Game = ""; 
-				String C_File = ""; 
-				String C_Sha1 = ""; 
+		
+				String O_Game = ""; 
+				String O_File = ""; 
+				String O_Sha1 = ""; 
 				
 				if(cellIterator.hasNext()) {
 					//creo una cella nell'altro foglio
@@ -200,7 +262,7 @@ public class ChangeManagement {
 					
 					//invece nel foglio corrente memorizzo i dati
 					Cell cell = cellIterator.next() ; 
-					C_Game = cell.getStringCellValue() ; 		
+					O_Game = cell.getStringCellValue() ; 		
 					
 					cellNum ++; 
 				}
@@ -211,7 +273,7 @@ public class ChangeManagement {
 					
 					//invece nel foglio corrente memorizzo i dati
 					Cell cell = cellIterator.next() ; 
-					C_File = cell.getStringCellValue() ; 		
+					O_File = cell.getStringCellValue() ; 		
 					
 					cellNum ++; 
 				}
@@ -223,7 +285,7 @@ public class ChangeManagement {
 					//invece nel foglio corrente memorizzo i dati
 					Cell cell = cellIterator.next() ; 
 					
-					C_Sha1 = cell.getStringCellValue() ;
+					O_Sha1 = cell.getStringCellValue() ;
 					
 					cellNum ++; 
 				}
@@ -240,16 +302,29 @@ public class ChangeManagement {
 					  
 					  case STRING: 
 						  
-						  if(cellNum == 3) { //C_GAME
+						  if(cellNum == 3) { //O_GAME
 							  Cell c = row2.createCell(cellNum); 
-							  c.setCellValue(C_Game);
-						  }else if(cellNum == 4) { //C_FILE
-							  Cell c = row2.createCell(cellNum) ; 
-							  c.setCellValue(C_File);
+							  c.setCellValue(O_Game);
+							  row2.createCell(0).setCellValue(checksumColumn1.get(indexColumn1));
+							  indexColumn1++;
 							  
-						  }else if(cellNum == 5) {
+						  }else if(cellNum == 4) { //O_FILE
 							  Cell c = row2.createCell(cellNum) ; 
-							  c.setCellValue(C_Sha1);
+							  c.setCellValue(O_File);
+							  row2.createCell(1).setCellValue(checksumColumn2.get(indexColumn2));
+							  indexColumn2++;
+							  
+						  }else if(cellNum == 5) { //O_SHA1
+							  Cell c = row2.createCell(cellNum) ; 
+							  c.setCellValue(O_Sha1);
+							  
+							  if(indexColumn5 < checksumColumn5Sha1.size()) {
+								  row2.createCell(2).setCellValue(checksumColumn5Sha1.get(indexColumn5));
+								  //System.out.println("indexColumn5 = "+indexColumn5);
+								  indexColumn5++;
+							  }
+
+							  
 						  }else {
 							  Cell c = row2.createCell(cellNum) ; 
 						  }
@@ -311,6 +386,7 @@ public class ChangeManagement {
 				rowNum ++;
 			}
 			
+			 indexColumn5 = 0;
 			
 			filePieno.close(); 
 			fileVuoto.close();
@@ -442,15 +518,15 @@ public class ChangeManagement {
 			/* e ora copio i nuovi dati presi dal file sha1 */
 			int rowNum = 0; 
 			
-	        while( (st = br.readLine()) != null ) {
+	        while( (st = br.readLine() ) != null ) {
+	        	
 	        	appoggio = sostituisci(st);
 	        	String dati = new String(appoggio);
 	        	String sha1 = dati.substring(0,40);
 	        	String path = dati.substring(41);
 	        	
 	        	Row row = desiredSheet.createRow(rowNum) ;
-	       
-	        	maxRowGrezzi ++;
+	        	nDatiGrezzi++; 
 	        	
 	        	int cellNum = 0; 
 	        	for(int i=0;i<2; i++) {
@@ -477,6 +553,7 @@ public class ChangeManagement {
 	        for(int i=0;i<2;i++) {
 	        	Cell c = r.createCell(i);
         		if(i == 0) {
+        			Sha1PrepareChecksumsGrezzi = sha1CheckSum.toLowerCase(); 
         			c.setCellValue(sha1CheckSum.toLowerCase());
         		}else {
         			c.setCellValue(nomeCheckSum);
@@ -486,7 +563,7 @@ public class ChangeManagement {
 	        }
 	        
 	        rowNum++;
-	        maxRowGrezzi ++;
+	        nDatiGrezzi++; 
 	        
 			//aggiorna il foglio
 			FileOutputStream fileOutputStream = new FileOutputStream(new File(nomeFoglioExcel));
@@ -697,25 +774,28 @@ public class ChangeManagement {
 		
 		int indexRow = 0; 
 		
-		System.out.println("nDatiGrezzi = "+nDatiGrezzi);
+		//System.out.println("nDatiGrezzi = "+nDatiGrezzi);
 		
-//		for(Row row: checksumsSheet) {
-//			
-//			for(int cn = 0; cn < row.getLastCellNum(); cn++) {
-//				
-//                if(indexRow >= (nDatiGrezzi) && cn < 4) {
-//                	
-//                	Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
-//                	cell.setCellType(CellType.BLANK);
-//                }
-//				
-//			}
-//			
-//			indexRow ++; 
-//		}
+		for(Row row: checksumsSheet) { //righe
+			
+			//System.out.println("row.getLastCellNum = "+row.getLastCellNum());
+			
+			for(int cn = 0; cn < row.getLastCellNum(); cn++) { //colonne
+				
+                if(indexRow > nDatiGrezzi && cn < 4) {
+                	
+                	Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
+                	cell.setCellType(CellType.BLANK);
+                }
+				
+			}
+			
+			indexRow ++; 
+		}
+		
 	}
 
-/*----------------------------------------------------[Fine]----------------------------------------------------------------*/
+/*--------------------------------------------------------[Fine]--------------------------------------------------------------*/
 	
 	
 
@@ -766,7 +846,7 @@ public class ChangeManagement {
 				titoloTabFileVuoto.createCell(0).setCellValue("FileName");
 				titoloTabFileVuoto.createCell(1).setCellValue("Path");
 				titoloTabFileVuoto.createCell(2).setCellValue("Sha1");
-				titoloTabFileVuoto.createCell(3).setCellValue("Column1");
+				titoloTabFileVuoto.createCell(3).setCellValue("Description");
 				titoloTabFileVuoto.createCell(4).setCellValue("");
 				titoloTabFileVuoto.createCell(5).setCellValue("Column1");
 				titoloTabFileVuoto.createCell(6).setCellValue("Column2");
@@ -809,9 +889,11 @@ public class ChangeManagement {
 				    rigaCreataFileVuoto.createCell(6).setCellValue(checksumColumn2.get(indexCol2));
 				    rigaCreataFileVuoto.createCell(7).setCellValue(checksumColumn3.get(indexCol3));
 				    rigaCreataFileVuoto.createCell(8).setCellValue(checksumColumn4.get(indexCol4));
+				    nDatiChecksums++;
 				    
 				    rigaCreataFileVuoto.createCell(9).setCellFormula(formula4);
 				    rigaCreataFileVuoto.createCell(10).setCellFormula(formula5);
+				    
 				    
 				    nRigheTabVuoto ++;
 				    indexPath ++;
@@ -842,5 +924,113 @@ public class ChangeManagement {
 	    }
 
 /*--------------------------------------------------------[Fine]-------------------------------------------------------------*/	
-	
+
+	 
+	 
+	 
+	 
+/*--------------------------------------------------------[CheckEVO]-----------------------------------------------------------*/
+	 
+	 public void checkEVO(File nuovoCM , File fileCritical) {
+		
+		 try {
+			 
+	    	/* FileInputStream per il file del nuov CM */
+	    	FileInputStream fileNuovoCM = new FileInputStream( nuovoCM ); //file nuovo CM
+	    	
+	    	/* FileInputStream per il file critical asset register  */
+	    	FileInputStream fileCritAssetsRegister = new FileInputStream(fileCritical);
+	    	
+	    	/* foglio excel per il file critical assets register */
+	    	XSSFWorkbook workbookCAR = new XSSFWorkbook(fileCritAssetsRegister);
+	    	
+	    	/* foglio excel per il file del nuovo CM */
+	    	XSSFWorkbook w = new XSSFWorkbook(fileNuovoCM);
+	    	
+	    	
+		    /*vado nel tab desiderato del file critical assets register  */
+			XSSFSheet tabCAR = workbookCAR.getSheetAt(0);
+	    	
+	    	int numRowCAR = 0; 
+	    	int numRowNuovoCM = 0; 
+	    	
+		    /*vado nel tab Check EVO nel file del nuovo CM  */
+			XSSFSheet tabNuovoCM = w.getSheetAt(6);
+	    	
+			/* Pulisco il tab Check EVO e inserisco intanto il titolo */
+			
+			deleteSheetAllContent(tabNuovoCM);
+			
+			Row titoloTabNuovoCM = tabNuovoCM.createRow(numRowNuovoCM);
+			titoloTabNuovoCM.createCell(0).setCellValue("Summary");
+			titoloTabNuovoCM.createCell(1).setCellValue("Evo_Checksums");
+			titoloTabNuovoCM.createCell(2).setCellValue("Path");
+			titoloTabNuovoCM.createCell(3).setCellValue("Quinel_Filename");
+			titoloTabNuovoCM.createCell(4).setCellValue("Q_Path");
+			titoloTabNuovoCM.createCell(5).setCellValue("Compare");
+			numRowNuovoCM ++; 
+			
+	        /* Iteratore righe file critical assets register */	
+			Iterator<Row> carRowIterator = tabCAR.iterator() ; 
+			
+			/* Salto le prime 4 righe del file perché non mi interessano */
+			for(int i=0;i<4;i++) {
+				
+				if(carRowIterator.hasNext()) {
+					carRowIterator.next() ;
+				}
+			}
+			
+			
+			while(carRowIterator.hasNext()) {
+				
+				Row carRow = carRowIterator.next() ;
+				
+				Row nuovoCMRow = tabNuovoCM.createRow(numRowNuovoCM);
+				
+				int numCellCAR = 0; 
+				Iterator<Cell> carCellIterator = carRow.cellIterator() ;
+				
+				while(carCellIterator.hasNext()) {
+					
+					Cell carCell = carCellIterator.next() ; 
+					
+					if(numCellCAR == 2) {
+						
+						//System.out.print(carCell.getStringCellValue()+"   ");
+						nuovoCMRow.createCell(0).setCellValue(carCell.getStringCellValue());
+						
+					}else if(numCellCAR == 10) {
+						
+						//System.out.print(carCell.getStringCellValue()+"   ");
+						nuovoCMRow.createCell(1).setCellValue(carCell.getStringCellValue());
+						
+					}else if(numCellCAR == 11) {
+						
+						//System.out.print(carCell.getStringCellValue()+"\n");
+						nuovoCMRow.createCell(2).setCellValue(carCell.getStringCellValue());
+					}
+					
+					
+					numCellCAR ++; 
+				}
+			    
+				//System.out.println("\n");
+				numRowCAR ++; 
+				numRowNuovoCM ++;
+			}
+			
+			//System.out.println("CAR nome tab : "+tabCAR.getSheetName());
+	    	
+			
+			//aggiorna il file vuoto
+			FileOutputStream out = new FileOutputStream(nuovoCM);
+			w.write(out);
+			out.close();
+	    	
+		 }catch(IOException ex) { ex.printStackTrace(); }
+	 }
+	 
+/*----------------------------------------------------------[Fine]-------------------------------------------------------------*/	 
+	 
 }
