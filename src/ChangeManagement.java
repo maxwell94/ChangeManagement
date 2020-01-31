@@ -59,6 +59,11 @@ public class ChangeManagement {
 	ArrayList<String> checksumColumn3 ;
 	ArrayList<String> checksumColumn4 ;
 	ArrayList<String> checksumColumn5Sha1; 
+	
+	ArrayList<String> appoChgGamesColumn0; 
+	ArrayList<String> appoChgGamesColumn1;
+	ArrayList<String> appoChgGamesColumn2;
+	
 	String Sha1PrepareChecksumsGrezzi; 
 	
 	static int nDatiGrezzi;
@@ -89,6 +94,11 @@ public class ChangeManagement {
 		this.checksumColumn4 = new ArrayList<String>() ;
 		this.checksumColumn5Sha1 = new ArrayList<String>() ; 
 		this.Sha1PrepareChecksumsGrezzi = "" ; 
+		
+		
+		this.appoChgGamesColumn0 = new ArrayList<String>() ; 
+		this.appoChgGamesColumn1 = new ArrayList<String>() ; 
+		this.appoChgGamesColumn2 = new ArrayList<String>() ; 
 
 		nDatiGrezzi = 0 ; 
 		nDatiChecksums = 0; 
@@ -163,7 +173,7 @@ public class ChangeManagement {
         		/*Se uguale a null controllo se è la riga corrispondente a quella del file prepare_checksums.py */
         		if(cellValueColumn5.getStringValue() == null) {
         			
-        			if(checksumColumn4.get(i).equals("prepare_checksums.py")) {
+        			if(checksumColumn4.get(i).contains("prepare_checksums.py")) {
         			   /* Aggiungo lo sha1 di "prepare_checksums.py" al mio vettore così da recuperarlo 
         			    * in Appoggio Changed Games per la scrittura */	
         			   checksumColumn5Sha1.add(Sha1PrepareChecksumsGrezzi);	
@@ -188,6 +198,57 @@ public class ChangeManagement {
 	/*--------------------------------------------------[Fine]-----------------------------------------------------------*/
 	
 	
+	/* ---------------------------------------------[leggiAppoggioChgGamesVCM]---------------------------------------------*/
+	
+	public void leggiAppoggioChgGamesVCM(XSSFSheet mySheet) {
+		
+		int rowNum = 0; 
+		Iterator<Row> rowIterator = mySheet.iterator();
+		
+		/* Salto la prima riga perché è il titolo */
+		if(rowIterator.hasNext()) {
+			rowIterator.next() ; 
+		}
+		
+		while(rowIterator.hasNext()) {
+			
+			Row rigaLetta = rowIterator.next() ; 
+			
+			Iterator<Cell> cellIterator = rigaLetta.cellIterator() ;
+			
+			int cellNum = 0; 
+			
+			while(cellIterator.hasNext()) {
+				
+				Cell cellaLetta = cellIterator.next() ; 
+				
+				if(cellNum == 0) {
+					appoChgGamesColumn0.add( cellaLetta.getStringCellValue() );
+					//System.out.print(cellaLetta.getStringCellValue()+"  ");
+					
+				}else if(cellNum == 1) {
+					appoChgGamesColumn1.add( cellaLetta.getStringCellValue() );
+					//System.out.print(cellaLetta.getStringCellValue()+"  ");
+					
+				}else if(cellNum == 2) {
+					appoChgGamesColumn2.add( cellaLetta.getStringCellValue() );
+					//System.out.print(cellaLetta.getStringCellValue()+"\n");
+				}
+				
+				
+				cellNum ++;
+			}
+			
+			rowNum ++;
+		}
+	}
+	
+	/*--------------------------------------------------------[Fine]---------------------------------------------------------*/
+	
+	
+	
+	
+	
 	/* ---------------------------------------------[appoggioChangedGames]---------------------------------------------*/
 
 	/* Metodo che lavora all'interno del tab Appoggio Changed Games 
@@ -196,204 +257,76 @@ public class ChangeManagement {
 		
 		try {
 			
-			FileInputStream fileVuoto = new FileInputStream( f ); //file vuoto
-			FileInputStream filePieno = new FileInputStream(f2) ; // file pieno 
+			/*File nuovo CM*/
+			FileInputStream fileNuovoCM = new FileInputStream( f ); 
 			
-			XSSFWorkbook workbook_fv = new XSSFWorkbook(fileVuoto);
-			XSSFWorkbook workbook_fp = new XSSFWorkbook(filePieno) ; 
+			/*File vecchio CM*/
+			FileInputStream fileVecchioCM = new FileInputStream(f2) ;  
 			
-		    //vado nel tab desiderato che in questo caso è appoggio changed games
-			XSSFSheet desiredSheetV = workbook_fv.getSheetAt(5);
-			XSSFSheet desiredSheetP = workbook_fp.getSheetAt(5);
+			/* Foglio nuovo CM */
+			XSSFWorkbook workbook_ncm = new XSSFWorkbook(fileNuovoCM);
 			
-			//pulisco il seguente prima dell'inserimento di nuovi dati
-			deleteSheetAllContent(desiredSheetV);
+			/*Foglio vecchio CM*/
+			XSSFWorkbook workbook_vcm = new XSSFWorkbook(fileVecchioCM) ; 
 			
-			//Intanto recupero gli Sha1 nella colonna 5 nel tab Checksums  
+		    /*vado nel tab desiderato Appoggio Changed Games in entrambi i fogli */
+			XSSFSheet tabAppoggioNCM = workbook_ncm.getSheetAt(5);
+			XSSFSheet tabAppoggioVCM = workbook_vcm.getSheetAt(5);
+			
+			int numRowTabNCM = 0; 
+			
+			/*pulisco il tab Appoggio Changed Games del nuovo CM prima dell'inserimento di nuovi dati*/
+			deleteSheetAllContent(tabAppoggioNCM);
+			
+			/*Dopo aver pulito il tab Appoggio Changed Games del nuovo CM inserisco il titolo */
+			Row rigaTitolo = tabAppoggioNCM.createRow(numRowTabNCM);
+			
+			rigaTitolo.createCell(0).setCellValue("C_Game");
+			rigaTitolo.createCell(1).setCellValue("C_File");
+			rigaTitolo.createCell(2).setCellValue("C_Sha1");
+			rigaTitolo.createCell(3).setCellValue("O_Game");
+			rigaTitolo.createCell(4).setCellValue("O_File");
+			rigaTitolo.createCell(5).setCellValue("O_Sha1");
+			rigaTitolo.createCell(6).setCellValue("Game");
+			rigaTitolo.createCell(7).setCellValue("File");
+			rigaTitolo.createCell(8).setCellValue("Sha");
+			numRowTabNCM ++;
+			
+			/*Leggo il tab Appoggio Changed Games del vecchio CM e memorizzo i dati delle prime tre colonne dentro 
+			 * tre ArrayList diverse */
+			leggiAppoggioChgGamesVCM(tabAppoggioVCM);
+			
+			/*Scrivo tutti i dati letti e memorizzati nel tab Appoggio Changed Games del nuovo CM */
+			for(int i=0; i<appoChgGamesColumn0.size(); i++) {
+				
+				/* Creo una riga nel tab Appoggio Changed Games del nuovo CM per ogni info letta */
+				Row rigaTabNCM = tabAppoggioNCM.createRow(numRowTabNCM);
+				
+				/* E ora creo tre celle e inserisco le informazioni memorizzate */
+				rigaTabNCM.createCell(0).setCellValue( appoChgGamesColumn0.get(i));
+				rigaTabNCM.createCell(1).setCellValue( appoChgGamesColumn1.get(i));
+				rigaTabNCM.createCell(2).setCellValue( appoChgGamesColumn2.get(i));
+				
+				numRowTabNCM ++;
+			}
+			
+			
+			/*Ora leggo e memorizzo i dati della colonna 5 del tab Checksums del file del nuovo CM */
 			leggiChecksumsColumn5Sha1(f);
 			
-			int rowNum = 0; 
-			Row header = desiredSheetV.createRow(rowNum);
+			/*Scrivo ora i dati letti e memorizzati nel tab Appoggio Changed games del nuovo CM */
 			
-		    header.createCell(0).setCellValue("C_Game");
-		    header.createCell(1).setCellValue("C_File");
-		    header.createCell(2).setCellValue("C_Sha1");
-		    header.createCell(3).setCellValue("O_Game");
-		    header.createCell(4).setCellValue("O_File");
-		    header.createCell(5).setCellValue("O_Sha1");
-		    header.createCell(6).setCellValue("Game");
-		    header.createCell(7).setCellValue("File");
-		    header.createCell(8).setCellValue("Sha");
+			/* setto a 1 il contatore delle righe che vengono create perché scrivere nelle altre tre colonne 
+			 * partendo dalla prima riga */
+			numRowTabNCM = 1; 
 			
 			
-			Iterator<Row> RowIterator = desiredSheetP.iterator();
-			
-			//se è la prima riga inserisco il titolo
-			if( RowIterator.hasNext() ) {
-				RowIterator.next();
-				rowNum ++; 
-			}
-			
-			int indexColumn1 = 1; 
-			int indexColumn2 = 1; 
-			int indexColumn5 = 0; 
-			
-			int indexRow1 = 2;
-			int indexRow2 = 2; 
-			int indexRow3 = 2; 
-			
-			while(RowIterator.hasNext()) {
-				
-				Row row = RowIterator.next(); 
-				
-				Row row2 = desiredSheetV.createRow(rowNum) ; 
-				
-				Iterator<Cell> cellIterator = row.cellIterator();
-				
-				int cellNum = 0;
-		
-				String O_Game = ""; 
-				String O_File = ""; 
-				String O_Sha1 = ""; 
-				
-				if(cellIterator.hasNext()) {
-					//creo una cella nell'altro foglio
-					Cell c = row2.createCell(cellNum);
-					
-					//invece nel foglio corrente memorizzo i dati
-					Cell cell = cellIterator.next() ; 
-					O_Game = cell.getStringCellValue() ; 		
-					
-					cellNum ++; 
-				}
-				
-				if(cellIterator.hasNext()) {
-					//creo una cella nell'altro foglio
-					Cell c = row2.createCell(cellNum);
-					
-					//invece nel foglio corrente memorizzo i dati
-					Cell cell = cellIterator.next() ; 
-					O_File = cell.getStringCellValue() ; 		
-					
-					cellNum ++; 
-				}
-				
-				if(cellIterator.hasNext()) {
-					//creo una cella nell'altro foglio
-					Cell c = row2.createCell(cellNum);
-					
-					//invece nel foglio corrente memorizzo i dati
-					Cell cell = cellIterator.next() ; 
-					
-					O_Sha1 = cell.getStringCellValue() ;
-					
-					cellNum ++; 
-				}
-				
-				while(cellIterator.hasNext()) {
-					 
-					Cell cell = cellIterator.next(); //prendo ogni cella 
-					
-					switch(cell.getCellType()) {
-					
-					  case NUMERIC: 
-						  
-						break;
-					  
-					  case STRING: 
-						  
-						  if(cellNum == 3) { //O_GAME
-							  Cell c = row2.createCell(cellNum); 
-							  c.setCellValue(O_Game);
-							  row2.createCell(0).setCellValue(checksumColumn1.get(indexColumn1));
-							  indexColumn1++;
-							  
-						  }else if(cellNum == 4) { //O_FILE
-							  Cell c = row2.createCell(cellNum) ; 
-							  c.setCellValue(O_File);
-							  row2.createCell(1).setCellValue(checksumColumn2.get(indexColumn2));
-							  indexColumn2++;
-							  
-						  }else if(cellNum == 5) { //O_SHA1
-							  Cell c = row2.createCell(cellNum) ; 
-							  c.setCellValue(O_Sha1);
-							  
-							  if(indexColumn5 < checksumColumn5Sha1.size()) {
-								  row2.createCell(2).setCellValue(checksumColumn5Sha1.get(indexColumn5));
-								  //System.out.println("indexColumn5 = "+indexColumn5);
-								  indexColumn5++;
-							  }
-
-							  
-						  }else {
-							  Cell c = row2.createCell(cellNum) ; 
-						  }
-						  
-						  cellNum++; 
-						  
-						  
-						break;	
-						
-					  case FORMULA:
-						
-						 
-						 if(cellNum == 2) {
-							 
-							 switch(cell.getCachedFormulaResultType()) {
-							  
-							  case STRING:  
-								  Cell c = row2.createCell(cellNum) ;
-								  c.setCellValue(cell.getRichStringCellValue().toString());
-							  break ; 
-
-							  case BOOLEAN:
-								  Cell c2 = row2.createCell(cellNum);
-								  break;
-						     }
-							 
-						 }else if(cellNum == 6 || cellNum == 7 || cellNum == 8){
-							 
-							 String strFormula = ""; 
-							 
-							 if(cellNum == 6) {
-								 strFormula = "IF(A"+indexRow1+"=D"+indexRow1+",TRUE)";
-								 indexRow1 ++;
-								 
-							 }else if(cellNum == 7) {
-								 strFormula = "IF(B"+indexRow2+"=E"+indexRow2+",TRUE)";
-								 indexRow2 ++;
-								 
-							 }else if(cellNum == 8) {
-								 strFormula = "IF(C"+indexRow3+"=F"+indexRow3+",TRUE)";
-								 indexRow3 ++;
-							 }
-							
-							 Cell c = row2.createCell(cellNum);
-							 c.setCellFormula(strFormula);
-							 
-						 }
-
-						 cellNum++; 
-						  
-						  break; 
-					}
-					
-				}
-				
-				cellNum = 0; 
-				
-				
-				rowNum ++;
-			}
-			
-			 indexColumn5 = 0;
-			
-			filePieno.close(); 
-			fileVuoto.close();
+			fileNuovoCM.close(); 
+			fileVecchioCM.close();
 			
 			//aggiorna il file che era vuoto
 			FileOutputStream out = new FileOutputStream(f);
-			workbook_fv.write(out);
+			workbook_ncm.write(out);
 			out.close();
 
 		}catch(Exception ex) { ex.printStackTrace(); }
@@ -538,10 +471,10 @@ public class ChangeManagement {
 	        			
 	        			/* tolgo dal path il nome della cartella principale del gioco */
 	        			//System.out.println("path: "+path);
-	        			int posPrimoSlash = path.indexOf("/");
-	        			String nuovoPath = path.substring(posPrimoSlash+1); 	        			
-	        			cell.setCellValue(nuovoPath);
-	        			giochiPathGrezzi.add(nuovoPath); 
+	        			//int posPrimoSlash = path.indexOf("/");
+	        			//String nuovoPath = path.substring(posPrimoSlash+1); 	        			
+	        			cell.setCellValue(path);
+	        			giochiPathGrezzi.add(path); 
 	        		}
 	        	}
 	        	 
@@ -659,33 +592,9 @@ public class ChangeManagement {
 							/* Cercherò in Grezzi il path corrente, se non lo trovo toglierò il nome del folder principale
 							 * dal path ed eseguirò di nuovo la ricerca. è un modo per sapere devo modificare il path o no*/
 							
-							if(cellNum == 1) {
-							   
-								
-							  int trovato = cercaPaths( cell.getStringCellValue() );
-							  if( trovato == 0) {
-								  //c.setCellValue("non trovato");
-								  int primoSlash = cell.getStringCellValue().indexOf("/");
-								  String newPth = cell.getStringCellValue().substring(primoSlash+1) ;
-								  trovato = cercaPaths(newPth);
-								  if(trovato == 1) {
-									  c.setCellValue(newPth);
-								  }else {
-									  c.setCellValue(cell.getStringCellValue());
-									  //System.out.println("controllare bene il path : "+newPth);
-								  }
-								  //c.setCellValue(newPth);
-								  
-							  }else if( trovato == 1) {
-								  c.setCellValue(cell.getStringCellValue());
-							  }
-								
-							}else {
-								
-								c.setCellValue(cell.getStringCellValue());
-							}
+							c.setCellValue(cell.getStringCellValue());
 							
-							break ; 
+							break; 
 					}
 					
 					cellNum ++; 
@@ -745,9 +654,7 @@ public class ChangeManagement {
 						
 						/* Devo togliere il nome del folder principale però ricordarsi che dal CM1_JAN_2020 
 						 * in poi togliere questa parte */
-						int primoSlash = cell.toString().indexOf("/");
-						String s = cell.toString().substring(primoSlash+1);
-						checksumColumn4.add(s);
+						checksumColumn4.add(cell.toString());
 						
 						//System.out.print(cell.toString()) ;
 					}
@@ -981,6 +888,7 @@ public class ChangeManagement {
 				}
 			}
 			
+			int indexC4 = 1; 
 			
 			while(carRowIterator.hasNext()) {
 				
@@ -995,29 +903,38 @@ public class ChangeManagement {
 					
 					Cell carCell = carCellIterator.next() ; 
 					
-					if(numCellCAR == 2) {
+					if(numCellCAR == 2) { 
 						
-						//System.out.print(carCell.getStringCellValue()+"   ");
+						/* Scrivo nome file */
 						nuovoCMRow.createCell(0).setCellValue(carCell.getStringCellValue());
 						
 					}else if(numCellCAR == 10) {
 						
-						//System.out.print(carCell.getStringCellValue()+"   ");
+						/* Scrivo nome sha1 */
 						nuovoCMRow.createCell(1).setCellValue(carCell.getStringCellValue());
+						
+						/* Quando scrivo sha1 vado a cercare in in Grezzi lo sha1 scritto così riporto il path 
+						 * nella colonna Q_Path */
+			            String cellaColumnB = "B"+indexC4;
+						String matrice = "Grezzi!A:B";
+						String formula5 = "VLOOKUP("+cellaColumnB+","+matrice+",2,FALSE)";
+						
+						nuovoCMRow.createCell(4).setCellFormula(formula5);
+						indexC4 ++;
 						
 					}else if(numCellCAR == 11) {
 						
-						//System.out.print(carCell.getStringCellValue()+"\n");
+						/* Scrivo nome path */
 						nuovoCMRow.createCell(2).setCellValue(carCell.getStringCellValue());
 					}
-					
 					
 					numCellCAR ++; 
 				}
 			    
 				//System.out.println("\n");
-				numRowCAR ++; 
 				numRowNuovoCM ++;
+				numRowCAR ++; 
+				
 			}
 			
 			//System.out.println("CAR nome tab : "+tabCAR.getSheetName());

@@ -36,7 +36,7 @@ public class Main {
 		ChangeManagement CM;
 		
 		/*Vecchio File Excel */
-		String vecchioCMExcel= "CM_DEC_2st_2019.xlsx";
+		String vecchioCMExcel= "CM1_JAN_2020.xlsx";
 		
 		/*il mio foglio excel*/
 		XSSFWorkbook workbook = null;
@@ -58,8 +58,8 @@ public class Main {
 	    	/* primo passo Change Management */
 	    	System.out.println("---------- primo passo [Estrazione , Rinominazione , e Calcolo file sha1 giochi  ...] ------------");
 	    	
-	    	String oldCMPath = path +"\\CM2_DEC_2019";
-	    	String newCMPath = path +"\\CM1_GEN_2020";
+	    	String oldCMPath = path +"\\CM1_JAN_2020";
+	    	String newCMPath = path +"\\CM2_JAN_2020";
 	    	
 	    	RenameFolders rfNew = new RenameFolders(newCMPath); 
 	    	System.out.println("Nuovo CM:");
@@ -141,7 +141,8 @@ public class Main {
 	    		
 	    		
 	    		
-	    		//caricamento dati Check EVO
+	    		/*caricamento dati Check EVO*/
+	    		
 	    		if(nomeFoglioExc.endsWith(".xlsx")) {
 	    			
 	    			System.out.print("Caricamento dati in Check EVO ...");
