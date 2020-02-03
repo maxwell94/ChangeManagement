@@ -60,9 +60,12 @@ public class ChangeManagement {
 	ArrayList<String> checksumColumn4 ;
 	ArrayList<String> checksumColumn5Sha1; 
 	
-	ArrayList<String> appoChgGamesColumn0; 
-	ArrayList<String> appoChgGamesColumn1;
-	ArrayList<String> appoChgGamesColumn2;
+	ArrayList<String> appoChgGamesColumn3; 
+	ArrayList<String> appoChgGamesColumn4;
+	ArrayList<String> appoChgGamesColumn5;
+	ArrayList<String> checksumsColumn1;
+	ArrayList<String> checksumsColumn2;
+	ArrayList<String> checksumsColumn5;
 	
 	String Sha1PrepareChecksumsGrezzi; 
 	
@@ -96,9 +99,13 @@ public class ChangeManagement {
 		this.Sha1PrepareChecksumsGrezzi = "" ; 
 		
 		
-		this.appoChgGamesColumn0 = new ArrayList<String>() ; 
-		this.appoChgGamesColumn1 = new ArrayList<String>() ; 
-		this.appoChgGamesColumn2 = new ArrayList<String>() ; 
+		this.appoChgGamesColumn3 = new ArrayList<String>() ; 
+		this.appoChgGamesColumn4 = new ArrayList<String>() ; 
+		this.appoChgGamesColumn5 = new ArrayList<String>() ; 
+		this.checksumsColumn1 = new ArrayList<String>() ; 
+		this.checksumsColumn2 = new ArrayList<String>() ; 
+		this.checksumsColumn5 = new ArrayList<String>() ; 
+		
 
 		nDatiGrezzi = 0 ; 
 		nDatiChecksums = 0; 
@@ -195,10 +202,10 @@ public class ChangeManagement {
 		
 	}
 	
-	/*--------------------------------------------------[Fine]-----------------------------------------------------------*/
+/*--------------------------------------------------[Fine]-----------------------------------------------------------*/
 	
 	
-	/* ---------------------------------------------[leggiAppoggioChgGamesVCM]---------------------------------------------*/
+/* ---------------------------------------------[leggiAppoggioChgGamesVCM]---------------------------------------------*/
 	
 	public void leggiAppoggioChgGamesVCM(XSSFSheet mySheet) {
 		
@@ -223,15 +230,15 @@ public class ChangeManagement {
 				Cell cellaLetta = cellIterator.next() ; 
 				
 				if(cellNum == 0) {
-					appoChgGamesColumn0.add( cellaLetta.getStringCellValue() );
+					appoChgGamesColumn3.add( cellaLetta.getStringCellValue() );
 					//System.out.print(cellaLetta.getStringCellValue()+"  ");
 					
 				}else if(cellNum == 1) {
-					appoChgGamesColumn1.add( cellaLetta.getStringCellValue() );
+					appoChgGamesColumn4.add( cellaLetta.getStringCellValue() );
 					//System.out.print(cellaLetta.getStringCellValue()+"  ");
 					
 				}else if(cellNum == 2) {
-					appoChgGamesColumn2.add( cellaLetta.getStringCellValue() );
+					appoChgGamesColumn5.add( cellaLetta.getStringCellValue() );
 					//System.out.print(cellaLetta.getStringCellValue()+"\n");
 				}
 				
@@ -248,12 +255,64 @@ public class ChangeManagement {
 	
 	
 	
+/* ------------------------------------------------------[leggiChecksumsNCM]--------------------------------------------------*/
+	
+	public void leggiChecksumsNCM(XSSFSheet mySheet, FormulaEvaluator fe) {
+		
+		int rowNum = 0;
+		String str = "";
+		
+		for(Row row: mySheet) {
+			
+			for(int cn=0; cn < row.getLastCellNum(); cn ++) {
+				
+				Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
+				
+				if(cn == 5 && rowNum > 0 && !cell.toString().isEmpty()) {   //column1 
+					//System.out.print(cell.toString()+"   ") ;
+					checksumsColumn1.add(cell.toString()); 
+					
+				}else if( cn == 6  && rowNum > 0 && !cell.toString().isEmpty()) {   //column2
+					checksumsColumn2.add(cell.toString()); 
+					//System.out.print(cell.toString()+"   ") ;
+					str = cell.toString() ; 
+					
+				}else if( cn == 10  && rowNum > 0 && !cell.toString().isEmpty() ) {  //column5
+					
+					CellValue cellValue = fe.evaluate(cell);
+					
+					if( cellValue.getStringValue() == null) {
+						
+						if( str.equals("prepare_checksums.py") ) {
+							checksumsColumn5.add(Sha1PrepareChecksumsGrezzi);
+						}
+						//System.out.println("Sha1 = null");
+					}else {
+						
+						switch( cellValue.getCellType() ) {
+					     
+						   case STRING:
+							   checksumsColumn5.add(cellValue.getStringValue());
+						       //System.out.print(cellValue.getStringValue()+"\n") ;
+						   break; 
+						}
+					}
+					
+				}
+			}
+			
+			rowNum ++;
+		}
+	}
+
+/*-------------------------------------------------------------[Fine]---------------------------------------------------------*/
+	
 	
 	/* ---------------------------------------------[appoggioChangedGames]---------------------------------------------*/
 
 	/* Metodo che lavora all'interno del tab Appoggio Changed Games 
 	 * getRichStringCellValue().toString();*/
-	public void appoggioChangedGames(File f , File f2) {
+	public void appoggioChangedGames(File f , File f2)  {
 		
 		try {
 			
@@ -272,6 +331,9 @@ public class ChangeManagement {
 		    /*vado nel tab desiderato Appoggio Changed Games in entrambi i fogli */
 			XSSFSheet tabAppoggioNCM = workbook_ncm.getSheetAt(5);
 			XSSFSheet tabAppoggioVCM = workbook_vcm.getSheetAt(5);
+			
+			/*Vado nel tab Checksums nel file del nuovo CM */
+			XSSFSheet tabChecksumsNCM = workbook_ncm.getSheetAt(1);
 			
 			int numRowTabNCM = 0; 
 			
@@ -293,32 +355,72 @@ public class ChangeManagement {
 			numRowTabNCM ++;
 			
 			/*Leggo il tab Appoggio Changed Games del vecchio CM e memorizzo i dati delle prime tre colonne dentro 
-			 * tre ArrayList diverse */
+			 * tre ArrayList diversi */
 			leggiAppoggioChgGamesVCM(tabAppoggioVCM);
 			
+			/*Leggo il tab Checksums del nuovo CM e memorizzo i dati delle colonne column1 , column2 , column5
+			 *dentro tre ArrayList diversi */
+			FormulaEvaluator fe = workbook_ncm.getCreationHelper().createFormulaEvaluator() ;  
+			leggiChecksumsNCM(tabChecksumsNCM , fe);
+			
+			int iGame = 2; 
+			int iFile = 2; 
+			int iSha1 = 2; 
+			
+			
+			
+//			System.out.println("size appoChgGamesColumn3 = "+appoChgGamesColumn3.size());
+//			System.out.println("size appoChgGamesColumn4 = "+appoChgGamesColumn4.size());
+//			System.out.println("size appoChgGamesColumn5 = "+appoChgGamesColumn5.size());
+//			
+//			System.out.println("size checksumsColumn1 = "+checksumsColumn1.size());
+//			System.out.println("size checksumsColumn2 = "+checksumsColumn2.size());
+//			System.out.println("size checksumsColumn5 = "+checksumsColumn5.size());
+			
+			
 			/*Scrivo tutti i dati letti e memorizzati nel tab Appoggio Changed Games del nuovo CM */
-			for(int i=0; i<appoChgGamesColumn0.size(); i++) {
+			for(int i=0; i<appoChgGamesColumn3.size(); i++) {
 				
 				/* Creo una riga nel tab Appoggio Changed Games del nuovo CM per ogni info letta */
 				Row rigaTabNCM = tabAppoggioNCM.createRow(numRowTabNCM);
 				
 				/* E ora creo tre celle e inserisco le informazioni memorizzate */
-				rigaTabNCM.createCell(0).setCellValue( appoChgGamesColumn0.get(i));
-				rigaTabNCM.createCell(1).setCellValue( appoChgGamesColumn1.get(i));
-				rigaTabNCM.createCell(2).setCellValue( appoChgGamesColumn2.get(i));
+				rigaTabNCM.createCell(0).setCellValue( checksumsColumn1.get(i) );
+				rigaTabNCM.createCell(1).setCellValue( checksumsColumn2.get(i) );
+				rigaTabNCM.createCell(2).setCellValue( checksumsColumn5.get(i) );
+				rigaTabNCM.createCell(3).setCellValue( appoChgGamesColumn3.get(i) );
+				rigaTabNCM.createCell(4).setCellValue( appoChgGamesColumn4.get(i) );
+				rigaTabNCM.createCell(5).setCellValue( appoChgGamesColumn5.get(i) );
+				
+				String formulaIGAME = "IF(A"+iGame+"=D"+iGame+",TRUE)"; 
+				String formulaIFILE = "IF(B"+iFile+"=E"+iFile+",TRUE)";
+				String formulaISHA1 = "IF(C"+iSha1+"=F"+iSha1+",TRUE)";
+				
+				rigaTabNCM.createCell(6).setCellFormula(formulaIGAME);
+				rigaTabNCM.createCell(7).setCellFormula(formulaIFILE);
+				rigaTabNCM.createCell(8).setCellFormula(formulaISHA1);
+				
+				iGame ++;
+				iFile ++;
+				iSha1 ++;
 				
 				numRowTabNCM ++;
 			}
 			
+//			for(int i=0;i<appoChgGamesColumn3.size(); i++) {
+//				System.out.println( checksumsColumn2.get(i) +" <-----> "+appoChgGamesColumn4.get(i)) ;
+//			}
+//			System.out.println();
 			
 			/*Ora leggo e memorizzo i dati della colonna 5 del tab Checksums del file del nuovo CM */
-			leggiChecksumsColumn5Sha1(f);
+			//leggiChecksumsColumn5Sha1(f);
 			
 			/*Scrivo ora i dati letti e memorizzati nel tab Appoggio Changed games del nuovo CM */
 			
 			/* setto a 1 il contatore delle righe che vengono create perché scrivere nelle altre tre colonne 
 			 * partendo dalla prima riga */
 			numRowTabNCM = 1; 
+			
 			
 			
 			fileNuovoCM.close(); 
