@@ -187,9 +187,51 @@ public class Main {
 	    		}
 	    		
 /*----------------------------------------------------------[Fine]-----------------------------------------------------------*/
+	    	
+	    		   		
+/*------------------------------------------------[caricamento dati Report]----------------------------------------------------*/	    		
 	    		
-	
-	    	    
+	    	   if( nomeFoglioExc.endsWith(".xlsx") ) {
+	    		   
+	    		   System.out.print("Caricamento dati in Report ...");
+	    		   
+	    			File nuovoCM = new File(newCMPath+"\\"+nomeFoglioExc);
+	    			File reportFile = null; 
+	    		    /* qui recupero tutti i nomi dei files presenti nella cartella del nuovo CM così troverò il file 
+	    		     * Excel critical assets register */
+	    			 String [] nomiFiles = directoryNuovoCM.list();
+	    			 for(String s:nomiFiles) {
+	    				 if(s.contains("Evolution Games Versions")) {
+	    					 reportFile = new File(newCMPath+"\\"+s);
+	    				 }
+	    			 }
+	    		     
+	    			 CM.report(nuovoCM, reportFile);
+	    			 
+	    		   System.out.print(" Fine\n");
+	    		   
+	    	   }else {
+	    		   
+	    		   System.out.print("Caricamento dati in Report ...");
+	    		   
+	    			File nuovoCM = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx");
+	    			File reportFile = null; 
+	    		    /* qui recupero tutti i nomi dei files presenti nella cartella del nuovo CM così troverò il file 
+	    		     * Excel critical assets register */
+	    			 String [] nomiFiles = directoryNuovoCM.list();
+	    			 for(String s:nomiFiles) {
+	    				 if( s.contains("Evolution Games Versions") ) {
+	    					 reportFile = new File(newCMPath+"\\"+s);
+	    				 }
+	    			 }
+	    		   
+	    		   CM.report(nuovoCM, reportFile);
+	    		   
+	    		   System.out.print(" Fine\n");
+	    		   
+	    	   }
+/*----------------------------------------------------------[Fine]-------------------------------------------------------------*/
+	    		
 	    	}else {  //nome foglio Excel non valido
 	    		System.out.println("File non trovato! ");
 	        }   	

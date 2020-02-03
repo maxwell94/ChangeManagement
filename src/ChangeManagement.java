@@ -54,11 +54,13 @@ public class ChangeManagement {
 	
 	ArrayList<String> giochiPathGrezzi ;
 	
+	/*---------- [da cancellare] -----------*/
 	ArrayList<String> checksumColumn1 ;
 	ArrayList<String> checksumColumn2 ;
 	ArrayList<String> checksumColumn3 ;
 	ArrayList<String> checksumColumn4 ;
 	ArrayList<String> checksumColumn5Sha1; 
+	/*--------------------------------------*/
 	
 	ArrayList<String> appoChgGamesColumn3; 
 	ArrayList<String> appoChgGamesColumn4;
@@ -66,6 +68,11 @@ public class ChangeManagement {
 	ArrayList<String> checksumsColumn1;
 	ArrayList<String> checksumsColumn2;
 	ArrayList<String> checksumsColumn5;
+	
+	ArrayList<String> EGVGameName;
+	ArrayList<String> EGVGameType;
+	ArrayList<String> EGVPlatformVersion;
+	ArrayList<String> EGVGameVersion;
 	
 	String Sha1PrepareChecksumsGrezzi; 
 	
@@ -106,6 +113,10 @@ public class ChangeManagement {
 		this.checksumsColumn2 = new ArrayList<String>() ; 
 		this.checksumsColumn5 = new ArrayList<String>() ; 
 		
+		this.EGVGameName = new ArrayList<String>() ; 
+		this.EGVGameType = new ArrayList<String>() ; 
+		this.EGVPlatformVersion = new ArrayList<String>() ; 
+		this.EGVGameVersion = new ArrayList<String>() ; 
 
 		nDatiGrezzi = 0 ; 
 		nDatiChecksums = 0; 
@@ -1106,7 +1117,7 @@ public class ChangeManagement {
 			
 			//System.out.println("numRowCAR : "+numRowCAR);
 			
-			//aggiorna il file vuoto
+			//aggiorna il file del nuovo CM 
 			FileOutputStream out = new FileOutputStream(nuovoCM);
 			w.write(out);
 			out.close();
@@ -1115,5 +1126,84 @@ public class ChangeManagement {
 	 }
 	 
 /*----------------------------------------------------------[Fine]-------------------------------------------------------------*/	 
+
+	 
+	 
+
+/*-----------------------------------------------------[leggiEvoGameVersions]----------------------------------------------------*/	 
+	 
+	 
+/*-------------------------------------------------------------[Fine]------------------------------------------------------------*/	 
+	 
+	 
+	 public void leggiEvoGameVersions(XSSFSheet mySheet) {
+		 
+		 int rowNum = 0; 
+		 
+		 for(Row row: mySheet) {
+			 
+			 for(int cn = 0; cn < row.getLastCellNum(); cn++) {
+				 
+				 Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
+				 
+				 if( cn == 0 && rowNum > 0) {
+					 
+					EGVGameName.add(cell.toString());
+					 
+				 }else if( cn == 1 && rowNum > 0) {
+					 
+					 EGVGameType.add(cell.toString());
+					 
+				 }else if( cn == 2 && rowNum > 0) {
+					 
+					EGVPlatformVersion.add(cell.toString());
+					 
+				 }else if( cn == 3 && rowNum > 0) {
+					 
+					 EGVGameVersion.add(cell.toString()) ;
+				 }
+				 
+			 }
+			 rowNum ++;
+		 }
+	 }
+	 
+	 
+	 
+/*------------------------------------------------------------[Report]----------------------------------------------------------*/
+	 
+	 public void report(File nuovoCM, File gameVersions) {
+		 
+		 try {
+			 
+		    	/* FileInputStream per il file del nuovo CM */
+		    	FileInputStream fileNuovoCM = new FileInputStream( nuovoCM );
+		    	
+		    	/* FileInputStream per il file gameVersions  */
+		    	FileInputStream fileGameVersions = new FileInputStream(gameVersions);
+		    	
+		    	/* foglio excel per il file Evolution Game Versions */
+		    	XSSFWorkbook workbook_gv = new XSSFWorkbook(fileGameVersions);
+		    	
+		    	/* foglio excel per il file del nuovo CM */
+		    	XSSFWorkbook workbook_ncm = new XSSFWorkbook(fileNuovoCM);
+		    	
+		    	
+		    	/*Tab Version del file Evolution Game Versions*/
+		    	XSSFSheet tabFileGameVersions = workbook_gv.getSheetAt(0);
+		    	
+		    	/*Chiamo la funzione che mi legge il contenuto del tab version del file Evolution Games versions e
+		    	 *  va a memorizzare i dati dentro degli ArrayList */
+		    	leggiEvoGameVersions(tabFileGameVersions);
+		    	
+				//aggiorna il file del nuovo CM 
+				FileOutputStream out = new FileOutputStream(nuovoCM);
+				workbook_ncm.write(out);
+				out.close();
+		    	
+		 }catch( IOException ex) { ex.printStackTrace();}
+	 }
+	 
+/*-------------------------------------------------------------[Fine]------------------------------------------------------------*/
 	 
 }
