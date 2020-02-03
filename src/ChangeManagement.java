@@ -440,8 +440,6 @@ public class ChangeManagement {
 	
 	
 	
-	
-	
 	/* ---------------------------------------------[sostituisci]--------------------------------------------------------*/
 	/* metodo che prende una stringa sostituisce '\' con '/' e ritorna un array */
 	public static char [] sostituisci (String str) {
@@ -964,13 +962,13 @@ public class ChangeManagement {
 	    	int numRowNuovoCM = 0; 
 	    	
 		    /*vado nel tab Check EVO nel file del nuovo CM  */
-			XSSFSheet tabNuovoCM = w.getSheetAt(6);
+			XSSFSheet tabCheckEvoNuovoCM = w.getSheetAt(6);
 	    	
 			/* Pulisco il tab Check EVO e inserisco intanto il titolo */
 			
-			deleteSheetAllContent(tabNuovoCM);
+			deleteSheetAllContent(tabCheckEvoNuovoCM);
 			
-			Row titoloTabNuovoCM = tabNuovoCM.createRow(numRowNuovoCM);
+			Row titoloTabNuovoCM = tabCheckEvoNuovoCM.createRow(numRowNuovoCM);
 			titoloTabNuovoCM.createCell(0).setCellValue("Summary");
 			titoloTabNuovoCM.createCell(1).setCellValue("Evo_Checksums");
 			titoloTabNuovoCM.createCell(2).setCellValue("Path");
@@ -989,14 +987,13 @@ public class ChangeManagement {
 					carRowIterator.next() ;
 				}
 			}
-			
-			int indexC4 = 1; 
+			 
 			
 			while(carRowIterator.hasNext()) {
 				
 				Row carRow = carRowIterator.next() ;
 				
-				Row nuovoCMRow = tabNuovoCM.createRow(numRowNuovoCM);
+				Row nuovoCMRow = tabCheckEvoNuovoCM.createRow(numRowNuovoCM);
 				
 				int numCellCAR = 0; 
 				Iterator<Cell> carCellIterator = carRow.cellIterator() ;
@@ -1007,22 +1004,58 @@ public class ChangeManagement {
 					
 					if(numCellCAR == 2) { 
 						
-						/* Scrivo nome file */
-						nuovoCMRow.createCell(0).setCellValue(carCell.getStringCellValue());
+						
+						
+						if( carCell.getStringCellValue().equals("certification-xml-daily") ) {
+							
+							nuovoCMRow.createCell(0).setCellValue(carCell.getStringCellValue());
+							
+						}else {
+							
+							/* Scrivo nome file */
+							if(!carCell.getStringCellValue().endsWith(".class") ) {
+								
+								String str = carCell.getStringCellValue()+".class";
+								
+								if( str.contains("/") ) {
+									
+									int primoSlash = str.indexOf("/");
+									String s = str.substring(primoSlash+1);
+									nuovoCMRow.createCell(0).setCellValue(s);
+									
+								}else {
+									
+									nuovoCMRow.createCell(0).setCellValue(str);
+								}
+								
+							}else if(carCell.getStringCellValue().endsWith(".class") ) {
+								
+								if( carCell.getStringCellValue().contains("/") ) {
+									
+									int primoSlash = carCell.getStringCellValue().indexOf("/");
+									String s = carCell.getStringCellValue().substring(primoSlash+1);
+									nuovoCMRow.createCell(0).setCellValue(s);
+									
+								}else {
+									nuovoCMRow.createCell(0).setCellValue(carCell.getStringCellValue());
+								}
+								
+							}
+							
+						}
+						
+						
+						//nuovoCMRow.createCell(0).setCellValue(carCell.getStringCellValue());
+						
+						/*ne approfitto per creare le altre celle cosi dopo devo solo cambiare il valore */
+						nuovoCMRow.createCell(3).setCellValue("ciao");
+						nuovoCMRow.createCell(4).setCellValue("ciao");
+						nuovoCMRow.createCell(5).setCellValue("ciao");
 						
 					}else if(numCellCAR == 10) {
 						
 						/* Scrivo nome sha1 */
 						nuovoCMRow.createCell(1).setCellValue(carCell.getStringCellValue());
-						
-						/* Quando scrivo sha1 vado a cercare in in Grezzi lo sha1 scritto così riporto il path 
-						 * nella colonna Q_Path */
-			            String cellaColumnB = "B"+indexC4;
-						String matrice = "Grezzi!A:B";
-						String formula5 = "VLOOKUP("+cellaColumnB+","+matrice+",2,FALSE)";
-						
-						nuovoCMRow.createCell(4).setCellFormula(formula5);
-						indexC4 ++;
 						
 					}else if(numCellCAR == 11) {
 						
@@ -1039,8 +1072,40 @@ public class ChangeManagement {
 				
 			}
 			
-			//System.out.println("CAR nome tab : "+tabCAR.getSheetName());
-	    	
+			/*Doper aver riempito le prime tre colonne devo riempire le ultime tre */
+			int nRow = 0; 
+			int indexColoumnB = 2;
+			int indexColoumnE = 2;
+			int indexColumnF = 2; 
+			
+			for(Row row: tabCheckEvoNuovoCM) {
+				
+				for(int cn=0; cn < row.getLastCellNum(); cn ++) {
+					
+					if(cn == 3 && nRow > 0) {
+						
+						String cellaColumnB = "B"+indexColoumnB;
+						String cellaColumnE = "E"+indexColoumnE;
+						
+						String matrice = "Grezzi!A:B";
+						String formula = "VLOOKUP("+cellaColumnB+","+matrice+",2,FALSE)";
+						String formulaEstrai ="RIGHT("+cellaColumnE+",LEN("+cellaColumnE+")-FIND("+cellaColumnE+",SUBSTITUTE("+cellaColumnE+","+"\"/\" "+","+cellaColumnE+",LEN("+cellaColumnE+")-LEN(SUBSTITUTE("+cellaColumnE+","+"\"/\" "+","+""+"))),1))";
+						String formulaEquals= "IF(A"+indexColumnF+"=D"+indexColumnF+",TRUE)"; 
+						
+						row.getCell(4).setCellFormula(formula);
+						row.getCell(3).setCellFormula(formulaEstrai);
+						row.getCell(5).setCellFormula(formulaEquals);
+						
+						indexColoumnB ++;
+						indexColoumnE ++;
+						indexColumnF ++;
+					}
+				}
+				
+				nRow ++;
+			}
+			
+			//System.out.println("numRowCAR : "+numRowCAR);
 			
 			//aggiorna il file vuoto
 			FileOutputStream out = new FileOutputStream(nuovoCM);
