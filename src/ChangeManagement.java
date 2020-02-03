@@ -986,8 +986,7 @@ public class ChangeManagement {
 				if(carRowIterator.hasNext()) {
 					carRowIterator.next() ;
 				}
-			}
-			 
+			} 
 			
 			while(carRowIterator.hasNext()) {
 				

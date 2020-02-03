@@ -100,13 +100,16 @@ public class Main {
 	    			CM = new ChangeManagement(newCMPath+"\\"+nomeFoglioExc+".xlsx");
 	    		}
 	    		
-	    		
+/*-----------------------------------------------[Caricamento dati Grezzi ]------------------------------------------------*/	    		
 	    	    //caricamento dati in Grezzi
 	    		System.out.print("Caricamento dati in Grezzi... ");
 	    	    CM.grezzi(f,newCMPath);
 	    	    System.out.print(" Fine\n");
+/*---------------------------------------------------------[Fine]--------------------------------------------------------------*/	    	    
 	    	    
 	    	    
+	    	    
+/*-----------------------------------------------[Caricamento dati Checksums ]------------------------------------------------*/	    	    
 	    		//caricamento dati Checksums 
 	    		if(nomeFoglioExc.endsWith(".xlsx")) {
 	    			File nuovoFile = new File(newCMPath+"\\"+nomeFoglioExc);
@@ -123,7 +126,12 @@ public class Main {
 	    			 //CM.checksums2(nuovoFile);
 	    			 System.out.print(" Fine\n");
 	    		}
-	    	    
+/*---------------------------------------------------------[Fine]--------------------------------------------------------------*/	    	    
+	    		
+	    		
+	    		
+	    		
+/*----------------------------------------[ Caricamento dati Appoggio Changed Games ]------------------------------------------*/
 	    	    //caricamento dati Appoggio Changed Games
 	    		if(nomeFoglioExc.endsWith(".xlsx")) {
 	    			File vuoto = new File(newCMPath+"\\"+nomeFoglioExc); 
@@ -138,10 +146,11 @@ public class Main {
 	    			 CM.appoggioChangedGames(vuoto,pieno); 
 	    			 System.out.print(" Fine\n");
 	    		}
+/*---------------------------------------------------------[Fine]--------------------------------------------------------------*/
 	    		
 	    		
 	    		
-	    		/*caricamento dati Check EVO*/
+/*----------------------------------------------[caricamento dati Check EVO]-------------------------------------------------*/
 	    		
 	    		if(nomeFoglioExc.endsWith(".xlsx")) {
 	    			
@@ -177,6 +186,9 @@ public class Main {
 	    			 System.out.print(" Fine\n");
 	    		}
 	    		
+/*----------------------------------------------------------[Fine]-----------------------------------------------------------*/
+	    		
+	
 	    	    
 	    	}else {  //nome foglio Excel non valido
 	    		System.out.println("File non trovato! ");
