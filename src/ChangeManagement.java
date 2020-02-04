@@ -1215,7 +1215,7 @@ public class ChangeManagement {
 		    	titleBigTable.createCell(0).setCellValue("Game");
 		    	titleBigTable.createCell(1).setCellValue("FileName");
 		    	titleBigTable.createCell(2).setCellValue("Sha1");
-		    	titleBigTable.createCell(3).setCellValue("Platform");
+		    	titleBigTable.createCell(3).setCellValue("Platform Version");
 		    	titleBigTable.createCell(4).setCellValue("Game Version");
 		    	titleBigTable.createCell(5).setCellValue("Sì");
 		    	nRowBigTable ++;
@@ -1231,6 +1231,10 @@ public class ChangeManagement {
 		    		contentsBigTable.createCell(0).setCellValue(checksumsColumn1.get(n));
 		    		contentsBigTable.createCell(1).setCellValue(checksumsColumn2.get(n));
 		    		contentsBigTable.createCell(2).setCellValue(checksumsColumn5.get(n));
+		    		contentsBigTable.createCell(3).setCellValue("empty");
+		    		contentsBigTable.createCell(4).setCellValue("empty");
+		    		contentsBigTable.createCell(5).setCellValue("empty");
+		    		
 		    		
 		    		/*Devo intanto proseguire con l'inserimento del titolo della tabella piccola*/
 		    		if(nRowBigTable == 5) { 
@@ -1256,6 +1260,34 @@ public class ChangeManagement {
 		    		
 		    		n++;
 		    		nRowBigTable ++;
+		    	}
+		    	
+		    	
+		    	
+		    	/* Ora devo riempire la colonna Platform Version , Game Version , e Sì della tabella grande 
+		    	 * perché ora ho tutti i dati che mi servono a disposizione */
+		    	
+		    	int rowNum = 0; 
+		    	int indexCellToSearch = 2 ; 
+		    	
+		    	for(Row row: tabReportFileNuovoCM) {
+		    		
+		    		for(int cn=0; cn < row.getLastCellNum(); cn++) {
+		    			
+		    			if(cn == 3 && rowNum > 0) {
+		    				
+				            String cellToSearch = "A"+indexCellToSearch;
+							String matrice = "Report!I6:L46";
+							String formulaPlatversion = "VLOOKUP("+cellToSearch+","+matrice+",3,FALSE)";
+							
+		    				Cell c = row.getCell(cn) ; 
+		    			    c.setCellFormula(formulaPlatversion);
+		    				
+		    				indexCellToSearch ++;
+		    			}
+		    		}
+		    		
+		    		rowNum ++;
 		    	}
 		    	
 		    	
