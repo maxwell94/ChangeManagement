@@ -1264,6 +1264,29 @@ public class ChangeManagement {
 		    	
 		    	
 		    	
+		    	/* Dettaglio importante: devo modificare "First Person Blackjack" e "First Person Roulette" 
+		    	 * in "Blackjack RNG" e "Roulette RNG" se no la formula VLOOKUP non troverebbe mai questi dati 
+		    	 * nella piccola tabella.
+		 		   Dopo aver riempito le colonne Platform Version e Game Version li devo rimettere come erano prima
+		    	 **/
+		    	
+		    	for(Row row:tabReportFileNuovoCM) {
+		    		
+		    		for(int cn = 0; cn< row.getLastCellNum(); cn++) {
+		    			
+		    			Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
+		    			
+		    			if( cn == 0 && cell.toString().equals("First Person Blackjack") ) {
+		    				
+		    				cell.setCellValue("Blackjack RNG");
+		    				
+		    			}else if(cn == 0 && cell.toString().equals("First Person Roulette") ) {
+		    				
+		    				cell.setCellValue("Roulette RNG");
+		    			}
+		    		}
+		    	}
+		    	
 		    	/* Ora devo riempire la colonna Platform Version , Game Version , e Sì della tabella grande 
 		    	 * perché ora ho tutti i dati che mi servono a disposizione */
 		    	
@@ -1274,17 +1297,29 @@ public class ChangeManagement {
 		    		
 		    		for(int cn=0; cn < row.getLastCellNum(); cn++) {
 		    			
+		    			Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
+		    			
 		    			if(cn == 3 && rowNum > 0) {
 		    				
-				            String cellToSearch = "A"+indexCellToSearch;
-							String matrice = "Report!I6:L46";
-							String formulaPlatversion = "VLOOKUP("+cellToSearch+","+matrice+",3,FALSE)";
-							
-		    				Cell c = row.getCell(cn) ; 
-		    			    c.setCellFormula(formulaPlatversion);
+		    				String cellToSearch = "A"+indexCellToSearch;
+		    				String matrice = "Report!I5:L46";
 		    				
-		    				indexCellToSearch ++;
+							String formulaPlatversion = "VLOOKUP("+cellToSearch+","+matrice+",3,FALSE)";
+							cell.setCellFormula(formulaPlatversion);
+							
+							
+		    			}else if(cn == 4 && rowNum > 0) {
+		    				
+		    				String cellToSearch = "A"+indexCellToSearch;
+		    				String matrice = "Report!I5:L46";
+		    				
+							String formulaPlatversion = "VLOOKUP("+cellToSearch+","+matrice+",4,FALSE)";
+							cell.setCellFormula(formulaPlatversion);
+							
+							indexCellToSearch ++;
 		    			}
+		    			
+		    			
 		    		}
 		    		
 		    		rowNum ++;
