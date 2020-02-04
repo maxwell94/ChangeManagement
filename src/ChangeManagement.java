@@ -1192,9 +1192,72 @@ public class ChangeManagement {
 		    	/*Tab Version del file Evolution Game Versions*/
 		    	XSSFSheet tabFileGameVersions = workbook_gv.getSheetAt(0);
 		    	
+		    	/*Tab Report del file del nuovo CM */
+		    	XSSFSheet tabReportFileNuovoCM = workbook_ncm.getSheetAt(2);
+		    	
 		    	/*Chiamo la funzione che mi legge il contenuto del tab version del file Evolution Games versions e
 		    	 *  va a memorizzare i dati dentro degli ArrayList */
 		    	leggiEvoGameVersions(tabFileGameVersions);
+		    	
+		    	/* Contatore righe tabella grande */
+		    	int nRowBigTable = 0; 
+		    	
+		    	/* Contatore righe tabella piccola */
+		    	int nRowSmallTable = 5;
+		    	
+		    	/*Indice degli ArrayList per il riempito della tabella piccola*/
+		    	int n = 0; 
+		    	
+		    	int nsTable = 0;
+		    	
+		    	/* Aggiungo il titolo della tabella grande */
+		    	Row titleBigTable = tabReportFileNuovoCM.createRow(nRowBigTable);
+		    	titleBigTable.createCell(0).setCellValue("Game");
+		    	titleBigTable.createCell(1).setCellValue("FileName");
+		    	titleBigTable.createCell(2).setCellValue("Sha1");
+		    	titleBigTable.createCell(3).setCellValue("Platform");
+		    	titleBigTable.createCell(4).setCellValue("Game Version");
+		    	titleBigTable.createCell(5).setCellValue("Sì");
+		    	nRowBigTable ++;
+		    	
+		    	/*Inserimento dei dati nella tabella grande , Sono quelli che ho già letto nel tab Checksums 
+		    	 * del file del nuovo CM e memorizzato dentro i vettori checksumsColumn1 , checksumsColumn2 , 
+		    	 * checksumsColumn5 */
+		    	
+		    	for(int i=0; i<checksumsColumn1.size(); i++) {
+		    		
+		    		Row contentsBigTable = tabReportFileNuovoCM.createRow(nRowBigTable);
+		    		
+		    		contentsBigTable.createCell(0).setCellValue(checksumsColumn1.get(n));
+		    		contentsBigTable.createCell(1).setCellValue(checksumsColumn2.get(n));
+		    		contentsBigTable.createCell(2).setCellValue(checksumsColumn5.get(n));
+		    		
+		    		/*Devo intanto proseguire con l'inserimento del titolo della tabella piccola*/
+		    		if(nRowBigTable == 5) { 
+		    			
+				    	/* Aggiungo il titolo della tabella piccola ma saltando 4 righe */
+		    			contentsBigTable.createCell(8).setCellValue("GameName");
+		    			contentsBigTable.createCell(9).setCellValue("GameType");
+		    			contentsBigTable.createCell(10).setCellValue("Platform Version");
+		    			contentsBigTable.createCell(11).setCellValue("Game Version");
+				    	nRowSmallTable ++;
+				    	
+		    		}else if( nRowBigTable > 5 && nsTable < EGVGameName.size()) {
+		    			
+		    			/* Inserimento dei dati nella piccola tabella 
+				    	 * Sono quelli che ho letto prima chiamando la funzione leggiEvoGameVersions*/
+		    			contentsBigTable.createCell(8).setCellValue(EGVGameName.get(nsTable));
+		    			contentsBigTable.createCell(9).setCellValue(EGVGameType.get(nsTable));
+		    			contentsBigTable.createCell(10).setCellValue(EGVPlatformVersion.get(nsTable));
+		    			contentsBigTable.createCell(11).setCellValue(EGVGameVersion.get(nsTable));
+		    			
+		    			nsTable ++;
+		    		}
+		    		
+		    		n++;
+		    		nRowBigTable ++;
+		    	}
+		    	
 		    	
 				//aggiorna il file del nuovo CM 
 				FileOutputStream out = new FileOutputStream(nuovoCM);
