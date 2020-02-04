@@ -1485,21 +1485,59 @@ public class ChangeManagement {
 		    	header.createCell(1).setCellValue("Changed");
 		    	rowNum ++;
 		    	
-		    	/* Ora inserisco la prima colonna che sono i GameName */
-		    	for(int i=0; i<gameVersionsGameName.size(); i++) {
-		    		
-		    		Row contentRow = tabChangedGamesNuovoCM.createRow(rowNum);
-		    		contentRow.createCell(0).setCellValue(gameVersionsGameName.get(index));
-		    		contentRow.createCell(1).setCellValue("empty");
-		    		index ++;
-		    		rowNum ++;
-		    	}
-		    	
 		    	
 		    	/*Ora controllo i giochi che sono cambiati , praticamente devo confrontare ogni 
 		    	 * C_GAME con O_GAME, C_FILE con O_FILE , C_SHA1 con O_SHA1 come avevo già fatto
 		    	 * in Appoggio Changed Games */
 		    	
+		    	int cambiato = 0 ;
+		        int [] changedGames = new int [gameVersionsGameName.size()];
+		        
+		        /* Setto a 0 tutto l'array così appena cambia un valore dell'array significa che un gioco è cambiato */
+		        for(int i=0; i<changedGames.length; i++) {
+		        	changedGames[i] = 0; 
+		        }
+		    	
+		    	for(int i=0; i<gameVersionsGameName.size(); i++) {
+		    		
+		    		for(int j=0; j<checksumsColumn1.size(); j++) {
+		    			
+			    		if( gameVersionsGameName.get(i).equals( checksumsColumn1.get(j) ) ) {
+			    			
+			    			if( checksumsColumn1.get(j).equals( appoChgGamesColumn3.get(j) ) &&
+			    				checksumsColumn2.get(j).equals( appoChgGamesColumn4.get(j) ) &&
+			    				checksumsColumn5.get(j).equals( appoChgGamesColumn5.get(j))) {
+			    				
+			    				//System.out.println("OK");
+			    				
+			    			}else {
+			    				
+			    				changedGames [i] = 1;
+			    				//System.out.println(gameVersionsGameName.get(i)+" cambiato ");
+			    			}
+			    			//System.out.println("GameName "+gameVersionsGameName.get(i)+" = "+checksumsColumn1.get(j));
+			    		}
+		    		}		    		
+
+		    	}
+		    	
+		        for(int i=0; i<changedGames.length; i++) {
+		        	
+		        	if(changedGames[i] == 1) {
+		        		
+				    	/* Ora inserisco il contenuto */
+			    		Row contentRow = tabChangedGamesNuovoCM.createRow(rowNum);
+			    		contentRow.createCell(0).setCellValue(gameVersionsGameName.get(i));
+			    		contentRow.createCell(1).setCellValue("Yes");
+			    		index ++;
+			    		rowNum ++;
+				   
+		        		
+		        		//System.out.println(gameVersionsGameName.get(i)+" cambiato ");
+		        	}
+		        }
+		    	
+	
 		    	
 				//aggiorna il file del nuovo CM 
 				FileOutputStream out = new FileOutputStream(nuovoCM);
