@@ -1148,7 +1148,19 @@ public class ChangeManagement {
 				 
 				 if( cn == 0 && rowNum > 0) {
 					 
-					EGVGameName.add(cell.toString());
+		    			if(cell.toString().equals("Blackjack RNG")) {
+		    				
+		    				EGVGameName.add("First Person Blackjack");
+		    				
+		    			}else if(cell.toString().equals("Roulette RNG")) {
+		    				
+		    				EGVGameName.add("First Person Roulette");
+		    				
+		    			}else {
+		    				
+		    				EGVGameName.add(cell.toString());
+		    			}
+					
 					 
 				 }else if( cn == 1 && rowNum > 0) {
 					 
@@ -1217,7 +1229,6 @@ public class ChangeManagement {
 		    	titleBigTable.createCell(2).setCellValue("Sha1");
 		    	titleBigTable.createCell(3).setCellValue("Platform Version");
 		    	titleBigTable.createCell(4).setCellValue("Game Version");
-		    	titleBigTable.createCell(5).setCellValue("Sì");
 		    	nRowBigTable ++;
 		    	
 		    	/*Inserimento dei dati nella tabella grande , Sono quelli che ho già letto nel tab Checksums 
@@ -1233,7 +1244,6 @@ public class ChangeManagement {
 		    		contentsBigTable.createCell(2).setCellValue(checksumsColumn5.get(n));
 		    		contentsBigTable.createCell(3).setCellValue("empty");
 		    		contentsBigTable.createCell(4).setCellValue("empty");
-		    		contentsBigTable.createCell(5).setCellValue("empty");
 		    		
 		    		
 		    		/*Devo intanto proseguire con l'inserimento del titolo della tabella piccola*/
@@ -1250,6 +1260,7 @@ public class ChangeManagement {
 		    			
 		    			/* Inserimento dei dati nella piccola tabella 
 				    	 * Sono quelli che ho letto prima chiamando la funzione leggiEvoGameVersions*/
+		    			
 		    			contentsBigTable.createCell(8).setCellValue(EGVGameName.get(nsTable));
 		    			contentsBigTable.createCell(9).setCellValue(EGVGameType.get(nsTable));
 		    			contentsBigTable.createCell(10).setCellValue(EGVPlatformVersion.get(nsTable));
@@ -1262,30 +1273,6 @@ public class ChangeManagement {
 		    		nRowBigTable ++;
 		    	}
 		    	
-		    	
-		    	
-		    	/* Dettaglio importante: devo modificare "First Person Blackjack" e "First Person Roulette" 
-		    	 * in "Blackjack RNG" e "Roulette RNG" se no la formula VLOOKUP non troverebbe mai questi dati 
-		    	 * nella piccola tabella.
-		 		   Dopo aver riempito le colonne Platform Version e Game Version li devo rimettere come erano prima
-		    	 **/
-		    	
-		    	for(Row row:tabReportFileNuovoCM) {
-		    		
-		    		for(int cn = 0; cn< row.getLastCellNum(); cn++) {
-		    			
-		    			Cell cell = row.getCell(cn ,MissingCellPolicy.CREATE_NULL_AS_BLANK) ;
-		    			
-		    			if( cn == 0 && cell.toString().equals("First Person Blackjack") ) {
-		    				
-		    				cell.setCellValue("Blackjack RNG");
-		    				
-		    			}else if(cn == 0 && cell.toString().equals("First Person Roulette") ) {
-		    				
-		    				cell.setCellValue("Roulette RNG");
-		    			}
-		    		}
-		    	}
 		    	
 		    	/* Ora devo riempire la colonna Platform Version , Game Version , e Sì della tabella grande 
 		    	 * perché ora ho tutti i dati che mi servono a disposizione */
