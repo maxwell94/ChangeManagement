@@ -73,6 +73,8 @@ public class ChangeManagement {
 	ArrayList<String> EGVGameType;
 	ArrayList<String> EGVPlatformVersion;
 	ArrayList<String> EGVGameVersion;
+	ArrayList<String> gameVersionsGameName; 
+	
 	
 	String Sha1PrepareChecksumsGrezzi;
 	String RngService; 
@@ -119,6 +121,8 @@ public class ChangeManagement {
 		this.EGVGameType = new ArrayList<String>() ; 
 		this.EGVPlatformVersion = new ArrayList<String>() ; 
 		this.EGVGameVersion = new ArrayList<String>() ; 
+		this.gameVersionsGameName = new ArrayList<String>() ; 
+		
 
 		nDatiGrezzi = 0 ; 
 		nDatiChecksums = 0; 
@@ -263,7 +267,7 @@ public class ChangeManagement {
 		}
 	}
 	
-	/*--------------------------------------------------------[Fine]---------------------------------------------------------*/
+/*--------------------------------------------------------[Fine]---------------------------------------------------------*/
 	
 	
 	
@@ -321,7 +325,7 @@ public class ChangeManagement {
 /*-------------------------------------------------------------[Fine]---------------------------------------------------------*/
 	
 	
-	/* ---------------------------------------------[appoggioChangedGames]---------------------------------------------*/
+/* ---------------------------------------------[appoggioChangedGames]---------------------------------------------*/
 
 	/* Metodo che lavora all'interno del tab Appoggio Changed Games 
 	 * getRichStringCellValue().toString();*/
@@ -446,14 +450,14 @@ public class ChangeManagement {
 
 		}catch(Exception ex) { ex.printStackTrace(); }
 	}
-	
-	/*-----------------------------------------------------[Fine]-------------------------------------------------------*/
-	
-	
+
+/*--------------------------------------------------[Fine]----------------------------------------------------------*/
 	
 	
 	
-	/* ---------------------------------------------[sostituisci]--------------------------------------------------------*/
+	
+	
+/* ---------------------------------------------[sostituisci]--------------------------------------------------------*/
 	/* metodo che prende una stringa sostituisce '\' con '/' e ritorna un array */
 	public static char [] sostituisci (String str) {
 		
@@ -474,14 +478,12 @@ public class ChangeManagement {
 		return myStrChar;
 	}
 	
-	/*-------------------------------------------------[Fine]------------------------------------------------------------*/
+/*-------------------------------------------------[Fine]------------------------------------------------------------*/
 	
 	
 	
 	
-
-	
-	/* ---------------------------------------------[deleteSheetAllContent]---------------------------------------------*/
+/* ---------------------------------------------[deleteSheetAllContent]---------------------------------------------*/
 	
 	/* Metodo che cancella tutto il contenuto di un preciso tab dentro un file Excel */
 	public void deleteSheetAllContent(XSSFSheet desiredSheet) {
@@ -514,14 +516,12 @@ public class ChangeManagement {
         }
 	}
 
-	/*-----------------------------------------------[Fine]--------------------------------------------------------------*/
+/*-----------------------------------------------[Fine]--------------------------------------------------------------*/
 	
 	
 	
 	
-
-	
-	/* ---------------------------------------------[grezzi]------------------------------------------------------------*/
+/* ---------------------------------------------[grezzi]------------------------------------------------------------*/
 	
 	/* Metodo che lavora all'interno del tab Grezzi , praticamente 
 	 * legge il file degli sha e lo carica in excel in grezzi*/
@@ -627,13 +627,13 @@ public class ChangeManagement {
 		
 	}
 	
-	/*-----------------------------------------------[Fine]--------------------------------------------------------------*/
+/*-----------------------------------------------[Fine]--------------------------------------------------------------*/
 	
 	
 	
 	
 	
-	/* ---------------------------------------------[cercaPaths]---------------------------------------------------------*/
+/* ---------------------------------------------[cercaPaths]---------------------------------------------------------*/
 	public int cercaPaths(String s) {
 		
 		int trovato = 0; 
@@ -646,14 +646,11 @@ public class ChangeManagement {
 		return trovato ; 
 	}
 	
-	/*-------------------------------------------------[Fine]------------------------------------------------------------*/
+/*-------------------------------------------------[Fine]------------------------------------------------------------*/
 	
 	
 	
-	
-	
-	
-	/* ---------------------------------------------[caricaDescription]-----------------------------------------------------*/	
+/* ---------------------------------------------[caricaDescription]-----------------------------------------------------*/	
 	/* Metodo che lavora dentro il tab Description */
 	public void caricaDescription(XSSFSheet descriptionSheet, File v) {
 		
@@ -725,16 +722,15 @@ public class ChangeManagement {
 		 
 	}
 	
-	/*----------------------------------------------------[Fine]------------------------------------------------------------*/
+/*----------------------------------------------------[Fine]------------------------------------------------------------*/
 	
 	
 	
 	
+/* --------------------------------------------------[leggiVCM]-------------------------------------------------------*/	
+	/* Metodo che va a leggere il foglio excel del vecchio CM e memorizza la column1 , column2 , column3 , 
+	 * column4 dentro degli arraylist */
 	
-	
-	
-	/* --------------------------------------------------[leggiVCM]-------------------------------------------------------*/	
-	/* Metodo che va a leggere il foglio excel del vecchio CM e memorizza la column1 , column2 , column3 , column4 dentro degli arraylist */
 	public void leggiVCM(File f) {
 		
 		try {
@@ -785,15 +781,13 @@ public class ChangeManagement {
 	
 	}
 	
-	/*----------------------------------------------------[Fine]-----------------------------------------------------------*/
+/*----------------------------------------------------[Fine]-----------------------------------------------------------*/
 	
 	
-	
-	
-	
-	
+
+
 /* -----------------------------------------------[deleteEmptyRows]---------------------------------------------------------*/
-	
+	/* Metodo che le celle vuote dentro un tab */
 	public static void deleteEmptyRows(XSSFSheet checksumsSheet) {
 		
 		int indexRow = 0; 
@@ -825,7 +819,7 @@ public class ChangeManagement {
 
 	
 /* -----------------------------------------------------[checksums]----------------------------------------------------------*/
-	
+	/* Metodo che lavora il tab Checksums */
 	 public void checksums(File f, File f3) {
 	    	
 	    	try {
@@ -954,7 +948,7 @@ public class ChangeManagement {
 	 
 	 
 /*--------------------------------------------------------[CheckEVO]-----------------------------------------------------------*/
-	 
+	 /* Metodo che lavora il tab Check EVO */
 	 public void checkEVO(File nuovoCM , File fileCritical) {
 		
 		 try {
@@ -1189,7 +1183,7 @@ public class ChangeManagement {
 	 
 	 
 /*------------------------------------------------------------[Report]----------------------------------------------------------*/
-	 
+	 /* Metodo che lavora il tab Report */
 	 public void report(File nuovoCM, File gameVersions) {
 		 
 		 try {
@@ -1318,8 +1312,8 @@ public class ChangeManagement {
 		    				String cellToSearch = "A"+indexCellToSearch;
 		    				String matrice = "Report!I5:L46";
 		    				
-							String formulaPlatversion = "VLOOKUP("+cellToSearch+","+matrice+",4,FALSE)";
-							cell.setCellFormula(formulaPlatversion);
+							String gameVersion = "VLOOKUP("+cellToSearch+","+matrice+",4,FALSE)";
+							cell.setCellFormula(gameVersion);
 							
 							indexCellToSearch ++;
 		    			}
@@ -1339,5 +1333,183 @@ public class ChangeManagement {
 	 }
 	 
 /*-------------------------------------------------------------[Fine]------------------------------------------------------------*/
+
+
+	 
+	 
+/*----------------------------------------------------------[leggiGameVersionsVCM]------------------------------------------------*/
+	 
+	 /* Metodo che legge il contenuto del tab Game Versions del file del vecchio CM e memorizza il GameName */
+	 
+	 public void leggiGameVersionsVCM(XSSFSheet mySheet) {
+		 
+		 int rowNum = 0; 
+		 
+		 for(Row row: mySheet) {
+			 
+			 for(int cn=0; cn<row.getLastCellNum(); cn++) {
+				 
+				 Cell cell = row.getCell(cn, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+						 
+				 if( cn == 0 && rowNum > 0) {
+					 gameVersionsGameName.add(cell.toString()) ; 
+				 }
+			 }
+			 
+			 rowNum ++;
+		 }
+	 }
+	 
+/*------------------------------------------------------------------[Fine]-------------------------------------------------------*/	 
+	 
+	 
+	 
+	 
+/*------------------------------------------------------------[GameVersions]-------------------------------------------------------*/
+	 /* Metodo che lavora dentro il tab Game Versions */
+	 public void gameVersions(File nuovoCM , File vecchioCM) {
+		 
+		 try {
+			 
+		    	/* FileInputStream per il file del nuovo CM */
+		    	FileInputStream fileNuovoCM = new FileInputStream( nuovoCM );
+		    	
+		    	/* FileInputStream per il file del vecchio CM */
+		    	FileInputStream fileVecchioCM = new FileInputStream( vecchioCM );
+		    	
+		    	/* foglio excel per il file del nuovo CM */
+		    	XSSFWorkbook workbook_ncm = new XSSFWorkbook(fileNuovoCM);
+		    	
+		    	/* foglio excel per il file del vecchio CM */
+		    	XSSFWorkbook workbook_vcm = new XSSFWorkbook(fileVecchioCM);
+		    	
+		    	/*Tab Game Versions del file del nuovo CM */
+		    	XSSFSheet tabGameVersionsFileNuovoCM = workbook_ncm.getSheetAt(3);
+		    	
+		    	/*Tab Game Versions del file del vecchio CM */
+		    	XSSFSheet tabGameVersionsFileVecchioCM = workbook_vcm.getSheetAt(3);
+		    	
+		    	/* Leggo e memorizzo la prima colonna (Game Name) del tab Game Versions del vecchio CM */
+		    	leggiGameVersionsVCM(tabGameVersionsFileVecchioCM);
+		    	
+		    	/*Contatore righe tab Game Versions File nuovo CM */
+		    	int rowNumTabGameVersions = 0;
+		    	int indexValue = 0; 
+		    	
+		    	/*Inserisco il titolo */
+		    	Row header = tabGameVersionsFileNuovoCM.createRow(rowNumTabGameVersions); 
+		    	header.createCell(0).setCellValue("GameName");
+		    	header.createCell(1).setCellValue("Platform Version");
+		    	header.createCell(2).setCellValue("Game Version");
+		    	header.createCell(3).setCellValue("Note");
+		    	
+		    	rowNumTabGameVersions ++;
+		    	
+		    	/*Ora inserisco il contenuto*/
+		    	
+		    	int indexCellToSearch = 2;
+		    	
+		    	for(int i=0; i<gameVersionsGameName.size(); i++) {
+		    		
+		    		Row contentsRow = tabGameVersionsFileNuovoCM.createRow(rowNumTabGameVersions);
+		    		contentsRow.createCell(0).setCellValue(gameVersionsGameName.get(indexValue));
+		    		
+    				String cellToSearch = "A"+indexCellToSearch;
+    				String matrice = "Report!I5:L46";
+    				
+					String formulaPlatversion = "VLOOKUP("+cellToSearch+","+matrice+",3,FALSE)";
+					String formulaGameVersion = "VLOOKUP("+cellToSearch+","+matrice+",4,FALSE)";
+					
+					contentsRow.createCell(1).setCellFormula(formulaPlatversion);
+					contentsRow.createCell(2).setCellFormula(formulaGameVersion);
+					
+					if( gameVersionsGameName.get(indexValue).equals("2 Hand Casino Hold’em") ) {
+						
+						contentsRow.createCell(3).setCellValue("Changed name");
+						
+					}else if( gameVersionsGameName.get(indexValue).equals("Baccarat") ) {
+						
+						contentsRow.createCell(3).setCellValue("Removed(*)");
+						
+					}else if( gameVersionsGameName.get(indexValue).equals("Blackjack") ) {
+						
+						contentsRow.createCell(3).setCellValue("Removed(**)");
+						
+					}else if( gameVersionsGameName.get(indexValue).equals("Roulette") ) {
+						
+						contentsRow.createCell(3).setCellValue("Removed(***)");
+					}
+					
+					indexCellToSearch ++;
+		    		indexValue ++;
+		    		rowNumTabGameVersions ++;
+		    		
+		    	}
+		    	
+		    	
+				//aggiorna il file del nuovo CM 
+				FileOutputStream out = new FileOutputStream(nuovoCM);
+				workbook_ncm.write(out);
+				out.close();
+		    	
+		 }catch(IOException ex) { ex.printStackTrace(); }
+		 
+	 }
+	 
+	 
+/*---------------------------------------------------------------[Fine]------------------------------------------------------------*/
+	 
+
+
+/*-----------------------------------------------------------[ChangedGames]-------------------------------------------------------*/	 
+	 /*Metodo che lavora dentro il tab Changed Games*/
+	 public void changedGames(File nuovoCM) {
+		 
+		 try {
+			 
+		    	/* FileInputStream per il file del nuovo CM */
+		    	FileInputStream fileNuovoCM = new FileInputStream( nuovoCM );
+		    	
+		    	/* foglio excel per il file del nuovo CM */
+		    	XSSFWorkbook workbook_ncm = new XSSFWorkbook( fileNuovoCM );
+		    	
+		    	/*Tab Changed Games del file del nuovo CM */
+		    	XSSFSheet tabChangedGamesNuovoCM = workbook_ncm.getSheetAt(4);
+		    	
+		    	int rowNum = 0;
+		    	int index = 0; 
+		    			
+		    	/*Inserimento del titolo tab Changed Games file nuovo CM */
+		    	Row header = tabChangedGamesNuovoCM.createRow(rowNum); 
+		    	header.createCell(0).setCellValue("GameName");
+		    	header.createCell(1).setCellValue("Changed");
+		    	rowNum ++;
+		    	
+		    	/* Ora inserisco la prima colonna che sono i GameName */
+		    	for(int i=0; i<gameVersionsGameName.size(); i++) {
+		    		
+		    		Row contentRow = tabChangedGamesNuovoCM.createRow(rowNum);
+		    		contentRow.createCell(0).setCellValue(gameVersionsGameName.get(index));
+		    		contentRow.createCell(1).setCellValue("empty");
+		    		index ++;
+		    		rowNum ++;
+		    	}
+		    	
+		    	
+		    	/*Ora controllo i giochi che sono cambiati , praticamente devo confrontare ogni 
+		    	 * C_GAME con O_GAME, C_FILE con O_FILE , C_SHA1 con O_SHA1 come avevo già fatto
+		    	 * in Appoggio Changed Games */
+		    	
+		    	
+				//aggiorna il file del nuovo CM 
+				FileOutputStream out = new FileOutputStream(nuovoCM);
+				workbook_ncm.write(out);
+				out.close();
+		    	
+			 
+		 }catch(IOException ex) { ex.printStackTrace(); }
+		 
+	 }
+/*---------------------------------------------------------------[Fine]------------------------------------------------------------*/
 	 
 }

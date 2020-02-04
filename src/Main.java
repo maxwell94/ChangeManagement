@@ -231,7 +231,44 @@ public class Main {
 	    		   
 	    	   }
 /*----------------------------------------------------------[Fine]-------------------------------------------------------------*/
+	    	   
+	    	   
+	    	   
+	    	   
+/*----------------------------------------[ Caricamento dati Game Versions ]---------------------------------------------------*/
+	    	    //caricamento dati Game Versions
+	    		if(nomeFoglioExc.endsWith(".xlsx")) {
+	    			File nuovo = new File(newCMPath+"\\"+nomeFoglioExc); 
+	    			File vecchio = new File(oldCMPath+"\\"+vecchioCMExcel);
+	    			System.out.print("Caricamento dati in Game Versions ...");
+	    			CM.gameVersions(nuovo,vecchio);
+	    			System.out.print(" Fine\n");
+	    		}else {
+	    			File nuovo = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx"); 
+	    			File vecchio = new File(oldCMPath+"\\"+vecchioCMExcel);
+	    			System.out.print("Caricamento dati in Game Versions ...");
+	    			CM.gameVersions(nuovo,vecchio);
+	    			System.out.print(" Fine\n");
+	    		}
+/*---------------------------------------------------------[Fine]--------------------------------------------------------------*/ 
 	    		
+	    		
+	    		
+/*----------------------------------------[ Caricamento dati Changed Games ]---------------------------------------------------*/
+	    	    //caricamento dati Changed Games
+	    		if(nomeFoglioExc.endsWith(".xlsx")) {
+	    			File nuovo = new File(newCMPath+"\\"+nomeFoglioExc); 
+	    			System.out.print("Caricamento dati in Changed Games ...");
+	    			CM.changedGames(nuovo);
+	    			System.out.print(" Fine\n");
+	    		}else {
+	    			File nuovo = new File(newCMPath+"\\"+nomeFoglioExc+".xlsx"); 
+	    			System.out.print("Caricamento dati in Changed Games ...");
+	    			CM.changedGames(nuovo);
+	    			System.out.print(" Fine\n");
+	    		}
+/*---------------------------------------------------------[Fine]--------------------------------------------------------------*/	    		
+	    	   
 	    	}else {  //nome foglio Excel non valido
 	    		System.out.println("File non trovato! ");
 	        }   	
