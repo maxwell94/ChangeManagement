@@ -74,7 +74,8 @@ public class ChangeManagement {
 	ArrayList<String> EGVPlatformVersion;
 	ArrayList<String> EGVGameVersion;
 	
-	String Sha1PrepareChecksumsGrezzi; 
+	String Sha1PrepareChecksumsGrezzi;
+	String RngService; 
 	
 	static int nDatiGrezzi;
 	static int nDatiChecksums; 
@@ -104,6 +105,7 @@ public class ChangeManagement {
 		this.checksumColumn4 = new ArrayList<String>() ;
 		this.checksumColumn5Sha1 = new ArrayList<String>() ; 
 		this.Sha1PrepareChecksumsGrezzi = "" ; 
+		this.RngService = ""; 
 		
 		
 		this.appoChgGamesColumn3 = new ArrayList<String>() ; 
@@ -569,8 +571,12 @@ public class ChangeManagement {
 	        	String sha1 = dati.substring(0,40);
 	        	String path = dati.substring(41);
 	        	
-	        	Row row = desiredSheet.createRow(rowNum) ;
-	        	nDatiGrezzi++; 
+	        	Row row = desiredSheet.createRow(rowNum);
+	        	nDatiGrezzi++;
+	        	
+	        	if(path.endsWith("RngService.class")) {
+	        		RngService = sha1 ;
+	        	}
 	        	
 	        	int cellNum = 0; 
 	        	for(int i=0;i<2; i++) {
@@ -1229,6 +1235,8 @@ public class ChangeManagement {
 		    	titleBigTable.createCell(2).setCellValue("Sha1");
 		    	titleBigTable.createCell(3).setCellValue("Platform Version");
 		    	titleBigTable.createCell(4).setCellValue("Game Version");
+		    	titleBigTable.createCell(8).setCellValue("RNG + Comuni");
+		    	
 		    	nRowBigTable ++;
 		    	
 		    	/*Inserimento dei dati nella tabella grande , Sono quelli che ho già letto nel tab Checksums 
@@ -1244,7 +1252,7 @@ public class ChangeManagement {
 		    		contentsBigTable.createCell(2).setCellValue(checksumsColumn5.get(n));
 		    		contentsBigTable.createCell(3).setCellValue("empty");
 		    		contentsBigTable.createCell(4).setCellValue("empty");
-		    		
+		 		    		
 		    		
 		    		/*Devo intanto proseguire con l'inserimento del titolo della tabella piccola*/
 		    		if(nRowBigTable == 5) { 
@@ -1267,6 +1275,16 @@ public class ChangeManagement {
 		    			contentsBigTable.createCell(11).setCellValue(EGVGameVersion.get(nsTable));
 		    			
 		    			nsTable ++;
+		    			
+		    		}else if( nRowBigTable == 1 ) {
+		    			
+		    			contentsBigTable.createCell(8).setCellValue("RngService.class");
+		    			contentsBigTable.createCell(9).setCellValue(RngService);
+		    			
+		    		}else if( nRowBigTable == 2 ) {
+		    			
+		    			contentsBigTable.createCell(8).setCellValue("prepare_checksums.py");
+		    			contentsBigTable.createCell(9).setCellValue(Sha1PrepareChecksumsGrezzi);
 		    		}
 		    		
 		    		n++;
@@ -1305,7 +1323,6 @@ public class ChangeManagement {
 							
 							indexCellToSearch ++;
 		    			}
-		    			
 		    			
 		    		}
 		    		
