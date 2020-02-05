@@ -13,18 +13,27 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.poi.hssf.record.cf.BorderFormatting;
+import org.apache.poi.hssf.record.cf.FontFormatting;
+import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.examples.CreateCell;
@@ -133,6 +142,48 @@ public class ChangeManagement {
 	}
 	
 	
+	
+	/* ---------------------------------------[addColorsToSheet]------------------------------------------------------*/
+	
+	/*Metodo che aggiunge dei colori alle celle di un tab*/
+	
+	public void addColorsToSheet(XSSFSheet mySheet) {
+		
+		SheetConditionalFormatting sheetCF = mySheet.getSheetConditionalFormatting() ; 
+		
+		ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule("MOD(ROW(),300)");
+		
+		org.apache.poi.ss.usermodel.PatternFormatting fill1 = rule1.createPatternFormatting();
+		org.apache.poi.ss.usermodel.FontFormatting fontFmt = rule1.createFontFormatting(); 
+		
+		
+		
+		/*bold or not*/
+		fontFmt.setFontStyle(true, false);
+		
+		/*colore scritta */
+		fontFmt.setFontColorIndex(IndexedColors.BLACK.index);
+
+		//bordFmt.setBorderTop(BorderStyle.THICK);
+		//bordFmt.setBorderLeft(BorderStyle.DASHED);
+		//bordFmt.setBorderRight(BorderStyle.DOTTED);
+		
+		/*Sfondo*/
+		fill1.setFillBackgroundColor(IndexedColors.WHITE1.index);
+		fill1.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
+		
+		CellRangeAddress [] regions = {
+				CellRangeAddress.valueOf("A1:Z400")
+		};
+		
+		sheetCF.addConditionalFormatting(regions,rule1);
+	}
+	
+	/* ---------------------------------------------[Fine]-----------------------------------------------------------*/
+	
+	
+	
+
 	/* --------------------------------------------[generaFoglioExcel]---------------------------------------------------*/
 		/* Metodo che genera un foglio excel che il Change Management nella cartella di lavoro 
 	 * (in futuro si potra modificare cosi da scegliere il percorso in cui si vorrebbe salvarlo) */
@@ -369,6 +420,10 @@ public class ChangeManagement {
 			rigaTitolo.createCell(6).setCellValue("Game");
 			rigaTitolo.createCell(7).setCellValue("File");
 			rigaTitolo.createCell(8).setCellValue("Sha");
+			
+	    	/*Aggiungo un filtro */
+			tabAppoggioNCM.setAutoFilter(CellRangeAddress.valueOf("A1:I1"));
+	    	
 			numRowTabNCM ++;
 			
 			/*Leggo il tab Appoggio Changed Games del vecchio CM e memorizzo i dati delle prime tre colonne dentro 
@@ -546,6 +601,8 @@ public class ChangeManagement {
 			/* cancello tutti i dati che ci sono già nel tab grezzi */
 			deleteSheetAllContent(desiredSheet);
             
+			/*Aggiungo colori al tab Grezzi*/
+			addColorsToSheet(desiredSheet);
 			
 	        /* File prepare_checksums.py da aggiungere alla lista grezzi*/
 	        String pathFileChecksum = pth + "\\prepare_checksums.py";
@@ -872,6 +929,9 @@ public class ChangeManagement {
 				titoloTabFileVuoto.createCell(8).setCellValue("Column4");
 				titoloTabFileVuoto.createCell(9).setCellValue("For Lookup");
 				titoloTabFileVuoto.createCell(10).setCellValue("Column5");
+
+				/*Aggiungo un filtro */
+				tabChecksumsFileVuoto.setAutoFilter( CellRangeAddress.valueOf("A1:K1") );
 				
 			
 				nRigheTabVuoto ++; 
@@ -986,6 +1046,10 @@ public class ChangeManagement {
 			titoloTabNuovoCM.createCell(3).setCellValue("Quinel_Filename");
 			titoloTabNuovoCM.createCell(4).setCellValue("Q_Path");
 			titoloTabNuovoCM.createCell(5).setCellValue("Compare");
+			
+	    	/*Aggiungo un filtro */
+			tabCheckEvoNuovoCM.setAutoFilter(CellRangeAddress.valueOf("A1:F1"));
+			
 			numRowNuovoCM ++; 
 			
 	        /* Iteratore righe file critical assets register */	
@@ -1231,6 +1295,9 @@ public class ChangeManagement {
 		    	titleBigTable.createCell(4).setCellValue("Game Version");
 		    	titleBigTable.createCell(8).setCellValue("RNG + Comuni");
 		    	
+		    	/*Aggiungo un filtro */
+		    	tabReportFileNuovoCM.setAutoFilter( CellRangeAddress.valueOf("A1:E1") );
+		    	
 		    	nRowBigTable ++;
 		    	
 		    	/*Inserimento dei dati nella tabella grande , Sono quelli che ho già letto nel tab Checksums 
@@ -1403,6 +1470,9 @@ public class ChangeManagement {
 		    	header.createCell(2).setCellValue("Game Version");
 		    	header.createCell(3).setCellValue("Note");
 		    	
+		    	/*Aggiungo un filtro */
+		    	tabGameVersionsFileNuovoCM.setAutoFilter( CellRangeAddress.valueOf("A1:C1") );
+		    	
 		    	rowNumTabGameVersions ++;
 		    	
 		    	/*Ora inserisco il contenuto*/
@@ -1483,6 +1553,10 @@ public class ChangeManagement {
 		    	Row header = tabChangedGamesNuovoCM.createRow(rowNum); 
 		    	header.createCell(0).setCellValue("GameName");
 		    	header.createCell(1).setCellValue("Changed");
+		    	
+		    	/*Aggiungo un filtro */
+		    	tabChangedGamesNuovoCM.setAutoFilter(CellRangeAddress.valueOf("A1:B1"));
+		    	
 		    	rowNum ++;
 		    	
 		    	
@@ -1531,7 +1605,6 @@ public class ChangeManagement {
 			    		contentRow.createCell(1).setCellValue("Yes");
 			    		index ++;
 			    		rowNum ++;
-				   
 		        		
 		        		//System.out.println(gameVersionsGameName.get(i)+" cambiato ");
 		        	}
