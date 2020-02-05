@@ -1572,6 +1572,24 @@ public class ChangeManagement {
 		    	/*Aggiungo un filtro */
 		    	tabGameVersionsFileNuovoCM.setAutoFilter( CellRangeAddress.valueOf("A1:C1") );
 		    	
+				/*Style and Fonts to the Title*/
+				XSSFFont font = workbook_ncm.createFont() ; 
+		        CellStyle style = workbook_ncm.createCellStyle(); 
+				
+		        /*Apply style on title cells */
+		        addStyleToTitleCells(font, style, header.getCell(0));
+		        addStyleToTitleCells(font, style, header.getCell(1));
+		        addStyleToTitleCells(font, style, header.getCell(2));
+		        addStyleToTitleCells(font, style, header.getCell(3));
+		        
+				CellRangeAddress [] regions = {
+						CellRangeAddress.valueOf("A2:Z400")
+		        };
+				
+				/*Aggiungo colori e font al tab Checksums*/
+				addColorsToSheet(tabGameVersionsFileNuovoCM , regions);
+		    	
+		    	
 		    	rowNumTabGameVersions ++;
 		    	
 		    	/*Ora inserisco il contenuto*/
@@ -1655,6 +1673,22 @@ public class ChangeManagement {
 		    	
 		    	/*Aggiungo un filtro */
 		    	tabChangedGamesNuovoCM.setAutoFilter(CellRangeAddress.valueOf("A1:B1"));
+		    	
+		    	
+				/*Style and Fonts to the Title*/
+				XSSFFont font = workbook_ncm.createFont() ; 
+		        CellStyle style = workbook_ncm.createCellStyle(); 
+				
+		        /*Apply style on title cells */
+		        addStyleToTitleCells(font, style, header.getCell(0));
+		        addStyleToTitleCells(font, style, header.getCell(1));
+		        
+				CellRangeAddress [] regions = {
+						CellRangeAddress.valueOf("A2:Z400")
+		        };
+				
+				/*Aggiungo colori e font al tab Checksums*/
+				addColorsToSheet(tabChangedGamesNuovoCM , regions);
 		    	
 		    	rowNum ++;
 		    	
