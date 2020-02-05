@@ -19,10 +19,12 @@ import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -37,6 +39,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.examples.CreateCell;
+import org.apache.poi.ss.usermodel.CellStyle;
 
 /**
  * Classe che gestisce tutto il Change Management. 
@@ -147,9 +150,9 @@ public class ChangeManagement {
 	
 	/*Metodo che aggiunge dei colori alle celle di un tab*/
 	
-	public void addColorsToSheet(XSSFSheet mySheet) {
+	public void addColorsToSheet(XSSFSheet mySheet, CellRangeAddress [] regions) {
 		
-		SheetConditionalFormatting sheetCF = mySheet.getSheetConditionalFormatting() ; 
+		SheetConditionalFormatting sheetCF = mySheet.getSheetConditionalFormatting(); 
 		
 		ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule("MOD(ROW(),300)");
 		
@@ -159,11 +162,12 @@ public class ChangeManagement {
 		
 		
 		/*bold or not*/
-		fontFmt.setFontStyle(true, false);
+		//fontFmt.setFontStyle(true, false);
 		
 		/*colore scritta */
 		fontFmt.setFontColorIndex(IndexedColors.BLACK.index);
-
+        
+		//org.apache.poi.ss.usermodel.BorderFormatting bordFmt = rule1.createBorderFormatting();
 		//bordFmt.setBorderTop(BorderStyle.THICK);
 		//bordFmt.setBorderLeft(BorderStyle.DASHED);
 		//bordFmt.setBorderRight(BorderStyle.DOTTED);
@@ -172,9 +176,11 @@ public class ChangeManagement {
 		fill1.setFillBackgroundColor(IndexedColors.WHITE1.index);
 		fill1.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
 		
-		CellRangeAddress [] regions = {
-				CellRangeAddress.valueOf("A1:Z400")
-		};
+		//bordFmt.setBorderLeft(BorderStyle.THIN);
+		
+//		CellRangeAddress [] regions = {
+//				CellRangeAddress.valueOf("A2:Z400")
+//		};
 		
 		sheetCF.addConditionalFormatting(regions,rule1);
 	}
@@ -601,8 +607,12 @@ public class ChangeManagement {
 			/* cancello tutti i dati che ci sono già nel tab grezzi */
 			deleteSheetAllContent(desiredSheet);
             
-			/*Aggiungo colori al tab Grezzi*/
-			addColorsToSheet(desiredSheet);
+			CellRangeAddress [] regions = {
+				 CellRangeAddress.valueOf("A1:Z400")
+			};
+			
+			/*Aggiungo colori e font al tab Grezzi*/
+			addColorsToSheet(desiredSheet , regions);
 			
 	        /* File prepare_checksums.py da aggiungere alla lista grezzi*/
 	        String pathFileChecksum = pth + "\\prepare_checksums.py";
@@ -887,11 +897,30 @@ public class ChangeManagement {
 				/* Foglio Excel nuovo CM */
 				XSSFWorkbook workbook_fv = new XSSFWorkbook(fileVuoto);
 				
+				/*Style and Fonts */
+				XSSFFont font = workbook_fv.createFont() ; 
+				font.setFontHeight(12.0);
+				font.setFontName("Arial");
+				font.setBold(true);
+				font.setColor(IndexedColors.WHITE.getIndex());
+		        CellStyle style = workbook_fv.createCellStyle();    
+		        style.setFillBackgroundColor(IndexedColors.GREEN.index);
+		        style.setFillForegroundColor(IndexedColors.GREEN.index);
+		        style.setFillPattern(FillPatternType.SOLID_FOREGROUND); 
+		        style.setFont(font);
+				
 			    /*vado nel tab desiderato che in questo caso è Checksums */
 				XSSFSheet tabChecksumsFileVuoto = workbook_fv.getSheetAt(1);
 				
 				/* prima di scrivere dentro il tab vuoto lo pulisco */
 				deleteSheetAllContent(tabChecksumsFileVuoto);
+				
+				CellRangeAddress [] regions = {
+						CellRangeAddress.valueOf("A2:Z400")
+		        };
+				
+				/*Aggiungo colori e font al tab Grezzi*/
+				addColorsToSheet(tabChecksumsFileVuoto , regions);
 				
 				XSSFSheet tabDescriptionFileVuoto = workbook_fv.getSheetAt(7);
 				
@@ -901,7 +930,8 @@ public class ChangeManagement {
 				/* carica gli ArrayList per column1 , 2 , 3 , 4 di checksums*/
 				leggiVCM(f3);
 				
-	    		
+			
+				
 				int nRigheTabVuoto = 0; 
 				int indexPath = 1;
 				int indexFileName = 2;
@@ -929,10 +959,21 @@ public class ChangeManagement {
 				titoloTabFileVuoto.createCell(8).setCellValue("Column4");
 				titoloTabFileVuoto.createCell(9).setCellValue("For Lookup");
 				titoloTabFileVuoto.createCell(10).setCellValue("Column5");
-
+				
+				/*Apply style on title cells */
+				titoloTabFileVuoto.getCell(0).setCellStyle(style);
+				titoloTabFileVuoto.getCell(1).setCellStyle(style);
+				titoloTabFileVuoto.getCell(2).setCellStyle(style);
+				titoloTabFileVuoto.getCell(3).setCellStyle(style);
+				titoloTabFileVuoto.getCell(5).setCellStyle(style);
+				titoloTabFileVuoto.getCell(6).setCellStyle(style);
+				titoloTabFileVuoto.getCell(7).setCellStyle(style);
+				titoloTabFileVuoto.getCell(8).setCellStyle(style);
+				titoloTabFileVuoto.getCell(9).setCellStyle(style);
+				titoloTabFileVuoto.getCell(10).setCellStyle(style);
+				
 				/*Aggiungo un filtro */
 				tabChecksumsFileVuoto.setAutoFilter( CellRangeAddress.valueOf("A1:K1") );
-				
 			
 				nRigheTabVuoto ++; 
 				
