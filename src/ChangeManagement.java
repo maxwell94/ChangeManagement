@@ -1367,6 +1367,30 @@ public class ChangeManagement {
 		    	/*Aggiungo un filtro */
 		    	tabReportFileNuovoCM.setAutoFilter( CellRangeAddress.valueOf("A1:E1") );
 		    	
+				/*Style and Fonts to the Title*/
+				XSSFFont font = workbook_ncm.createFont() ; 
+		        CellStyle style = workbook_ncm.createCellStyle(); 
+				
+		        /*Apply style on title cells */
+		        addStyleToTitleCells(font, style, titleBigTable.getCell(0));
+		        addStyleToTitleCells(font, style, titleBigTable.getCell(1));
+		        addStyleToTitleCells(font, style, titleBigTable.getCell(2));
+		        addStyleToTitleCells(font, style, titleBigTable.getCell(3));
+		        addStyleToTitleCells(font, style, titleBigTable.getCell(4));
+
+		        
+				CellRangeAddress [] regions = {
+						CellRangeAddress.valueOf("A2:Z400")
+		        };
+				
+				/*Aggiungo colori e font al tab Checksums*/
+				addColorsToSheet(tabReportFileNuovoCM , regions);
+		    	
+		    	
+		    	
+		    	
+		    	
+		    	
 		    	nRowBigTable ++;
 		    	
 		    	/*Inserimento dei dati nella tabella grande , Sono quelli che ho già letto nel tab Checksums 
@@ -1392,6 +1416,12 @@ public class ChangeManagement {
 		    			contentsBigTable.createCell(9).setCellValue("GameType");
 		    			contentsBigTable.createCell(10).setCellValue("Platform Version");
 		    			contentsBigTable.createCell(11).setCellValue("Game Version");
+		    			
+				        addStyleToTitleCells(font, style, contentsBigTable.getCell(8));
+				        addStyleToTitleCells(font, style, contentsBigTable.getCell(9));
+				        addStyleToTitleCells(font, style, contentsBigTable.getCell(10));
+				        addStyleToTitleCells(font, style, contentsBigTable.getCell(11));
+		    			
 				    	nRowSmallTable ++;
 				    	
 		    		}else if( nRowBigTable > 5 && nsTable < EGVGameName.size()) {
