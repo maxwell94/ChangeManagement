@@ -154,7 +154,7 @@ public class ChangeManagement {
 		
 		SheetConditionalFormatting sheetCF = mySheet.getSheetConditionalFormatting(); 
 		
-		ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule("MOD(ROW(),300)");
+		ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule("MOD(ROW(),2)");
 		
 		org.apache.poi.ss.usermodel.PatternFormatting fill1 = rule1.createPatternFormatting();
 		org.apache.poi.ss.usermodel.FontFormatting fontFmt = rule1.createFontFormatting(); 
@@ -173,7 +173,7 @@ public class ChangeManagement {
 		//bordFmt.setBorderRight(BorderStyle.DOTTED);
 		
 		/*Sfondo*/
-		fill1.setFillBackgroundColor(IndexedColors.WHITE1.index);
+		fill1.setFillBackgroundColor(IndexedColors.LIGHT_GREEN.index);
 		fill1.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
 		
 		//bordFmt.setBorderLeft(BorderStyle.THIN);
@@ -882,8 +882,31 @@ public class ChangeManagement {
 
 /*--------------------------------------------------------[Fine]--------------------------------------------------------------*/
 	
-	
 
+	
+	
+/*--------------------------------------------------------[addStyleToTitleCell]-----------------------------------------------*/
+	
+	public void addStyleToTitleCells(XSSFFont myFont, CellStyle style  ,Cell c) {
+		
+		/*Style and Fonts */
+		myFont.setFontHeight(13);
+		myFont.setFontName("Arial");
+		myFont.setBold(true);
+		myFont.setColor(IndexedColors.WHITE.getIndex());   
+        style.setFillBackgroundColor(IndexedColors.GREEN.index);
+        style.setFillForegroundColor(IndexedColors.GREEN.index);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND); 
+        style.setFont(myFont);
+        
+        c.setCellStyle(style);
+	}
+	
+/*-----------------------------------------------------------[Fine]-----------------------------------------------------------*/	
+
+	
+	
+	
 	
 /* -----------------------------------------------------[checksums]----------------------------------------------------------*/
 	/* Metodo che lavora il tab Checksums */
@@ -895,32 +918,13 @@ public class ChangeManagement {
 	    		FileInputStream fileVuoto = new FileInputStream( f ); //file vuoto
 	    		
 				/* Foglio Excel nuovo CM */
-				XSSFWorkbook workbook_fv = new XSSFWorkbook(fileVuoto);
-				
-				/*Style and Fonts */
-				XSSFFont font = workbook_fv.createFont() ; 
-				font.setFontHeight(12.0);
-				font.setFontName("Arial");
-				font.setBold(true);
-				font.setColor(IndexedColors.WHITE.getIndex());
-		        CellStyle style = workbook_fv.createCellStyle();    
-		        style.setFillBackgroundColor(IndexedColors.GREEN.index);
-		        style.setFillForegroundColor(IndexedColors.GREEN.index);
-		        style.setFillPattern(FillPatternType.SOLID_FOREGROUND); 
-		        style.setFont(font);
+				XSSFWorkbook workbook_fv = new XSSFWorkbook(fileVuoto);   
 				
 			    /*vado nel tab desiderato che in questo caso è Checksums */
 				XSSFSheet tabChecksumsFileVuoto = workbook_fv.getSheetAt(1);
 				
 				/* prima di scrivere dentro il tab vuoto lo pulisco */
 				deleteSheetAllContent(tabChecksumsFileVuoto);
-				
-				CellRangeAddress [] regions = {
-						CellRangeAddress.valueOf("A2:Z400")
-		        };
-				
-				/*Aggiungo colori e font al tab Grezzi*/
-				addColorsToSheet(tabChecksumsFileVuoto , regions);
 				
 				XSSFSheet tabDescriptionFileVuoto = workbook_fv.getSheetAt(7);
 				
@@ -960,17 +964,41 @@ public class ChangeManagement {
 				titoloTabFileVuoto.createCell(9).setCellValue("For Lookup");
 				titoloTabFileVuoto.createCell(10).setCellValue("Column5");
 				
-				/*Apply style on title cells */
-				titoloTabFileVuoto.getCell(0).setCellStyle(style);
-				titoloTabFileVuoto.getCell(1).setCellStyle(style);
-				titoloTabFileVuoto.getCell(2).setCellStyle(style);
-				titoloTabFileVuoto.getCell(3).setCellStyle(style);
-				titoloTabFileVuoto.getCell(5).setCellStyle(style);
-				titoloTabFileVuoto.getCell(6).setCellStyle(style);
-				titoloTabFileVuoto.getCell(7).setCellStyle(style);
-				titoloTabFileVuoto.getCell(8).setCellStyle(style);
-				titoloTabFileVuoto.getCell(9).setCellStyle(style);
-				titoloTabFileVuoto.getCell(10).setCellStyle(style);
+				
+				/*Style and Fonts to the Title*/
+				XSSFFont font = workbook_fv.createFont() ; 
+		        CellStyle style = workbook_fv.createCellStyle(); 
+				
+		        /*Apply style on title cells */
+		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(0));
+		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(1));
+		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(2));
+		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(3));
+		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(5));
+		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(6));
+		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(7));
+		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(8));
+		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(9));
+		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(10));
+		        
+				CellRangeAddress [] regions = {
+						CellRangeAddress.valueOf("A2:Z400")
+		        };
+				
+				/*Aggiungo colori e font al tab Checksums*/
+				addColorsToSheet(tabChecksumsFileVuoto , regions);
+				
+				
+//				titoloTabFileVuoto.getCell(0).setCellStyle(style);
+//				titoloTabFileVuoto.getCell(1).setCellStyle(style);
+//				titoloTabFileVuoto.getCell(2).setCellStyle(style);
+//				titoloTabFileVuoto.getCell(3).setCellStyle(style);
+//				titoloTabFileVuoto.getCell(5).setCellStyle(style);
+//				titoloTabFileVuoto.getCell(6).setCellStyle(style);
+//				titoloTabFileVuoto.getCell(7).setCellStyle(style);
+//				titoloTabFileVuoto.getCell(8).setCellStyle(style);
+//				titoloTabFileVuoto.getCell(9).setCellStyle(style);
+//				titoloTabFileVuoto.getCell(10).setCellStyle(style);
 				
 				/*Aggiungo un filtro */
 				tabChecksumsFileVuoto.setAutoFilter( CellRangeAddress.valueOf("A1:K1") );
