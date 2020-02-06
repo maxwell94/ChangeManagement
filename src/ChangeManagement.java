@@ -429,6 +429,28 @@ public class ChangeManagement {
 			
 	    	/*Aggiungo un filtro */
 			tabAppoggioNCM.setAutoFilter(CellRangeAddress.valueOf("A1:I1"));
+			
+			/*Style and Fonts to the Title*/
+			XSSFFont font = workbook_ncm.createFont() ; 
+	        CellStyle style = workbook_ncm.createCellStyle(); 
+			
+	        /*Apply style on title cells */
+	        addStyleToTitleCells(font, style, rigaTitolo.getCell(0));
+	        addStyleToTitleCells(font, style, rigaTitolo.getCell(1));
+	        addStyleToTitleCells(font, style, rigaTitolo.getCell(2));
+	        addStyleToTitleCells(font, style, rigaTitolo.getCell(3));
+	        addStyleToTitleCells(font, style, rigaTitolo.getCell(4));
+	        addStyleToTitleCells(font, style, rigaTitolo.getCell(5));
+	        addStyleToTitleCells(font, style, rigaTitolo.getCell(6));
+	        addStyleToTitleCells(font, style, rigaTitolo.getCell(7));
+	        addStyleToTitleCells(font, style, rigaTitolo.getCell(8));
+	        
+			CellRangeAddress [] regions = {
+					CellRangeAddress.valueOf("A2:Z400")
+	        };
+			
+			/*Aggiungo colori e font al tab Checksums*/
+			addColorsToSheet(tabAppoggioNCM , regions);
 	    	
 			numRowTabNCM ++;
 			
@@ -719,8 +741,9 @@ public class ChangeManagement {
 	
 /* ---------------------------------------------[caricaDescription]-----------------------------------------------------*/	
 	/* Metodo che lavora dentro il tab Description */
-	public void caricaDescription(XSSFSheet descriptionSheet, File v) {
+	public void caricaDescription(XSSFSheet descriptionSheet, File v , XSSFFont font , CellStyle style , CellRangeAddress [] regions) {
 		
+		//caricaDescription(tabDescriptionFileVuoto, f3 , font , style , regions);
 		try {
 			
 			FileInputStream mioFile = new FileInputStream( v ) ;
@@ -730,7 +753,7 @@ public class ChangeManagement {
 			
 			Iterator<Row> rowIterator = desiredSheet.iterator(); 
 			
-			int rowNum = 0 ; 
+			int rowNum = 0; 
 		
 			
 			/* Nel sheet da riempire creo prima il titolo */
@@ -740,6 +763,15 @@ public class ChangeManagement {
 		    header.createCell(1).setCellValue("Path");
 		    header.createCell(2).setCellValue("Description");
 			
+	        /*Apply style on title cells */
+	        addStyleToTitleCells(font, style, header.getCell(0));
+	        addStyleToTitleCells(font, style, header.getCell(1));
+	        addStyleToTitleCells(font, style, header.getCell(2));
+	        
+
+			/*Aggiungo colori e font al tab Checksums*/
+			addColorsToSheet(descriptionSheet , regions);
+		    
 			/* Invece nel sheet da cui devo copiare le cose è la prima riga la salto perché è il titolo */
 			if(rowIterator.hasNext()) {
 				rowIterator.next();
@@ -928,8 +960,18 @@ public class ChangeManagement {
 				
 				XSSFSheet tabDescriptionFileVuoto = workbook_fv.getSheetAt(7);
 				
+				
+				/*Style and Fonts to description Title*/
+				XSSFFont font = workbook_fv.createFont() ; 
+		        CellStyle style = workbook_fv.createCellStyle(); 
+				
+				CellRangeAddress [] regions = {
+						CellRangeAddress.valueOf("A2:Z400")
+		        };
+				
 				/* carico il tab Description */
-				caricaDescription(tabDescriptionFileVuoto, f3);
+				caricaDescription(tabDescriptionFileVuoto, f3 , font , style , regions);			
+				
 				
 				/* carica gli ArrayList per column1 , 2 , 3 , 4 di checksums*/
 				leggiVCM(f3);
@@ -966,27 +1008,27 @@ public class ChangeManagement {
 				
 				
 				/*Style and Fonts to the Title*/
-				XSSFFont font = workbook_fv.createFont() ; 
-		        CellStyle style = workbook_fv.createCellStyle(); 
+				XSSFFont checksumsFont = workbook_fv.createFont() ; 
+		        CellStyle checksumsStyle = workbook_fv.createCellStyle(); 
 				
 		        /*Apply style on title cells */
-		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(0));
-		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(1));
-		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(2));
-		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(3));
-		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(5));
-		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(6));
-		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(7));
-		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(8));
-		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(9));
-		        addStyleToTitleCells(font, style, titoloTabFileVuoto.getCell(10));
+		        addStyleToTitleCells(checksumsFont, checksumsStyle, titoloTabFileVuoto.getCell(0));
+		        addStyleToTitleCells(checksumsFont, checksumsStyle, titoloTabFileVuoto.getCell(1));
+		        addStyleToTitleCells(checksumsFont, checksumsStyle, titoloTabFileVuoto.getCell(2));
+		        addStyleToTitleCells(checksumsFont, checksumsStyle, titoloTabFileVuoto.getCell(3));
+		        addStyleToTitleCells(checksumsFont, checksumsStyle, titoloTabFileVuoto.getCell(5));
+		        addStyleToTitleCells(checksumsFont, checksumsStyle, titoloTabFileVuoto.getCell(6));
+		        addStyleToTitleCells(checksumsFont, checksumsStyle, titoloTabFileVuoto.getCell(7));
+		        addStyleToTitleCells(checksumsFont, checksumsStyle, titoloTabFileVuoto.getCell(8));
+		        addStyleToTitleCells(checksumsFont, checksumsStyle, titoloTabFileVuoto.getCell(9));
+		        addStyleToTitleCells(checksumsFont, checksumsStyle, titoloTabFileVuoto.getCell(10));
 		        
-				CellRangeAddress [] regions = {
+				CellRangeAddress [] checksumsRegions = {
 						CellRangeAddress.valueOf("A2:Z400")
 		        };
 				
 				/*Aggiungo colori e font al tab Checksums*/
-				addColorsToSheet(tabChecksumsFileVuoto , regions);
+				addColorsToSheet(tabChecksumsFileVuoto , checksumsRegions);
 				
 				
 //				titoloTabFileVuoto.getCell(0).setCellStyle(style);
@@ -1118,6 +1160,25 @@ public class ChangeManagement {
 			
 	    	/*Aggiungo un filtro */
 			tabCheckEvoNuovoCM.setAutoFilter(CellRangeAddress.valueOf("A1:F1"));
+			
+			/*Style and Fonts to the Title*/
+			XSSFFont font = w.createFont() ; 
+	        CellStyle style = w.createCellStyle(); 
+			
+	        /*Apply style on title cells */
+	        addStyleToTitleCells(font, style, titoloTabNuovoCM.getCell(0));
+	        addStyleToTitleCells(font, style, titoloTabNuovoCM.getCell(1));
+	        addStyleToTitleCells(font, style, titoloTabNuovoCM.getCell(2));
+	        addStyleToTitleCells(font, style, titoloTabNuovoCM.getCell(3));
+	        addStyleToTitleCells(font, style, titoloTabNuovoCM.getCell(4));
+	        addStyleToTitleCells(font, style, titoloTabNuovoCM.getCell(5));
+	        
+			CellRangeAddress [] regions = {
+					CellRangeAddress.valueOf("A2:Z400")
+	        };
+			
+			/*Aggiungo colori e font al tab Checksums*/
+			addColorsToSheet(tabCheckEvoNuovoCM , regions);
 			
 			numRowNuovoCM ++; 
 			
